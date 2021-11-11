@@ -1,5 +1,5 @@
 - label: "JIRA"
   message: "$issuePrefix"
   color: "#0052CC"
-  url: "https://https://rnd4pbl.atlassian.net/jira/software/projects/RD4/boards/browse/$issuePrefix"
+  url: "https://rnd4pbl.atlassian.net/browse/$issuePrefix"
   when: "$issuePrefix"
