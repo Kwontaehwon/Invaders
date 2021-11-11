@@ -7,6 +7,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,9 +79,9 @@ public final class DrawManager {
 		/** Destroyed enemy ship. */
 		Explosion,
 		//추가한것.
-		Box, Boom;
-
-
+		Box, Boom,
+		/** test.*/
+		NewShipDesign
 	};
 
 	/**
@@ -108,6 +109,7 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.Explosion, new int[13][7]);
 			spriteMap.put(SpriteType.Box, new int[13][8]);
 			spriteMap.put(SpriteType.Boom, new int[8][8]);
+			spriteMap.put(SpriteType.NewShipDesign, new int[13][8])
 
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");
@@ -263,11 +265,11 @@ public final class DrawManager {
 	 * @param lives
 	 *            Current lives.
 	 */
-	public void drawLives(final Screen screen, final int lives) {
+	public void drawLives(final Screen screen, final int lives, SpriteType lifeShape) {
 		backBufferGraphics.setFont(fontRegular);
 		backBufferGraphics.setColor(Color.WHITE);
 		backBufferGraphics.drawString(Integer.toString(lives), 20, 25);
-		Ship dummyShip = new Ship(0, 0);
+		Ship dummyShip = new Ship(0, 0, lifeShape);
 		for (int i = 0; i < lives; i++)
 			drawEntity(dummyShip, 40 + 35 * i, 10);
 	}
@@ -325,6 +327,7 @@ public final class DrawManager {
 		String highScoresString = "High scores";
 		String exitString = "exit";
 		String loadString = "Load";
+		String customizeString = "Custom";
 
 		if (option == 2)
 			backBufferGraphics.setColor(Color.GREEN);
@@ -332,18 +335,6 @@ public final class DrawManager {
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, playString,
 				screen.getHeight() / 3 * 2);
-		if (option == 3)
-			backBufferGraphics.setColor(Color.GREEN);
-		else
-			backBufferGraphics.setColor(Color.WHITE);
-		drawCenteredRegularString(screen, highScoresString, screen.getHeight()
-				/ 3 * 2 + fontRegularMetrics.getHeight() * 4);
-		if (option == 0)
-			backBufferGraphics.setColor(Color.GREEN);
-		else
-			backBufferGraphics.setColor(Color.WHITE);
-		drawCenteredRegularString(screen, exitString, screen.getHeight() / 3
-				* 2 + fontRegularMetrics.getHeight() * 6);
 		// load 메뉴 추가.
 		if (option == 8)
 			backBufferGraphics.setColor(Color.GREEN);
@@ -351,7 +342,25 @@ public final class DrawManager {
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, loadString, screen.getHeight()
 				/ 3 * 2 + fontRegularMetrics.getHeight() * 2);
-	}
+		if (option == 3)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		drawCenteredRegularString(screen, highScoresString, screen.getHeight()
+				/ 3 * 2 + fontRegularMetrics.getHeight() * 4);
+		if (option == 9)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		drawCenteredRegularString(screen, customizeString, screen.getHeight()
+				/ 3 * 2 + fontRegularMetrics.getHeight() * 4);
+		if (option == 0)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		drawCenteredRegularString(screen, exitString, screen.getHeight() / 3
+				* 2 + fontRegularMetrics.getHeight() * 6);
+		}
 
 	/**
 	 * Draws game results.
@@ -684,5 +693,100 @@ public final class DrawManager {
 						+ fontBigMetrics.stringWidth(soundString) / 2 - 5,
 				screen.getHeight() / 3
 						* 1 + fontRegularMetrics.getHeight() * 10);
+	}
+
+	/**
+	 * Draws Ship screen title and instructions.
+	 *
+	 * @param screen
+	 *            Screen to draw on.
+	 */
+	public void drawShipCustomMenu(final Screen screen) {
+		String customString = "Customize";
+		String instructionsString = "Press Space to return";
+
+		backBufferGraphics.setColor(Color.GREEN);
+		drawCenteredBigString(screen, customString, screen.getHeight() / 8);
+
+		backBufferGraphics.setColor(Color.GRAY);
+		drawCenteredRegularString(screen, instructionsString,
+				screen.getHeight() / 5);
+	}
+
+
+	/**
+	 * Draws sprites given as list and cursor.
+	 *
+	 * @param screen
+	 * 				Screen to draw on.
+	 * @param list
+	 * 				List of sprites to draw.
+	 * @param option
+	 * 				Cursor index.
+	 */
+	public void drawDesigns(final Screen screen, final ArrayList<SpriteType> list, int option){
+		int count = 0;
+		int positionX = 40;
+		int j = 0, positionY = screen.getWidth()-60;
+		int cursorX = 0;
+		int cursorY = 0;
+		int margin = 10;
+
+		// 두 줄에 다 안들어오는 경우는 고려하지 못함.
+		for(SpriteType sprite: list){
+			if( positionX + spriteMap.get(sprite).length*2 + margin >= frame.getWidth() ){
+				j++;
+				positionX = 40;
+				positionY = positionY + 40*j;
+			}
+			if(count == option){
+				cursorX = positionX;
+				cursorY = positionY;
+			}
+			Ship dummyShip = new Ship(0, 0, sprite);
+			drawEntity(dummyShip, positionX, positionY);
+			count++;
+			positionX += spriteMap.get(sprite).length*2 + margin;
+		}
+		backBufferGraphics.setColor(Color.RED);
+		drawTriangle(cursorX+12, cursorY-6, true);
+
+	}
+
+
+	/**
+	 * Draws triangle which has a horizontal side.
+	 *
+	 * @param tipPositionX
+	 * 					X-position of tip.
+	 * @param tipPositionY
+	 * 					Y-position of tip.
+	 */
+	private void drawTriangle(final int tipPositionX, final int tipPositionY){
+		drawTriangle(tipPositionX, tipPositionY, false);
+	}
+
+	/**
+	 * Draws triangle which has a horizontal side.
+	 *
+	 * @param tipPositionX
+	 * 					X-position of tip
+	 * @param tipPositionY
+	 * 					Y-position of tip
+	 * @param reverse
+	 * 				Is Tip's direction reversed? (false: up, true: down)
+	 */
+	private void drawTriangle(final int tipPositionX, final int tipPositionY, boolean reverse){
+		// size of triangle.
+		int size = 6;
+
+		int[] x = {tipPositionX, tipPositionX+size, tipPositionX-size};
+		int[] y = {tipPositionY, tipPositionY+size*2, tipPositionY+size*2};
+
+		if(reverse) {
+			y[1] -= size*4;
+			y[2] -= size*4;
+		}
+		backBufferGraphics.drawPolygon(x, y, 3);		// 3점의 x좌표와 y좌표를 전달해서 삼각형을 그리는 함수
 	}
 }

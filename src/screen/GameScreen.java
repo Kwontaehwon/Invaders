@@ -1,6 +1,6 @@
 package screen;
 
-
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Random;
@@ -90,6 +90,8 @@ public class GameScreen extends Screen {
 	Frame frame;
 
 
+	private DesignSetting designSetting;
+
 	/**
 	 * Constructor, establishes the properties of the screen.
 	 * 
@@ -107,9 +109,9 @@ public class GameScreen extends Screen {
 	 *            Frames per second, frame rate at which the game is run.
 	 */
 	public GameScreen(final GameState gameState,
-			final GameSettings gameSettings, final boolean bonusLife,
-			final int width, final int height, final int fps,
-					  Frame frame) {	// 생성자 수정 (frame 매개변수 추가)
+					  final GameSettings gameSettings, final boolean bonusLife, final DesignSetting designSetting,
+					  final int width, final int height, final int fps,
+					  Frame frame) {
 		super(width, height, fps);
 
 		this.gameSettings = gameSettings;
@@ -119,6 +121,7 @@ public class GameScreen extends Screen {
 		this.lives = gameState.getLivesRemaining();
 		if (this.bonusLife)
 			this.lives++;
+		this.designSetting = designSetting;
 		this.bulletsShot = gameState.getBulletsShot();
 		this.shipsDestroyed = gameState.getShipsDestroyed();
 
@@ -140,7 +143,9 @@ public class GameScreen extends Screen {
 
 		enemyShipFormation = new EnemyShipFormation(this.gameSettings);
 		enemyShipFormation.attach(this);
-		this.ship = new Ship(this.width / 2, this.height - 30);
+
+		this.ship = new Ship(this.width / 2, this.height - 30, designSetting.getShipType());
+		//this.ship = new Ship(this.width / 2, this.height - 30, gameSettings.getShipColor());
 		// Appears each 10-30 seconds.
 		this.enemyShipSpecialCooldown = Core.getVariableCooldown(
 				BONUS_SHIP_INTERVAL, BONUS_SHIP_VARIANCE);
@@ -157,7 +162,6 @@ public class GameScreen extends Screen {
 		this.gameStartTime = System.currentTimeMillis();
 		this.inputDelay = Core.getCooldown(INPUT_DELAY);
 		this.inputDelay.reset();
-
 
 	}
 
@@ -329,7 +333,7 @@ public class GameScreen extends Screen {
 			if (item.getPositionY() > this.height){ //아이템이 맵밖으로 떨어지면 사라짐.
 				this.item = null;
 			}
-			else { 
+			else {
 				drawManager.drawEntity(this.item, this.item.getPositionX(), this.item.getPositionY());
 			}
 		}
@@ -346,7 +350,7 @@ public class GameScreen extends Screen {
 		//
 		// Interface.
 		drawManager.drawScore(this, this.score);
-		drawManager.drawLives(this, this.lives);
+		drawManager.drawLives(this, this.lives,designSetting.getShipType());
 		drawManager.drawHorizontalLine(this, SEPARATION_LINE_HEIGHT - 1);
 		// 폭탄 인터페이스 추가
 		drawManager.drawBooms(this, this.boomTimes);

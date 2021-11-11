@@ -14,6 +14,7 @@ import screen.HighScoreScreen;
 import screen.ScoreScreen;
 import screen.Screen;
 import screen.TitleScreen;
+import screen.ShipScreen;
 
 /**
  * Implements core game logic.
@@ -118,7 +119,8 @@ public final class Core {
 		gameSettings.add(SETTINGS_LEVEL_5);
 		gameSettings.add(SETTINGS_LEVEL_6);
 		gameSettings.add(SETTINGS_LEVEL_7);
-		
+
+		DesignSetting designSetting = new DesignSetting(DrawManager.SpriteType.Ship);
 		GameState gameState;
 
 		int returnCode = 1;
@@ -145,7 +147,7 @@ public final class Core {
 					
 					currentScreen = new GameScreen(gameState,
 							gameSettings.get(gameState.getLevel() - 1),
-							bonusLife, width, height, FPS, frame);
+							bonusLife, designSetting, width, height, FPS, frame);
 					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 							+ " game screen at " + FPS + " fps.");
 					frame.setScreen(currentScreen);
@@ -201,7 +203,7 @@ public final class Core {
 
 					currentScreen = new GameScreen(gameState,
 							gameSettings.get(gameState.getLevel() - 1),
-							bonusLife, width, height, FPS, frame);
+							bonusLife, designSetting width, height, FPS, frame);
 
 					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 							+ " game screen at " + FPS + " fps.");
@@ -249,7 +251,7 @@ public final class Core {
 
 				currentScreen = new GameScreen(gameStatus.getStates(),
 						gameStatus.getSettings(),
-						gameStatus.getBonus(), width, height, FPS, frame);
+						gameStatus.getBonus(), designSetting, width, height, FPS, frame);
 				do {
 					// One extra live every few levels.
 					if(isFirst){
@@ -259,7 +261,7 @@ public final class Core {
 
 						currentScreen = new GameScreen(gameState,
 								gameSettings.get(gameState.getLevel() - 1),
-								bonusLife, width, height, FPS, frame);}
+								bonusLife, designSetting, width, height, FPS, frame);}
 					isFirst = true;
 
 					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
@@ -295,6 +297,15 @@ public final class Core {
 				returnCode = frame.setScreen(currentScreen);
 				LOGGER.info("Closing score screen.");
 				break;
+			case 9:
+				//Custom
+				currentScreen = new ShipScreen(width, height, FPS, designSetting);
+				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
+						+ " Ship screen at " + FPS + " fps.");
+				returnCode = frame.setScreen(currentScreen);
+				LOGGER.info("Closing high score screen.");
+				break;
+
 			default:
 				break;
 			}
