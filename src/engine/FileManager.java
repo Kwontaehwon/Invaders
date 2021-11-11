@@ -65,7 +65,7 @@ public final class FileManager {
 	 * @throws IOException
 	 *             In case of loading problems.
 	 */
-	public void loadSprite(final Map<SpriteType, boolean[][]> spriteMap)
+	public void loadSprite(final Map<SpriteType, int[][]> spriteMap)
 			throws IOException {
 		InputStream inputStream = null;
 
@@ -75,18 +75,14 @@ public final class FileManager {
 			char c;
 
 			// Sprite loading.
-			for (Map.Entry<SpriteType, boolean[][]> sprite : spriteMap
+			for (Map.Entry<SpriteType, int[][]> sprite : spriteMap
 					.entrySet()) {
 				for (int i = 0; i < sprite.getValue().length; i++)
 					for (int j = 0; j < sprite.getValue()[i].length; j++) {
 						do
 							c = (char) inputStream.read();
-						while (c != '0' && c != '1');
-
-						if (c == '1')
-							sprite.getValue()[i][j] = true;
-						else
-							sprite.getValue()[i][j] = false;
+						while (c != '0' && c != '1' && c != '2' && c != '3' && c != '4' && c != '5' && c != '6'); // 변경필요
+						sprite.getValue()[i][j] = Integer.parseInt(String.valueOf(c));
 					}
 				logger.fine("Sprite " + sprite.getKey() + " loaded.");
 			}

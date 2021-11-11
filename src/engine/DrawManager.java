@@ -48,7 +48,7 @@ public final class DrawManager {
 	private static FontMetrics fontBigMetrics;
 
 	/** Sprite types mapped to their images. */
-	private static Map<SpriteType, boolean[][]> spriteMap;
+	private static Map<SpriteType, int[][]> spriteMap;
 
 	/** Sprite types. */
 	public static enum SpriteType {
@@ -75,7 +75,9 @@ public final class DrawManager {
 		/** Bonus ship. */
 		EnemyShipSpecial,
 		/** Destroyed enemy ship. */
-		Explosion
+		Explosion,
+		//추가한것.
+		Box
 	};
 
 	/**
@@ -87,20 +89,21 @@ public final class DrawManager {
 		logger.info("Started loading resources.");
 
 		try {
-			spriteMap = new LinkedHashMap<SpriteType, boolean[][]>();
-
-			spriteMap.put(SpriteType.Ship, new boolean[13][8]);
-			spriteMap.put(SpriteType.ShipDestroyed, new boolean[13][8]);
-			spriteMap.put(SpriteType.Bullet, new boolean[3][5]);
-			spriteMap.put(SpriteType.EnemyBullet, new boolean[3][5]);
-			spriteMap.put(SpriteType.EnemyShipA1, new boolean[12][8]);
-			spriteMap.put(SpriteType.EnemyShipA2, new boolean[12][8]);
-			spriteMap.put(SpriteType.EnemyShipB1, new boolean[12][8]);
-			spriteMap.put(SpriteType.EnemyShipB2, new boolean[12][8]);
-			spriteMap.put(SpriteType.EnemyShipC1, new boolean[12][8]);
-			spriteMap.put(SpriteType.EnemyShipC2, new boolean[12][8]);
-			spriteMap.put(SpriteType.EnemyShipSpecial, new boolean[16][7]);
-			spriteMap.put(SpriteType.Explosion, new boolean[13][7]);
+			spriteMap = new LinkedHashMap<SpriteType, int[][]>();
+			// 각각의 이름그대로, 배, 배파괴되어을때, 총알등등이있음.
+			spriteMap.put(SpriteType.Ship, new int[13][8]);
+			spriteMap.put(SpriteType.ShipDestroyed, new int[13][8]);
+			spriteMap.put(SpriteType.Bullet, new int[5][5]);
+			spriteMap.put(SpriteType.EnemyBullet, new int[3][5]);
+			spriteMap.put(SpriteType.EnemyShipA1, new int[12][8]);
+			spriteMap.put(SpriteType.EnemyShipA2, new int[12][8]);
+			spriteMap.put(SpriteType.EnemyShipB1, new int[12][8]);
+			spriteMap.put(SpriteType.EnemyShipB2, new int[12][8]);
+			spriteMap.put(SpriteType.EnemyShipC1, new int[12][8]);
+			spriteMap.put(SpriteType.EnemyShipC2, new int[12][8]);
+			spriteMap.put(SpriteType.EnemyShipSpecial, new int[16][7]);
+			spriteMap.put(SpriteType.Explosion, new int[13][7]);
+			spriteMap.put(SpriteType.Box, new int[13][8]);
 
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");
@@ -185,15 +188,21 @@ public final class DrawManager {
 	 *            Coordinates for the upper side of the image.
 	 */
 	public void drawEntity(final Entity entity, final int positionX,
-			final int positionY) {
-		boolean[][] image = spriteMap.get(entity.getSpriteType());
+						   final int positionY) {
+		int[][] image = spriteMap.get(entity.getSpriteType());
 
-		backBufferGraphics.setColor(entity.getColor());
+//		backBufferGraphics.setColor(entity.getColor());
 		for (int i = 0; i < image.length; i++)
 			for (int j = 0; j < image[i].length; j++)
-				if (image[i][j])
+				if (image[i][j] != 0){
+					if(image[i][j] == 1) backBufferGraphics.setColor(Color.white);
+					else if(image[i][j] == 2) backBufferGraphics.setColor(Color.red);
+					else if(image[i][j] == 3) backBufferGraphics.setColor(Color.blue);
+					else if(image[i][j] == 4) backBufferGraphics.setColor(Color.green);
+					else if(image[i][j] == 5) backBufferGraphics.setColor(Color.yellow);
 					backBufferGraphics.drawRect(positionX + i * 2, positionY
 							+ j * 2, 1, 1);
+				}
 	}
 
 	/**

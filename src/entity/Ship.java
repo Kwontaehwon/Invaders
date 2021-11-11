@@ -14,7 +14,6 @@ import engine.DrawManager.SpriteType;
  * 
  */
 public class Ship extends Entity {
-
 	/** Time between shots. */
 	private static final int SHOOTING_INTERVAL = 750;
 	/** Speed of the bullets shot by the ship. */
@@ -39,6 +38,7 @@ public class Ship extends Entity {
 		super(positionX, positionY, 13 * 2, 8 * 2, Color.GREEN);
 
 		this.spriteType = SpriteType.Ship;
+		//슈팅 쿨타임을 설정.
 		this.shootingCooldown = Core.getCooldown(SHOOTING_INTERVAL);
 		this.destructionCooldown = Core.getCooldown(1000);
 	}
@@ -66,6 +66,7 @@ public class Ship extends Entity {
 	 *            List of bullets on screen, to add the new bullet.
 	 * @return Checks if the bullet was shot correctly.
 	 */
+	//Colldown이 슈팅쿨타운을 조절하는것을 알수있음.
 	public final boolean shoot(final Set<Bullet> bullets) {
 		if (this.shootingCooldown.checkFinished()) {
 			this.shootingCooldown.reset();
@@ -110,4 +111,9 @@ public class Ship extends Entity {
 	public final int getSpeed() {
 		return SPEED;
 	}
+	//추가한부분: 총알 쿨타움조절함수
+	public void setShootingCooldown(int interval){
+		this.shootingCooldown = Core.getCooldown(interval);
+	}
+
 }

@@ -2,6 +2,7 @@ package screen;
 
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import engine.Cooldown;
@@ -14,7 +15,9 @@ import entity.EnemyShip;
 import entity.EnemyShipFormation;
 import entity.Entity;
 import entity.Ship;
-
+// 추가한부분
+import entity.Item;
+//
 /**
  * Implements the game screen, where the action happens.
  * 
@@ -70,6 +73,12 @@ public class GameScreen extends Screen {
 	private boolean levelFinished;
 	/** Checks if a bonus life is received. */
 	private boolean bonusLife;
+	// 추가한 부분
+	private Item item;
+	private Cooldown itemCooldown;
+	private Random random = new Random();
+
+	//
 
 	/**
 	 * Constructor, establishes the properties of the screen.
@@ -78,7 +87,7 @@ public class GameScreen extends Screen {
 	 *            Current game state.
 	 * @param gameSettings
 	 *            Current game settings.
-	 * @param bonnusLife
+	 * @param bonusLife
 	 *            Checks if a bonus life is awarded this level.
 	 * @param width
 	 *            Screen width.
@@ -125,6 +134,8 @@ public class GameScreen extends Screen {
 		this.gameStartTime = System.currentTimeMillis();
 		this.inputDelay = Core.getCooldown(INPUT_DELAY);
 		this.inputDelay.reset();
+
+
 	}
 
 	/**
@@ -166,6 +177,7 @@ public class GameScreen extends Screen {
 				if (moveLeft && !isLeftBorder) {
 					this.ship.moveLeft();
 				}
+				//총알발사부분
 				if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
 					if (this.ship.shoot(this.bullets))
 						this.bulletsShot++;
@@ -190,15 +202,35 @@ public class GameScreen extends Screen {
 				this.logger.info("The special ship has escaped");
 			}
 
+			//추가한부분
+			if(this.item != null ){ //아이템이 존재한다면, 아이템을 아래로떨어짐.
+				this.item.update();
+			}
+			//
 			this.ship.update();
 			this.enemyShipFormation.update();
 			this.enemyShipFormation.shoot(this.bullets);
 		}
 
 		manageCollisions();
+		//추가한부분:ship과 아이템의 충돌
+		if(this.item != null && checkCollision(this.item,this.ship)){
+			//일단 false로 보였다 보였다를 구현했는데 나중에 enemyship처럼 따로함수를 둬야할지도
+			this.ship.setShootingCooldown(100);
+			//아이템쿨타임 시작.item 쿨타임 5초
+			this.itemCooldown = Core.getCooldown(5000);
+			this.itemCooldown.reset();
+			this.item = null;
+
+		}
+		// 아이템 지속시간이끝나면 원래대로 돌아옴.
+		if(this.itemCooldown != null && this.itemCooldown.checkFinished()){
+			this.ship.setShootingCooldown(750);
+			this.itemCooldown = null;
+		}
+		//
 		cleanBullets();
 		draw();
-
 		if ((this.enemyShipFormation.isEmpty() || this.lives == 0)
 				&& !this.levelFinished) {
 			this.levelFinished = true;
@@ -228,7 +260,17 @@ public class GameScreen extends Screen {
 		for (Bullet bullet : this.bullets)
 			drawManager.drawEntity(bullet, bullet.getPositionX(),
 					bullet.getPositionY());
+		// 추가한부분: 아이템생성.
+		if(this.item != null ){ //아이템이 존재하면
+			if (item.getPositionY() > this.height){ //아이템이 맵밖으로 떨어지면 사라짐.
+				this.item = null;
+			}
+			else { //존재하지않으면 생성.
+				drawManager.drawEntity(this.item, this.item.getPositionX(), this.item.getPositionY());
+			}
+		}
 
+		//
 		// Interface.
 		drawManager.drawScore(this, this.score);
 		drawManager.drawLives(this, this.lives);
@@ -282,13 +324,23 @@ public class GameScreen extends Screen {
 					}
 				}
 			} else {
+				// 적ship 하나하나마다 충돌되었는지 확인
 				for (EnemyShip enemyShip : this.enemyShipFormation)
 					if (!enemyShip.isDestroyed()
 							&& checkCollision(bullet, enemyShip)) {
 						this.score += enemyShip.getPointValue();
 						this.shipsDestroyed++;
 						this.enemyShipFormation.destroy(enemyShip);
-						recyclable.add(bullet);
+						// 추가한부분: item추가, 확률조정해야됨.
+						if(random.nextInt(5) == 1 ) { // 5분의 1의확률, 중복으로아이템생성x
+							if(this.item == null) { //아이템이 존재하지않으면
+								this.item = new Item(enemyShip.getPositionX(), enemyShip.getPositionX());
+
+
+							}
+						}
+						//////////////////////////
+						recyclable.add(bullet); //이부분이 이해가 가지않음.
 					}
 				if (this.enemyShipSpecial != null
 						&& !this.enemyShipSpecial.isDestroyed()
@@ -300,6 +352,7 @@ public class GameScreen extends Screen {
 					recyclable.add(bullet);
 				}
 			}
+
 		this.bullets.removeAll(recyclable);
 		BulletPool.recycle(recyclable);
 	}
