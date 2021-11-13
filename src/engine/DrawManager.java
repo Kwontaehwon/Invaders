@@ -315,6 +315,7 @@ public final class DrawManager {
 		String playString = "Play";
 		String highScoresString = "High scores";
 		String exitString = "exit";
+		String loadString = "Load";
 
 		if (option == 2)
 			backBufferGraphics.setColor(Color.GREEN);
@@ -327,13 +328,20 @@ public final class DrawManager {
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, highScoresString, screen.getHeight()
-				/ 3 * 2 + fontRegularMetrics.getHeight() * 2);
+				/ 3 * 2 + fontRegularMetrics.getHeight() * 4);
 		if (option == 0)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, exitString, screen.getHeight() / 3
-				* 2 + fontRegularMetrics.getHeight() * 4);
+				* 2 + fontRegularMetrics.getHeight() * 6);
+		// load 메뉴 추가.
+		if (option == 8)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		drawCenteredRegularString(screen, loadString, screen.getHeight()
+				/ 3 * 2 + fontRegularMetrics.getHeight() * 2);
 	}
 
 	/**
@@ -567,5 +575,105 @@ public final class DrawManager {
 		else
 			drawCenteredBigString(screen, "GO!", screen.getHeight() / 2
 					+ fontBigMetrics.getHeight() / 3);
+	}
+
+
+	// 추가한 부분 : 일시정지 화면 타이틀 구성.
+	public void drawPauseTitle(final Screen screen) {
+		String pauseString = "Pause";
+		String instructionsString = "Press Space to return";
+
+		backBufferGraphics.setColor(Color.GREEN);
+		drawCenteredBigString(screen, pauseString, screen.getHeight() / 8);
+
+		backBufferGraphics.setColor(Color.GRAY);
+		drawCenteredRegularString(screen, instructionsString,
+				screen.getHeight() / 5);
+	}
+	// 추가한 부분 : 일시정지 화면 메뉴 구성.
+	public void drawPauseMenu(final Screen screen, final int option) {
+		String restartString = "Restart";
+		String saveString = "Save";
+		String musicString = "Music";
+		String mainString = "Main";
+		String continueString = "Continue";
+		String soundString = "Sound";
+
+		if (option == 2)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		drawCenteredRegularString(screen, continueString,
+				screen.getHeight() / 3 * 1);
+		if (option == 1)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		drawCenteredRegularString(screen, mainString,
+				screen.getHeight() / 3 * 1 + fontRegularMetrics.getHeight() * 2);
+
+		if (option == 4)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		drawCenteredRegularString(screen, restartString,
+				screen.getHeight() / 3 * 1 + fontRegularMetrics.getHeight() * 4);
+		if (option == 5)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		drawCenteredRegularString(screen, saveString, screen.getHeight()
+				/ 3 * 1 + fontRegularMetrics.getHeight() * 6);
+		if (option == 6)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		drawCenteredRegularString(screen, musicString, screen.getHeight() / 3
+				* 1 + fontRegularMetrics.getHeight() * 8);
+
+		if (option == 11)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		backBufferGraphics.setFont(fontBig);
+		backBufferGraphics.drawString("<", screen.getWidth() / 2
+						- fontBigMetrics.stringWidth(musicString) / 2 - 5,
+				screen.getHeight() / 3
+						* 1 + fontRegularMetrics.getHeight() * 8);
+		if (option == 12)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		backBufferGraphics.setFont(fontBig);
+		backBufferGraphics.drawString(">", screen.getWidth() / 2
+						+ fontBigMetrics.stringWidth(musicString) / 2 - 5,
+				screen.getHeight() / 3
+						* 1 + fontRegularMetrics.getHeight() * 8);
+
+		if (option == 15)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		drawCenteredRegularString(screen, soundString, screen.getHeight() / 3
+				* 1 + fontRegularMetrics.getHeight() * 10);
+
+		if (option == 13)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		backBufferGraphics.setFont(fontBig);
+		backBufferGraphics.drawString("<", screen.getWidth() / 2
+						- fontBigMetrics.stringWidth(soundString) / 2 - 5,
+				screen.getHeight() / 3
+						* 1 + fontRegularMetrics.getHeight() * 10);
+		if (option == 14)
+			backBufferGraphics.setColor(Color.GREEN);
+		else
+			backBufferGraphics.setColor(Color.WHITE);
+		backBufferGraphics.setFont(fontBig);
+		backBufferGraphics.drawString(">", screen.getWidth() / 2
+						+ fontBigMetrics.stringWidth(soundString) / 2 - 5,
+				screen.getHeight() / 3
+						* 1 + fontRegularMetrics.getHeight() * 10);
 	}
 }
