@@ -4,11 +4,9 @@ import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.logging.Logger;
 
-import engine.Cooldown;
-import engine.Core;
-import engine.GameSettings;
-import engine.GameState;
+import engine.*;
 import entity.Bullet;
 import entity.BulletPool;
 import entity.EnemyShip;
@@ -78,7 +76,12 @@ public class GameScreen extends Screen {
 	private Cooldown itemCooldown;
 	private Random random = new Random();
 
-	//
+	// 추가한 부분 (세이브, 로드 관련)
+	private int initScore;
+	private int initLive;
+	private int initBullet;
+	private int initShip;
+	Frame frame;
 
 	/**
 	 * Constructor, establishes the properties of the screen.
@@ -98,7 +101,8 @@ public class GameScreen extends Screen {
 	 */
 	public GameScreen(final GameState gameState,
 			final GameSettings gameSettings, final boolean bonusLife,
-			final int width, final int height, final int fps) {
+			final int width, final int height, final int fps,
+					  Frame frame) {	// 생성자 수정 (frame 매개변수 추가)
 		super(width, height, fps);
 
 		this.gameSettings = gameSettings;
@@ -110,6 +114,12 @@ public class GameScreen extends Screen {
 			this.lives++;
 		this.bulletsShot = gameState.getBulletsShot();
 		this.shipsDestroyed = gameState.getShipsDestroyed();
+		// 추가한 부분
+		this.initScore = this.score;
+		this.initLive = this.lives;
+		this.initBullet = bulletsShot;
+		this.initShip = this.shipsDestroyed;
+		this.frame = frame;
 	}
 
 	/**
@@ -165,6 +175,7 @@ public class GameScreen extends Screen {
 						|| inputManager.isKeyDown(KeyEvent.VK_D);
 				boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT)
 						|| inputManager.isKeyDown(KeyEvent.VK_A);
+				boolean isPauseScreen = false;		// 추가한 부분
 
 				boolean isRightBorder = this.ship.getPositionX()
 						+ this.ship.getWidth() + this.ship.getSpeed() > this.width - 1;
@@ -177,10 +188,24 @@ public class GameScreen extends Screen {
 				if (moveLeft && !isLeftBorder) {
 					this.ship.moveLeft();
 				}
-				//총알발사부분
-				if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
-					if (this.ship.shoot(this.bullets))
+				//총알발사부분 (+일시정지 확인 추가)
+				if (!isPauseScreen&&inputManager.isKeyDown(KeyEvent.VK_SPACE))
+					if (this.ship.shoot(this.bullets)){
 						this.bulletsShot++;
+					}
+				//일시정지 부분 : 일시정지 화면으로 넘어감
+				if(!isPauseScreen&&inputManager.isKeyDown(KeyEvent.VK_ESCAPE)){
+					GameState gameState = getGameState();
+					gameState.setState(initScore, initLive, initBullet, initShip);
+					GameStatus gameStatus = new GameStatus(gameState, gameSettings, bonusLife);
+					Screen currentScreen = new PauseScreen(width, height, fps, gameStatus);
+					Logger LOGGER = Logger.getLogger(Core.class
+							.getSimpleName());
+					LOGGER.info("escKey.");
+					returnCode = frame.setScreen(currentScreen);
+				}
+				if(Core.flag_main || Core.flag_restart)
+					this.isRunning = false;
 			}
 
 			if (this.enemyShipSpecial != null) {
