@@ -75,6 +75,8 @@ public final class Core {
 	// 추가한 부분 flag.
 	public static boolean flag_main = false;
 	public static boolean flag_restart = false;
+	// 추가한 부분 Audio
+	public static Audio backgroundMusic = new Audio("res/bgm.wav", true);
 
 
 	/**
@@ -101,6 +103,7 @@ public final class Core {
 			// TODO handle exception
 			e.printStackTrace();
 		}
+		backgroundMusic.start();
 
 		frame = new Frame(WIDTH, HEIGHT);
 		DrawManager.getInstance().setFrame(frame);
@@ -300,6 +303,7 @@ public final class Core {
 
 		fileHandler.flush();
 		fileHandler.close();
+		backgroundMusic.stop();
 		System.exit(0);
 	}
 
