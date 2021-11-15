@@ -77,5 +77,12 @@ public class GameState {
 	public final int getShipsDestroyed() {
 		return shipsDestroyed;
 	}
+	//setter 추가
+	public void setState(int score, int livesRemaining, int bulletsShot, int shipsDestroyed){
+		this.score = score;
+		this.livesRemaining = livesRemaining;
+		this.bulletsShot = bulletsShot;
+		this.shipsDestroyed = shipsDestroyed;
+	}
 
 }
