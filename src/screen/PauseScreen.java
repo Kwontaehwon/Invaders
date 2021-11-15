@@ -75,11 +75,13 @@ public class PauseScreen extends Screen{
                 this.saveSave();
                 this.selectionCooldown.reset();
             }
-            if (this.returnCode == 11 && inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
+            if (this.returnCode == 11 && (inputManager.isKeyDown(KeyEvent.VK_SPACE) ||
+                                            inputManager.isKeyDown(KeyEvent.VK_LEFT))) {
                 backgroundMusic.decrease();
                 this.selectionCooldown.reset();
             }
-            if (this.returnCode == 12 && inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
+            if (this.returnCode == 12 && (inputManager.isKeyDown(KeyEvent.VK_SPACE) ||
+                                            inputManager.isKeyDown(KeyEvent.VK_RIGHT))) {
                 backgroundMusic.increase();
                 this.selectionCooldown.reset();
             }
