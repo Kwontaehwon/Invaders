@@ -8,6 +8,9 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static engine.Core.backgroundMusic;
+
 // 추가 클래스
 public class PauseScreen extends Screen{
     GameStatus gameStatus;
@@ -70,6 +73,14 @@ public class PauseScreen extends Screen{
             }
             if (this.returnCode == 5 && inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
                 this.saveSave();
+                this.selectionCooldown.reset();
+            }
+            if (this.returnCode == 11 && inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
+                backgroundMusic.decrease();
+                this.selectionCooldown.reset();
+            }
+            if (this.returnCode == 12 && inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
+                backgroundMusic.increase();
                 this.selectionCooldown.reset();
             }
             if(inputManager.isKeyDown(KeyEvent.VK_LEFT)
