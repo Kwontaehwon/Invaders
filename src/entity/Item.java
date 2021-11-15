@@ -10,7 +10,7 @@ public class Item extends Entity{
 
 
     // 아이템떨어지는 속도.
-    private int speed = 2;
+    private int speed = 2 ;
 
     /** Cooldown between sprite changes. */
     // 이부분을활용하여 떨어질떄 애니메이션을 줄수있음. EnemyShip.java, update부분보면됨.
@@ -31,7 +31,8 @@ public class Item extends Entity{
     public final void update() {
 
         this.positionY += this.speed;
-
     }
-
+    public int getSpeed(){
+        return this.speed;
+    }
 }
