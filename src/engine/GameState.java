@@ -18,7 +18,8 @@ public class GameState {
 	private int bulletsShot;
 	/** Ships destroyed until now. */
 	private int shipsDestroyed;
-
+	//폭탄 times 저장
+	private int boomtimes;
 	/**
 	 * Constructor.
 	 * 
@@ -35,12 +36,13 @@ public class GameState {
 	 */
 	public GameState(final int level, final int score,
 			final int livesRemaining, final int bulletsShot,
-			final int shipsDestroyed) {
+			final int shipsDestroyed,final int boomtimes) {
 		this.level = level;
 		this.score = score;
 		this.livesRemaining = livesRemaining;
 		this.bulletsShot = bulletsShot;
 		this.shipsDestroyed = shipsDestroyed;
+		this.boomtimes = boomtimes;
 	}
 
 	/**
@@ -77,6 +79,8 @@ public class GameState {
 	public final int getShipsDestroyed() {
 		return shipsDestroyed;
 	}
+
+	public final int getBoomtimes() { return boomtimes;}
 	//setter 추가
 	public void setState(int score, int livesRemaining, int bulletsShot, int shipsDestroyed){
 		this.score = score;

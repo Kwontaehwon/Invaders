@@ -121,6 +121,9 @@ public class GameScreen extends Screen {
 			this.lives++;
 		this.bulletsShot = gameState.getBulletsShot();
 		this.shipsDestroyed = gameState.getShipsDestroyed();
+
+		// 추가한 부분,다음세이브 폭탄추가
+		this.boomTimes = gameState.getBoomtimes();
 		// 추가한 부분
 		this.initScore = this.score;
 		this.initLive = this.lives;
@@ -147,8 +150,6 @@ public class GameScreen extends Screen {
 		this.screenFinishedCooldown = Core.getCooldown(SCREEN_CHANGE_INTERVAL);
 		this.bullets = new HashSet<Bullet>();
 
-		//boomtimes 생성, 3번만 발사가능 추후에 아이템먹으면 추가.
-		this.boomTimes = 3;
 		//폭탄집합 생성
 		this.booms = new HashSet<Boom>();
 
@@ -537,6 +538,6 @@ public class GameScreen extends Screen {
 	 */
 	public final GameState getGameState() {
 		return new GameState(this.level, this.score, this.lives,
-				this.bulletsShot, this.shipsDestroyed);
+				this.bulletsShot, this.shipsDestroyed,this.boomTimes);
 	}
 }

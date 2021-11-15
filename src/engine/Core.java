@@ -121,7 +121,7 @@ public final class Core {
 		int returnCode = 1;
 		do {
 			flag_main = false;
-			gameState = new GameState(1, 0, MAX_LIVES, 0, 0);
+			gameState = new GameState(1, 0, MAX_LIVES, 0, 0,3);
 
 			switch (returnCode) {
 			case 1:
@@ -161,7 +161,8 @@ public final class Core {
 							gameState.getScore(),
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
-							gameState.getShipsDestroyed());
+							gameState.getShipsDestroyed(),
+							gameState.getBoomtimes());
 
 				} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);
@@ -188,7 +189,7 @@ public final class Core {
 			case 4:
 				// Game & score. (Restart)
 				do {
-					gameState = new GameState(1, 0, MAX_LIVES, 0, 0);
+					gameState = new GameState(1, 0, MAX_LIVES, 0, 0,3);
 
 					// One extra live every few levels.
 					boolean bonusLife = gameState.getLevel()
@@ -216,7 +217,8 @@ public final class Core {
 							gameState.getScore(),
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
-							gameState.getShipsDestroyed());
+							gameState.getShipsDestroyed(),
+							gameState.getBoomtimes());
 
 				} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);
@@ -274,7 +276,8 @@ public final class Core {
 							gameState.getScore(),
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
-							gameState.getShipsDestroyed());
+							gameState.getShipsDestroyed(),
+							gameState.getBoomtimes());
 
 				} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);
