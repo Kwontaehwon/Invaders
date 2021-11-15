@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import entity.Boom;
 import screen.Screen;
 import entity.Entity;
 import entity.Ship;
@@ -77,7 +78,9 @@ public final class DrawManager {
 		/** Destroyed enemy ship. */
 		Explosion,
 		//추가한것.
-		Box
+		Box, Boom;
+
+
 	};
 
 	/**
@@ -104,6 +107,7 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.EnemyShipSpecial, new int[16][7]);
 			spriteMap.put(SpriteType.Explosion, new int[13][7]);
 			spriteMap.put(SpriteType.Box, new int[13][8]);
+			spriteMap.put(SpriteType.Boom, new int[8][8]);
 
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");
@@ -191,7 +195,6 @@ public final class DrawManager {
 						   final int positionY) {
 		int[][] image = spriteMap.get(entity.getSpriteType());
 
-//		backBufferGraphics.setColor(entity.getColor());
 		for (int i = 0; i < image.length; i++)
 			for (int j = 0; j < image[i].length; j++)
 				if (image[i][j] != 0){
@@ -282,6 +285,12 @@ public final class DrawManager {
 		backBufferGraphics.drawLine(0, positionY, screen.getWidth(), positionY);
 		backBufferGraphics.drawLine(0, positionY + 1, screen.getWidth(),
 				positionY + 1);
+	}
+
+	public void drawBooms(final Screen screen , final int boomtimes){
+		Boom dummyBoom = new Boom(0,0,0);
+		for (int i = 0; i < boomtimes; i++)
+			drawEntity(dummyBoom,150+ 20 * i,10);
 	}
 
 	/**

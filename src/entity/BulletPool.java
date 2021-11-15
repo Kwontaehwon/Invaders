@@ -9,6 +9,8 @@ import java.util.Set;
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  * 
  */
+// 충돌된에 사용된 총알들을 삭제하고, 다시 recycle하는데 사용되는듯함.
+// 그와중에 총알을 만들어주는 함수를 추가해준듯.
 public final class BulletPool {
 
 	/** Set of already created bullets. */
@@ -38,12 +40,13 @@ public final class BulletPool {
 			final int positionY, final int speed) {
 		Bullet bullet;
 		if (!pool.isEmpty()) {
-			bullet = pool.iterator().next();
-			pool.remove(bullet);
+			bullet = pool.iterator().next(); // 객체로 Set의 모든 아이템을 순회(for loop 같은느낌)
+			pool.remove(bullet); //있으면 삭제. recycle을 통해 업데이트된 총알삭제하는듯.
 			bullet.setPositionX(positionX - bullet.getWidth() / 2);
 			bullet.setPositionY(positionY);
 			bullet.setSpeed(speed);
 			bullet.setSprite();
+
 		} else {
 			bullet = new Bullet(positionX, positionY, speed);
 			bullet.setPositionX(positionX - bullet.getWidth() / 2);

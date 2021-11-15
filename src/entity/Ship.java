@@ -17,7 +17,7 @@ public class Ship extends Entity {
 	/** Time between shots. */
 	private static final int SHOOTING_INTERVAL = 750;
 	/** Speed of the bullets shot by the ship. */
-	private static final int BULLET_SPEED = -6;
+	private static int BULLET_SPEED = -6;
 	/** Movement of the ship for each unit of time. */
 	private static final int SPEED = 2;
 	
@@ -76,6 +76,16 @@ public class Ship extends Entity {
 		}
 		return false;
 	}
+	//폭탄발사부분
+	public final boolean boomShoot(final Set<Boom> booms) {
+		if (this.shootingCooldown.checkFinished()) {
+			this.shootingCooldown.reset();
+			booms.add(BoomPool.getBoom(positionX + this.width / 2,
+					positionY, BULLET_SPEED));
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Updates status of the ship.
@@ -115,5 +125,7 @@ public class Ship extends Entity {
 	public void setShootingCooldown(int interval){
 		this.shootingCooldown = Core.getCooldown(interval);
 	}
+	//추가한부분: 총알 속도조절
+	public void setBulletSpeed(int speed) {this.BULLET_SPEED = speed;}
 
 }
