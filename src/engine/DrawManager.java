@@ -109,7 +109,7 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.Explosion, new int[13][7]);
 			spriteMap.put(SpriteType.Box, new int[13][8]);
 			spriteMap.put(SpriteType.Boom, new int[8][8]);
-			spriteMap.put(SpriteType.NewShipDesign, new int[13][8])
+			spriteMap.put(SpriteType.NewShipDesign, new int[13][8]);
 
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");
@@ -333,21 +333,21 @@ public final class DrawManager {
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
-		drawCenteredRegularString(screen, playString,
-				screen.getHeight() / 3 * 2);
+		drawCenteredRegularString(screen, playString, screen.getHeight()
+				/ 3 * 2 - fontRegularMetrics.getHeight() * 2);
 		// load 메뉴 추가.
 		if (option == 8)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, loadString, screen.getHeight()
-				/ 3 * 2 + fontRegularMetrics.getHeight() * 2);
+				/ 3 * 2 );
 		if (option == 3)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, highScoresString, screen.getHeight()
-				/ 3 * 2 + fontRegularMetrics.getHeight() * 4);
+				/ 3 * 2 + fontRegularMetrics.getHeight() * 2);
 		if (option == 9)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
