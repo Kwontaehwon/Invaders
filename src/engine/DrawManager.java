@@ -704,6 +704,7 @@ public final class DrawManager {
 	public void drawShipCustomMenu(final Screen screen) {
 		String customString = "Customize";
 		String instructionsString = "Press Space to return";
+		String currentString = "Current";
 
 		backBufferGraphics.setColor(Color.GREEN);
 		drawCenteredBigString(screen, customString, screen.getHeight() / 8);
@@ -711,9 +712,11 @@ public final class DrawManager {
 		backBufferGraphics.setColor(Color.GRAY);
 		drawCenteredRegularString(screen, instructionsString,
 				screen.getHeight() / 5);
+		backBufferGraphics.setColor(Color.GREEN);
+		drawCenteredRegularString(screen, currentString,
+				screen.getHeight() / 3);
+
 	}
-
-
 	/**
 	 * Draws sprites given as list and cursor.
 	 *
@@ -724,7 +727,7 @@ public final class DrawManager {
 	 * @param option
 	 * 				Cursor index.
 	 */
-	public void drawDesigns(final Screen screen, final ArrayList<SpriteType> list, int option){
+	public void drawDesigns(final Screen screen, final ArrayList<SpriteType> list, int option, DesignSetting designSetting){
 		int count = 0;
 		int positionX = 40;
 		int j = 0, positionY = screen.getWidth()-60;
@@ -745,6 +748,9 @@ public final class DrawManager {
 			}
 			Ship dummyShip = new Ship(0, 0, sprite);
 			drawEntity(dummyShip, positionX, positionY);
+			if(designSetting.getShipType() == sprite){
+				drawEntity(dummyShip, 200, screen.getHeight() / 3 + 20);
+			}
 			count++;
 			positionX += spriteMap.get(sprite).length*2 + margin;
 		}

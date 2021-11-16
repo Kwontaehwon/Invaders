@@ -16,7 +16,7 @@ public class ShipScreen extends Screen{
     private static final int SELECTION_TIME = 200;
     /** Time between changes in user selection. */
     private Cooldown selectionCooldown;
-
+    private SpriteType newSpriteType;
 
     private final DesignSetting designSetting;
     private int cursor=0;
@@ -35,6 +35,7 @@ public class ShipScreen extends Screen{
         this.selectionCooldown = Core.getCooldown(SELECTION_TIME);
         this.selectionCooldown.reset();
         this.returnCode = 1;
+        this.cursor = designList.indexOf(designSetting.getShipType());
     }
 
 
@@ -47,13 +48,6 @@ public class ShipScreen extends Screen{
 
     protected final void update() {
         super.update();
-
-        if(cursor==0)
-            designSetting.setShipType(SpriteType.Ship);
-        else if(cursor==1)
-            designSetting.setShipType(SpriteType.NewShipDesign);
-        else
-            designSetting.setShipType(SpriteType.Ship);
 
         draw();
 
@@ -69,8 +63,10 @@ public class ShipScreen extends Screen{
                 nextItem();
                 this.selectionCooldown.reset();
             }
-            if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
+            if (inputManager.isKeyDown(KeyEvent.VK_SPACE)){
+                designSetting.setShipType(designList.get(cursor));
                 this.isRunning = false;
+            }
         }
 
     }
@@ -78,7 +74,7 @@ public class ShipScreen extends Screen{
     public void draw(){
         drawManager.initDrawing(this);
         drawManager.drawShipCustomMenu(this);
-        drawManager.drawDesigns(this, designList, this.cursor);
+        drawManager.drawDesigns(this, designList, this.cursor, designSetting);
         //TODO 잠긴 색깔 구분하기
         drawManager.completeDrawing(this);
     }
