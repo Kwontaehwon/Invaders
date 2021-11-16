@@ -20,7 +20,8 @@ public class Ship extends Entity {
 	private static int BULLET_SPEED = -6;
 	/** Movement of the ship for each unit of time. */
 	private static final int SPEED = 2;
-	
+	private SpriteType shipType;
+
 	/** Minimum time between shots. */
 	private Cooldown shootingCooldown;
 	/** Time spent inactive between hits. */
@@ -34,11 +35,12 @@ public class Ship extends Entity {
 	 * @param positionY
 	 *            Initial position of the ship in the Y axis.
 	 */
-	public Ship(final int positionX, final int positionY) {
+	public Ship(final int positionX, final int positionY, SpriteType spriteType) {
 		super(positionX, positionY, 13 * 2, 8 * 2, Color.GREEN);
 
-		this.spriteType = SpriteType.Ship;
 		//슈팅 쿨타임을 설정.
+		this.spriteType = spriteType;
+		this.shipType = spriteType;
 		this.shootingCooldown = Core.getCooldown(SHOOTING_INTERVAL);
 		this.destructionCooldown = Core.getCooldown(1000);
 	}
@@ -94,7 +96,7 @@ public class Ship extends Entity {
 		if (!this.destructionCooldown.checkFinished())
 			this.spriteType = SpriteType.ShipDestroyed;
 		else
-			this.spriteType = SpriteType.Ship;
+			this.spriteType = shipType;
 	}
 
 	/**
@@ -128,4 +130,10 @@ public class Ship extends Entity {
 	//추가한부분: 총알 속도조절
 	public void setBulletSpeed(int speed) {this.BULLET_SPEED = speed;}
 
+
+	/**
+	 * Setter for the ship's spriteType.
+	 * @param type represents design
+	 */
+	public void setShipType(SpriteType type){ this.shipType = type; }
 }
