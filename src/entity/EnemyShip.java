@@ -137,12 +137,10 @@ public class EnemyShip extends Entity {
 				break;
 			// D적 업데이트 스프라이트 추가.
 			case EnemyShipD1:
-				if(this.getLive()<=1) this.spriteType = SpriteType.EnemyShipD4;
-				else this.spriteType = SpriteType.EnemyShipD2;
+				this.spriteType = SpriteType.EnemyShipD2;
 				break;
 			case EnemyShipD2:
-				if(this.getLive()<=1) this.spriteType = SpriteType.EnemyShipD3;
-				else this.spriteType = SpriteType.EnemyShipD1;
+				this.spriteType = SpriteType.EnemyShipD1;
 				break;
 			case EnemyShipD3:
 				this.spriteType = SpriteType.EnemyShipD4;
@@ -160,8 +158,15 @@ public class EnemyShip extends Entity {
 	 * Destroys the ship, causing an explosion.
 	 */
 	public final void destroy() {
-		live--;
-		if(live<=0){		// live가 0 이하면 isDestroyed 를 바꿈.
+		this.live--;
+		// 피격시 spriteType 을 바꿔줌
+		if(this.spriteType == SpriteType.EnemyShipD1 && this.live==1){
+			this.spriteType = SpriteType.EnemyShipD4;
+		}
+		else if(this.spriteType == SpriteType.EnemyShipD2 && this.live==1){
+			this.spriteType = SpriteType.EnemyShipD3;
+		}
+		if(this.live<=0){		// live가 0 이하면 isDestroyed 를 바꿈.
 			this.isDestroyed = true;
 			this.spriteType = SpriteType.Explosion;
 		}
@@ -176,5 +181,5 @@ public class EnemyShip extends Entity {
 		return this.isDestroyed;
 	}
 
-	public int getLive() { return live; }
+	public int getLive() { return this.live; }
 }
