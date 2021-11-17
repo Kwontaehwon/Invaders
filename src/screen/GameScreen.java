@@ -413,11 +413,16 @@ public class GameScreen extends Screen {
 					for (EnemyShip enemyShip2 : this.enemyShipFormation) {
 						if (!enemyShip2.isDestroyed() //좌표상 폭탄범위에 해당하는 enemyShip destroy.
 								&& checkBoomCollision(boom,enemyShip2)) {
-							this.score += enemyShip2.getPointValue();
-							this.shipsDestroyed++;
-							this.enemyShipFormation.destroy(enemyShip2);
+							if (enemyShip.getLive() >= 2) {
+								this.enemyShipFormation.destroy(enemyShip2);
+							} else {
+								this.score += enemyShip2.getPointValue();
+								this.shipsDestroyed++;
+								this.enemyShipFormation.destroy(enemyShip2);
+								// item 떨어짐.
+								dropItem(enemyShip);
+							}
 						}
-
 					}
 					recyclableBoom.add(boom); //충돌에 사용된 폭탄제거.
 				}
