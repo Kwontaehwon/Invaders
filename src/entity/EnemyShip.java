@@ -22,6 +22,7 @@ public class EnemyShip extends Entity {
 	private static final int C_TYPE_POINTS = 30;
 	/** Point value of a bonus enemy. */
 	private static final int BONUS_TYPE_POINTS = 100;
+	private static final int D_TYPE_POINTS = 40; // 두번 피격해야 죽는 적 D의 포인트.
 
 	/** Cooldown between sprite changes. */
 	private Cooldown animationCooldown;
@@ -29,6 +30,8 @@ public class EnemyShip extends Entity {
 	private boolean isDestroyed;
 	/** Values of the ship, in points, when destroyed. */
 	private int pointValue;
+
+	private int live = 1; // 적의 live 추가 (기본값 1 : 한번 피격하면 죽음)
 
 	/**
 	 * Constructor, establishes the ship's properties.
@@ -60,6 +63,11 @@ public class EnemyShip extends Entity {
 		case EnemyShipC1:
 		case EnemyShipC2:
 			this.pointValue = C_TYPE_POINTS;
+			break;
+		case EnemyShipD1:		// 적D 포인트 설정.
+		case EnemyShipD2:
+			this.pointValue = D_TYPE_POINTS;
+			this.live = 2;
 			break;
 		default:
 			this.pointValue = 0;
@@ -127,6 +135,19 @@ public class EnemyShip extends Entity {
 			case EnemyShipC2:
 				this.spriteType = SpriteType.EnemyShipC1;
 				break;
+			// D적 업데이트 스프라이트 추가.
+			case EnemyShipD1:
+				this.spriteType = SpriteType.EnemyShipD2;
+				break;
+			case EnemyShipD2:
+				this.spriteType = SpriteType.EnemyShipD1;
+				break;
+			case EnemyShipD3:
+				this.spriteType = SpriteType.EnemyShipD4;
+				break;
+			case EnemyShipD4:
+				this.spriteType = SpriteType.EnemyShipD3;
+				break;
 			default:
 				break;
 			}
@@ -137,8 +158,18 @@ public class EnemyShip extends Entity {
 	 * Destroys the ship, causing an explosion.
 	 */
 	public final void destroy() {
-		this.isDestroyed = true;
-		this.spriteType = SpriteType.Explosion;
+		this.live--;
+		// 피격시 spriteType 을 바꿔줌
+		if(this.spriteType == SpriteType.EnemyShipD1 && this.live==1){
+			this.spriteType = SpriteType.EnemyShipD4;
+		}
+		else if(this.spriteType == SpriteType.EnemyShipD2 && this.live==1){
+			this.spriteType = SpriteType.EnemyShipD3;
+		}
+		if(this.live<=0){		// live가 0 이하면 isDestroyed 를 바꿈.
+			this.isDestroyed = true;
+			this.spriteType = SpriteType.Explosion;
+		}
 	}
 
 	/**
@@ -149,4 +180,6 @@ public class EnemyShip extends Entity {
 	public final boolean isDestroyed() {
 		return this.isDestroyed;
 	}
+
+	public int getLive() { return this.live; }
 }

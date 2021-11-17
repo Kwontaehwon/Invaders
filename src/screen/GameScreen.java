@@ -413,11 +413,16 @@ public class GameScreen extends Screen {
 					for (EnemyShip enemyShip2 : this.enemyShipFormation) {
 						if (!enemyShip2.isDestroyed() //좌표상 폭탄범위에 해당하는 enemyShip destroy.
 								&& checkBoomCollision(boom,enemyShip2)) {
-							this.score += enemyShip2.getPointValue();
-							this.shipsDestroyed++;
-							this.enemyShipFormation.destroy(enemyShip2);
+							if (enemyShip.getLive() >= 2) {
+								this.enemyShipFormation.destroy(enemyShip2);
+							} else {
+								this.score += enemyShip2.getPointValue();
+								this.shipsDestroyed++;
+								this.enemyShipFormation.destroy(enemyShip2);
+								// item 떨어짐.
+								dropItem(enemyShip);
+							}
 						}
-
 					}
 					recyclableBoom.add(boom); //충돌에 사용된 폭탄제거.
 				}
@@ -447,11 +452,16 @@ public class GameScreen extends Screen {
 				for (EnemyShip enemyShip : this.enemyShipFormation)
 					if (!enemyShip.isDestroyed() //파괴된 적비행기가아니고
 							&& checkCollision(bullet, enemyShip)) {
-						this.score += enemyShip.getPointValue();
-						this.shipsDestroyed++;
-						this.enemyShipFormation.destroy(enemyShip);
-						// item 떨어짐.
-						dropItem(enemyShip);
+						if(enemyShip.getLive()>=2){			// 기본 live값이 2 이상인 적을 카운트하지 않음.
+							this.enemyShipFormation.destroy(enemyShip);
+						}
+						else{
+							this.score += enemyShip.getPointValue();
+							this.shipsDestroyed++;
+							this.enemyShipFormation.destroy(enemyShip);
+							// item 떨어짐.
+							dropItem(enemyShip);
+						}
 						recyclable.add(bullet); //충돌에 사용된 총알제거.
 					}
 				// 적특별개체 판단여부

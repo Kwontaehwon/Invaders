@@ -144,7 +144,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 						+ PROPORTION_C)
 					spriteType = SpriteType.EnemyShipB1;
 				else
-					spriteType = SpriteType.EnemyShipA1;
+					spriteType = SpriteType.EnemyShipD1;
 
 				column.add(new EnemyShip((SEPARATION_DISTANCE 
 						* this.enemyShips.indexOf(column))
@@ -358,7 +358,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				}
 
 		// Updates the list of ships that can shoot the player.
-		if (this.shooters.contains(destroyedShip)) {
+		if (this.shooters.contains(destroyedShip) && destroyedShip.isDestroyed()) {
 			int destroyedShipIndex = this.shooters.indexOf(destroyedShip);
 			int destroyedShipColumnIndex = -1;
 
@@ -380,7 +380,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 			}
 		}
 
-		this.shipCount--;
+		if (destroyedShip.isDestroyed()) this.shipCount--;
 	}
 
 	/**
