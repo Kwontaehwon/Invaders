@@ -296,7 +296,7 @@ public final class FileManager {
 			bufferedWriter = new BufferedWriter(new OutputStreamWriter(
 					outputStream, Charset.forName("UTF-8")));
 
-			logger.info("Saving user high scores.");
+			logger.info("Saving user's game.");
 
 			bufferedWriter.write(save.get(0));
 			bufferedWriter.newLine();

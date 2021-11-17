@@ -81,7 +81,12 @@ public final class DrawManager {
 		//추가한것.
 		Box, Boom,
 		/** test.*/
-		NewShipDesign
+		NewShipDesign,
+		// 두번피격적 추가.
+		EnemyShipD1,
+		EnemyShipD2,
+		EnemyShipD3,
+		EnemyShipD4
 	};
 
 	/**
@@ -110,6 +115,10 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.Box, new int[13][8]);
 			spriteMap.put(SpriteType.Boom, new int[8][8]);
 			spriteMap.put(SpriteType.NewShipDesign, new int[13][8]);
+			spriteMap.put(SpriteType.EnemyShipD1, new int[12][8]);
+			spriteMap.put(SpriteType.EnemyShipD2, new int[12][8]);
+			spriteMap.put(SpriteType.EnemyShipD3, new int[12][8]);
+			spriteMap.put(SpriteType.EnemyShipD4, new int[12][8]);
 
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");

@@ -144,7 +144,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 						+ PROPORTION_C)
 					spriteType = SpriteType.EnemyShipB1;
 				else
-					spriteType = SpriteType.EnemyShipA1;
+					spriteType = SpriteType.EnemyShipD1;
 
 				column.add(new EnemyShip((SEPARATION_DISTANCE 
 						* this.enemyShips.indexOf(column))
