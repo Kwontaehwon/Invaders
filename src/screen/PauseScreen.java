@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static engine.Core.backgroundMusic;
+import static engine.Core.effectSound;
 
 // 추가 클래스
 public class PauseScreen extends Screen{
@@ -83,6 +84,16 @@ public class PauseScreen extends Screen{
             if (this.returnCode == 12 && (inputManager.isKeyDown(KeyEvent.VK_SPACE) ||
                                             inputManager.isKeyDown(KeyEvent.VK_RIGHT))) {
                 backgroundMusic.increase();
+                this.selectionCooldown.reset();
+            }
+            if (this.returnCode == 13 && (inputManager.isKeyDown(KeyEvent.VK_SPACE) ||
+                                            inputManager.isKeyDown(KeyEvent.VK_RIGHT))) {
+                effectSound.decrease();
+                this.selectionCooldown.reset();
+            }
+            if (this.returnCode == 14 && (inputManager.isKeyDown(KeyEvent.VK_SPACE) ||
+                                            inputManager.isKeyDown(KeyEvent.VK_RIGHT))) {
+                effectSound.increase();
                 this.selectionCooldown.reset();
             }
             if(inputManager.isKeyDown(KeyEvent.VK_LEFT)

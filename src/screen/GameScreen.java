@@ -19,6 +19,8 @@ import entity.EnemyShipFormation;
 import entity.Entity;
 import entity.Ship;
 
+import static engine.Core.effectSound;
+
 /**
  * Implements the game screen, where the action happens.
  * 
@@ -205,14 +207,17 @@ public class GameScreen extends Screen {
 					this.ship.moveLeft();
 				}
 				//총알발사부분 (+일시정지 확인 추가)
-				if (!isPauseScreen&&inputManager.isKeyDown(KeyEvent.VK_SPACE))
-					if (this.ship.shoot(this.bullets))
+				if (!isPauseScreen&&inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
+					if (this.ship.shoot(this.bullets)) {
 						this.bulletsShot++;
+						effectSound.shootingSound.start();		// 총 발사 소리
+					}
+				}
 				//폭탄발사부분
 				if (!isPauseScreen && inputManager.isKeyDown(KeyEvent.VK_Z) && boomTimes > 0) {
 					if (this.ship.boomShoot(this.booms)) {
 						boomTimes--;
-
+						effectSound.boomingSound.start();		// 폭탄 발사 소리
 					}
 				}
 				//일시정지 부분 : 일시정지 화면으로 넘어감
@@ -273,7 +278,7 @@ public class GameScreen extends Screen {
 			this.itemCooldown = Core.getCooldown(5000);
 			this.itemCooldown.reset();
 			this.item = null;
-
+			effectSound.getItemSound.start();		// 드랍된 아이템 얻는 소리
 		}
 		// 아이템 지속시간이끝나면 원래대로 돌아옴.
 		if(this.itemCooldown != null && this.itemCooldown.checkFinished()){
@@ -286,6 +291,7 @@ public class GameScreen extends Screen {
 			if(this.boomTimes < 3)
 				boomTimes++;
 			this.boomItem= null;
+			effectSound.getItemSound.start();		// 드랍된 폭탄 아이템 얻는 소리
 		}
 
 		//스크린 밖으로 나간 총알 없애기, 또한 Bullets업데이트
@@ -414,8 +420,10 @@ public class GameScreen extends Screen {
 						if (!enemyShip2.isDestroyed() //좌표상 폭탄범위에 해당하는 enemyShip destroy.
 								&& checkBoomCollision(boom,enemyShip2)) {
 							if (enemyShip.getLive() >= 2) {
+								effectSound.hitEnemySound.start();			// 적이 폭탄에 타격되는 소리 (사라지지는 않음)
 								this.enemyShipFormation.destroy(enemyShip2);
 							} else {
+								effectSound.destroyedEnemySound.start();	// 적이 폭탄에 파괴되는 소리
 								this.score += enemyShip2.getPointValue();
 								this.shipsDestroyed++;
 								this.enemyShipFormation.destroy(enemyShip2);
@@ -441,6 +449,7 @@ public class GameScreen extends Screen {
 				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
 					recyclable.add(bullet);
 					if (!this.ship.isDestroyed()) {
+						effectSound.deathSound.start();		// 플레이어가 총알에 맞는 소리
 						this.ship.destroy();
 						this.lives--;
 						this.logger.info("Hit on player ship, " + this.lives
@@ -453,9 +462,11 @@ public class GameScreen extends Screen {
 					if (!enemyShip.isDestroyed() //파괴된 적비행기가아니고
 							&& checkCollision(bullet, enemyShip)) {
 						if(enemyShip.getLive()>=2){			// 기본 live값이 2 이상인 적을 카운트하지 않음.
+							effectSound.hitEnemySound.start();			// 적이 총알에 타격되는 소리 (사라지지는 않음)
 							this.enemyShipFormation.destroy(enemyShip);
 						}
 						else{
+							effectSound.destroyedEnemySound.start();	// 적이 총알에 파괴되는 소리
 							this.score += enemyShip.getPointValue();
 							this.shipsDestroyed++;
 							this.enemyShipFormation.destroy(enemyShip);
@@ -468,6 +479,7 @@ public class GameScreen extends Screen {
 				if (this.enemyShipSpecial != null
 						&& !this.enemyShipSpecial.isDestroyed()
 						&& checkCollision(bullet, this.enemyShipSpecial)) {
+					effectSound.destroyedEnemySound.start();	// 적이 총알에 파괴되는 소리
 					this.score += this.enemyShipSpecial.getPointValue();
 					this.shipsDestroyed++;
 					this.enemyShipSpecial.destroy();
@@ -532,11 +544,13 @@ public class GameScreen extends Screen {
 		if(random.nextInt(5) == 1 ) { // 5분의 1의확률, 중복으로아이템생성x
 			if(random.nextInt(2) == 1 ){ // 폭탄과 아이템중
 				if(this.item == null) { //아이템이 존재하지않으면
+					effectSound.dropItemSound.start();		// 아이템 드랍 소리
 					this.item = new Item(enemyShip.getPositionX(), enemyShip.getPositionX());
 				}
 			}
 			else { //폭탄이드랍.
 				if(this.boomItem == null){
+					effectSound.dropItemSound.start();		// 폭탄 아이템 드랍 소리
 					this.boomItem = new Boom(enemyShip.getPositionX(), enemyShip.getPositionX(),2);
 				}
 			}

@@ -78,6 +78,8 @@ public final class Core {
 	public static boolean flag_restart = false;
 	// 추가한 부분 Audio
 	public static Audio backgroundMusic = new Audio("res/bgm.wav", true);
+	// 추가한 부분 Audio - effect sound
+	public static Sound effectSound = new Sound();
 
 
 	/**
