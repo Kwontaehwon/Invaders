@@ -13,10 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import entity.Boom;
+import entity.*;
 import screen.Screen;
-import entity.Entity;
-import entity.Ship;
+import skill.Skill1;
+import skill.Skill2;
+import skill.Skill3;
+import skill.Skill4;
 
 /**
  * Manages screen drawing.
@@ -86,7 +88,11 @@ public final class DrawManager {
 		EnemyShipD1,
 		EnemyShipD2,
 		EnemyShipD3,
-		EnemyShipD4
+		EnemyShipD4,
+		Skill1,
+		Skill2,
+		Skill3,
+		Skill4
 	};
 
 	/**
@@ -119,6 +125,11 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.EnemyShipD2, new int[12][8]);
 			spriteMap.put(SpriteType.EnemyShipD3, new int[12][8]);
 			spriteMap.put(SpriteType.EnemyShipD4, new int[12][8]);
+			spriteMap.put(SpriteType.Skill1, new int[8][8]);
+			spriteMap.put(SpriteType.Skill2, new int[8][8]);
+			spriteMap.put(SpriteType.Skill3, new int[8][8]);
+			spriteMap.put(SpriteType.Skill4, new int[8][8]);
+
 
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");
@@ -177,8 +188,6 @@ public final class DrawManager {
 		fontRegularMetrics = backBufferGraphics.getFontMetrics(fontRegular);
 		fontBigMetrics = backBufferGraphics.getFontMetrics(fontBig);
 
-		// drawBorders(screen);
-		// drawGrid(screen);
 	}
 
 	/**
@@ -299,9 +308,34 @@ public final class DrawManager {
 	}
 
 	public void drawBooms(final Screen screen , final int boomtimes){
-		Boom dummyBoom = new Boom(0,0,0);
+		Boom dummyBoom = new Boom(0,0,0,0);
 		for (int i = 0; i < boomtimes; i++)
 			drawEntity(dummyBoom,150+ 20 * i,10);
+	}
+
+	//stageLevel에 따른 스킬해제. cursor의 위치에 따른 효과
+	public void drawSkills(final int cursor, Skill1 skill1, Skill2 skill2, Skill3 skill3 , Skill4 skill4){
+		if (skill1.checkOpen()) {
+			drawEntity(skill1,270 + 20 * 0, 10);
+		}
+		if (skill2.checkOpen()) {
+			drawEntity(skill2,270 + 20 * 1, 10);
+		}
+		if (skill3.checkOpen()) {
+			drawEntity(skill3,270 + 20 * 2, 10);
+		}
+		if (skill4.checkOpen()) {
+			drawEntity(skill4,270 + 20 * 3, 10);
+		}
+		for (int i = 0; i < 4; i++) {
+			if( i == cursor){
+				backBufferGraphics.setColor(Color.green);
+			}
+			else {
+				backBufferGraphics.setColor(Color.gray);
+			}
+			backBufferGraphics.drawRect(270 + 20 * i, 10, skill1.getWidth(), skill1.getHeight());
+		}
 	}
 
 	/**
@@ -586,15 +620,21 @@ public final class DrawManager {
 				rectWidth, rectHeight);
 		backBufferGraphics.setColor(Color.GREEN);
 		if (number >= 4)
-			if (!bonusLife) {
-				drawCenteredBigString(screen, "Level " + level,
+			if(level == 2 || level == 3 ||level == 4 || level ==5) {
+				drawCenteredBigString(screen, "Level " + level + " NEW SKILL!",
 						screen.getHeight() / 2
-						+ fontBigMetrics.getHeight() / 3);
-			} else {
-				drawCenteredBigString(screen, "Level " + level
-						+ " - Bonus life!",
-						screen.getHeight() / 2
-						+ fontBigMetrics.getHeight() / 3);
+								+ fontBigMetrics.getHeight() / 3);
+			}
+			else if (!bonusLife) {
+					drawCenteredBigString(screen, "Level " + level,
+							screen.getHeight() / 2
+									+ fontBigMetrics.getHeight() / 3);
+				}
+			else {
+					drawCenteredBigString(screen, "Level " + level
+									+ " - Bonus life!",
+							screen.getHeight() / 2
+									+ fontBigMetrics.getHeight() / 3);
 			}
 		else if (number != 0)
 			drawCenteredBigString(screen, Integer.toString(number),

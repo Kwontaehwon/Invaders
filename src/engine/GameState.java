@@ -18,7 +18,7 @@ public class GameState {
 	private int bulletsShot;
 	/** Ships destroyed until now. */
 	private int shipsDestroyed;
-	//폭탄 times 저장
+	// 폭탄 times 저장
 	private int boomtimes;
 	/**
 	 * Constructor.
@@ -81,6 +81,7 @@ public class GameState {
 	}
 
 	public final int getBoomtimes() { return boomtimes;}
+
 	//setter 추가
 	public void setState(int score, int livesRemaining, int bulletsShot, int shipsDestroyed){
 		this.score = score;
