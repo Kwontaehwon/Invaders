@@ -68,9 +68,15 @@ public class Skill1 extends Skill{
         this.skillCooldown.reset();
     }
 
-    public int returnCoolTime(){
-
+    //스킬 남은시간을 돌려줌
+    public int returnSkillCoolTime(){
         return this.SKILL_COOLDOWN/1000 - this.skillCooldown.passedCooldown();
+    }
+
+    //pause한 시간만큼 시간을 시작시간에 더해줌.
+    public void pause(long time){
+        this.skillCooldown.pause(time);
+        this.duration.pause(time);
     }
 
 

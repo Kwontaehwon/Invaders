@@ -15,10 +15,7 @@ import java.util.logging.Logger;
 
 import entity.*;
 import screen.Screen;
-import skill.Skill1;
-import skill.Skill2;
-import skill.Skill3;
-import skill.Skill4;
+import skill.*;
 
 /**
  * Manages screen drawing.
@@ -94,7 +91,8 @@ public final class DrawManager {
 		Skill1,
 		Skill2,
 		Skill3,
-		Skill4
+		Skill4,
+		LargeBoom
 	};
 
 	/**
@@ -131,6 +129,7 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.Skill2, new int[8][8]);
 			spriteMap.put(SpriteType.Skill3, new int[8][8]);
 			spriteMap.put(SpriteType.Skill4, new int[8][8]);
+			spriteMap.put(SpriteType.LargeBoom, new int[100][100]);
 
 
 			fileManager.loadSprite(spriteMap);
@@ -317,41 +316,49 @@ public final class DrawManager {
 	}
 
 	//stageLevel에 따른 스킬해제. cursor의 위치에 따른 효과
-	public void drawSkills(final int cursor, Skill1 skill1, Skill2 skill2, Skill3 skill3 , Skill4 skill4){
+	public void drawSkills(final int cursor, Skill1 skill1, Skill2 skill2, Skill3 skill3 , Skill4 skill4,long pauseTime){
 		int y = 36;
-		drawString("SKILL",213,25);
+		int sizePlus = 72; //화면이 늘어남에 따라
+		drawString("SKILL",213 +sizePlus ,25);
 		backBufferGraphics.setFont(fontSmall);
 		if (skill1.checkOpen()) { //열려있으면 그려줌.
-			drawEntity(skill1,267 + 22 * 0, 10);
-			if(skill1.returnCoolTime() > 0  && skill1.returnCoolTime() < 10 ) {
-				backBufferGraphics.drawString(Integer.toString(skill1.returnCoolTime()), 267 + 22* 0 + 4 , y);
-			}
-			else if(skill1.returnCoolTime() > 9){
-				backBufferGraphics.drawString(Integer.toString(skill1.returnCoolTime()),267 + 22 * 0 + 3,y);
+			drawEntity(skill1,267 + 22 * 0 +sizePlus, 10);
+			if(pauseTime == 0) {
+				if (skill1.returnSkillCoolTime() > 0 && skill1.returnSkillCoolTime() < 10) {
+					backBufferGraphics.drawString(Integer.toString(skill1.returnSkillCoolTime()), 267 + 22 * 0 + 4 + sizePlus, y);
+				} else if (skill1.returnSkillCoolTime() > 9) {
+					backBufferGraphics.drawString(Integer.toString(skill1.returnSkillCoolTime()), 267 + 22 * 0 + 3 + sizePlus, y);
+				}
 			}
 		}
 		if (skill2.checkOpen()) {
-			drawEntity(skill2,267 + 22 * 1, 10);
-			if(skill2.returnCoolTime() > 0  && skill2.returnCoolTime() < 10)
-				backBufferGraphics.drawString(Integer.toString(skill2.returnCoolTime()),270 + 22 * 1 + 3,y);
-			else if(skill2.returnCoolTime() > 9){
-				backBufferGraphics.drawString(Integer.toString(skill2.returnCoolTime()),267 + 22 * 1 + 3,y);
+			drawEntity(skill2, 267 + 22 * 1 + sizePlus, 10);
+			if(pauseTime == 0) {
+				if (skill2.returnSkillCoolTime() > 0 && skill2.returnSkillCoolTime() < 10)
+					backBufferGraphics.drawString(Integer.toString(skill2.returnSkillCoolTime()), 270 + 22 * 1 + 3 + sizePlus, y);
+				else if (skill2.returnSkillCoolTime() > 9) {
+					backBufferGraphics.drawString(Integer.toString(skill2.returnSkillCoolTime()), 267 + 22 * 1 + 3 + sizePlus, y);
+				}
 			}
 		}
 		if (skill3.checkOpen()) {
-			drawEntity(skill3,267 + 22 * 2, 10);
-			if(skill3.returnCoolTime() > 0 && skill3.returnCoolTime() < 10)
-				backBufferGraphics.drawString(Integer.toString(skill3.returnCoolTime()),270 + 22 * 2 + 3,y);
-			else if(skill3.returnCoolTime() > 9){
-				backBufferGraphics.drawString(Integer.toString(skill3.returnCoolTime()),267 + 22 * 2 + 3,y);
+			drawEntity(skill3, 267 + 22 * 2 + sizePlus, 10);
+			if(pauseTime == 0) {
+				if (skill3.returnSkillCoolTime() > 0 && skill3.returnSkillCoolTime() < 10)
+					backBufferGraphics.drawString(Integer.toString(skill3.returnSkillCoolTime()), 270 + 22 * 2 + 3 + sizePlus, y);
+				else if (skill3.returnSkillCoolTime() > 9) {
+					backBufferGraphics.drawString(Integer.toString(skill3.returnSkillCoolTime()), 267 + 22 * 2 + 3 + sizePlus, y);
+				}
 			}
 		}
 		if (skill4.checkOpen()) {
-			drawEntity(skill4,267 + 22 * 3, 10);
-			if(skill4.returnCoolTime() > 0 && skill4.returnCoolTime() < 10)
-				backBufferGraphics.drawString(Integer.toString(skill4.returnCoolTime()),270 + 22 * 3 + 3,y);
-			else if(skill4.returnCoolTime() > 9){
-				backBufferGraphics.drawString(Integer.toString(skill4.returnCoolTime()),267 + 22 * 3 + 3 ,y);
+			drawEntity(skill4, 267 + 22 * 3 + sizePlus, 10);
+			if(pauseTime == 0) {
+				if (skill4.returnSkillCoolTime() > 0 && skill4.returnSkillCoolTime() < 10)
+					backBufferGraphics.drawString(Integer.toString(skill4.returnSkillCoolTime()), 270 + 22 * 3 + 3 + sizePlus, y);
+				else if (skill4.returnSkillCoolTime() > 9) {
+					backBufferGraphics.drawString(Integer.toString(skill4.returnSkillCoolTime()), 267 + 22 * 3 + 3 + sizePlus, y);
+				}
 			}
 		}
 		for (int i = 0; i < 4; i++) {
@@ -361,8 +368,15 @@ public final class DrawManager {
 			else {
 				backBufferGraphics.setColor(Color.gray);
 			}
-			backBufferGraphics.drawRect(267 + 22 * i, 10, skill1.getWidth(), skill1.getHeight());
+			backBufferGraphics.drawRect(267 + 22 * i + sizePlus, 10, skill1.getWidth(), skill1.getHeight());
 		}
+	}
+	//필살기 인터페이스
+	public void drawLargeBoom(final int largeBoomtimes){
+		if(largeBoomtimes == 1) backBufferGraphics.setColor(Color.green);
+		else backBufferGraphics.setColor(Color.gray);
+		drawSmallString("Large", 230,20);
+		drawSmallString(" Boom!", 230,31);
 	}
 
 	/**
@@ -634,7 +648,6 @@ public final class DrawManager {
 	//작은글씨 그리기, 스킬발동로그용
 	public void drawSmallString(final String string, final int x, final int y){
 		backBufferGraphics.setFont(fontSmall);
-		backBufferGraphics.setColor(Color.yellow);
 		backBufferGraphics.drawString(string,x,y);
 	}
 

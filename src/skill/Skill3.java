@@ -69,8 +69,14 @@ public class Skill3 extends Skill {
 
     public boolean checkOpen() { return this.open; }
 
-    public int returnCoolTime(){
+    public int returnSkillCoolTime(){
 
         return this.SKILL_COOLDOWN/1000 - this.skillCooldown.passedCooldown();
+    }
+
+    //pause한 시간만큼 시간을 시작시간에 더해줌.
+    public void pause(long time){
+        this.skillCooldown.pause(time);
+        this.duration.pause(time);
     }
 }

@@ -18,10 +18,7 @@ import entity.EnemyShip;
 import entity.EnemyShipFormation;
 import entity.Entity;
 import entity.Ship;
-import skill.Skill1;
-import skill.Skill2;
-import skill.Skill3;
-import skill.Skill4;
+import skill.*;
 
 import static engine.Core.effectSound;
 
@@ -95,6 +92,9 @@ public class GameScreen extends Screen {
 	private Skill2 skill2;
 	private Skill3 skill3;
 	private Skill4 skill4;
+	private LargeBoom largeBoom;
+	private int largeBoomTimes;
+	private long pauseTime ; //pause시작했을때의 시간을잼.
 	// 추가한 부분 (세이브, 로드 관련)
 	private int initScore;
 	private int initLive;
@@ -181,10 +181,13 @@ public class GameScreen extends Screen {
 		this.skill3.startCollTime();
 		this.skill4 = new Skill4(20); // this.level로 차후에 바꿔줌.
 		this.skill4.startCollTime();
+		this.largeBoomTimes = 1; // 추후에 보스스테이지 깨면 하나얻게 조건수정.
+		this.pauseTime = 0;
 		// Special input delay / countdown.
 		this.gameStartTime = System.currentTimeMillis();
 		this.inputDelay = Core.getCooldown(INPUT_DELAY);
 		this.inputDelay.reset();
+
 
 	}
 
@@ -209,6 +212,13 @@ public class GameScreen extends Screen {
 		super.update();
 
 		if (this.inputDelay.checkFinished() && !this.levelFinished) {
+			if(pauseTime != 0 ){ //pause한 시간만큼 더해줌.
+				this.skill1.pause(System.currentTimeMillis() - this.pauseTime);
+				this.skill2.pause(System.currentTimeMillis() - this.pauseTime);
+				this.skill3.pause(System.currentTimeMillis() - this.pauseTime);
+				this.skill4.pause(System.currentTimeMillis() - this.pauseTime);
+				this.pauseTime = 0;
+			}
 
 			if (!this.ship.isDestroyed()) {
 				boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT);
@@ -270,6 +280,7 @@ public class GameScreen extends Screen {
 						}
 					this.SkillInputDelay.reset();
 					}
+
 				if(this.skill1.checkActivate()){ //활성화중일떄
 					this.skill1.checkDuration(); //지속시간이끝나면 다시 원상태로 돌려줌.
 				}
@@ -297,8 +308,18 @@ public class GameScreen extends Screen {
 						this.logger.info("The boom has been launched.");
 					}
 				}
+				//필살기사용
+				if(!isPauseScreen&&inputManager.isKeyDown(KeyEvent.VK_C) && largeBoomTimes > 0){
+					System.out.println("test");
+					this.largeBoom = new LargeBoom(this.ship.getPositionX() + this.ship.getWidth()/ 2,
+							this.ship.getPositionY());
+					largeBoomTimes--;
+					this.logger.info("The large boom has been launched.");
+				}
 				//일시정지 부분 : 일시정지 화면으로 넘어감
 				if(!isPauseScreen&&inputManager.isKeyDown(KeyEvent.VK_ESCAPE)){
+					//pause했을때 스킬쿨타임 돌지않게하기위해서
+					if(this.pauseTime == 0 ) this.pauseTime = System.currentTimeMillis();
 					GameState gameState = getGameState();
 					gameState.setState(initScore, initLive, initBullet, initShip);
 					GameStatus gameStatus = new GameStatus(gameState, gameSettings, bonusLife);
@@ -339,10 +360,19 @@ public class GameScreen extends Screen {
 			if(this.boomItem != null){
 				this.boomItem.update();
 			}
+			//필살기 움직임
+			if(this.largeBoom != null){
+				this.largeBoom.update();
+			}
 			this.ship.update();
 			this.enemyShipFormation.update(this.skill2.checkActivate());
 			this.enemyShipFormation.shoot(this.bullets);
 		}
+		else{
+			//스킬쿨타임에 적용시키기위해, 시간을잼.
+			if(pauseTime ==  0) pauseTime = System.currentTimeMillis();
+		}
+
 
 		manageCollisions();
 		//ship과 아이템의 충돌
@@ -445,6 +475,16 @@ public class GameScreen extends Screen {
 				drawManager.drawEntity(this.boomItem, this.boomItem.getPositionX(), this.boomItem.getPositionY());
 			}
 		}
+		// 필살기
+		if(this.largeBoom != null){
+			if (this.largeBoom.getPositionY() + 200 < 0){
+				this.largeBoom = null;
+			}
+			else {
+				drawManager.drawEntity(this.largeBoom, this.largeBoom.getPositionX(), this.largeBoom.getPositionY());
+			}
+		}
+
 
 		//
 		// Interface.
@@ -453,11 +493,15 @@ public class GameScreen extends Screen {
 		drawManager.drawHorizontalLine(this, SEPARATION_LINE_HEIGHT - 1);
 		// 폭탄 인터페이스 추가
 		drawManager.drawBooms(this, this.boomTimes);
-		// 스킬 인터페이스 추가
-		drawManager.drawSkills(skillCursor,skill1,skill2,skill3,skill4);
+		// 스킬 인터페이스 추가,pause상태에서는 쿨타임을 그리지않음.
+		drawManager.drawSkills(skillCursor, skill1, skill2, skill3, skill4,this.pauseTime);
 
-		// Countdown to game start.
+		//필살기 인터페이스 추가
+		drawManager.drawLargeBoom(this.largeBoomTimes);
+
+		// Countdown to game start. 스테이지 시작전 5초
 		if (!this.inputDelay.checkFinished()) {
+
 			int countdown = (int) ((INPUT_DELAY
 					- (System.currentTimeMillis()
 							- this.gameStartTime)) / 1000);
@@ -591,6 +635,20 @@ public class GameScreen extends Screen {
 				}
 
 			}
+		if(this.largeBoom != null){
+			for (EnemyShip enemyShip : this.enemyShipFormation)
+				if (!enemyShip.isDestroyed() //파괴된 적비행기가아니고
+						&& checkCollision(largeBoom, enemyShip)){
+					effectSound.destroyedEnemySound.start();	// 적이 총알에 파괴되는 소리
+					this.score += enemyShip.getPointValue();
+					this.shipsDestroyed++;
+					this.enemyShipFormation.destroy(enemyShip);
+					// item 떨어짐.
+					dropItem(enemyShip);
+					this.logger.info("The item is falling !");
+				}
+		}
+
 
 		this.bullets.removeAll(recyclable); //충돌에 사용된 총알제거.
 		BulletPool.recycle(recyclable); // Pool업데이트한후 Pool내 에서 제거해주는듯

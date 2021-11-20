@@ -16,7 +16,6 @@ public class Cooldown {
 	private int duration;
 	/** Beginning time. */
 	private long time;
-
 	/**
 	 * Constructor, established the time until the action can be performed
 	 * again.
@@ -61,7 +60,11 @@ public class Cooldown {
 	public int passedCooldown(){
 		return (int)(System.currentTimeMillis() - this.time)/1000;
 	}
-
+	
+	//pause한 시간만큼 시간을 시작시간에 더해줌.
+	public void pause(long pauseTime){
+		this.time += pauseTime;
+	}
 	/**
 	 * Restarts the cooldown.
 	 */
