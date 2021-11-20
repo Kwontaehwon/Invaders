@@ -317,13 +317,12 @@ public final class DrawManager {
 	}
 
 	//stageLevel에 따른 스킬해제. cursor의 위치에 따른 효과
-	public void drawSkills(final Screen screen,final int cursor, Skill1 skill1, Skill2 skill2, Skill3 skill3 , Skill4 skill4){
+	public void drawSkills(final int cursor, Skill1 skill1, Skill2 skill2, Skill3 skill3 , Skill4 skill4){
 		int y = 36;
 		drawString("SKILL",213,25);
 		backBufferGraphics.setFont(fontSmall);
-		if (skill1.checkOpen()) {
+		if (skill1.checkOpen()) { //열려있으면 그려줌.
 			drawEntity(skill1,267 + 22 * 0, 10);
-			backBufferGraphics.setFont(fontSmall);
 			if(skill1.returnCoolTime() > 0  && skill1.returnCoolTime() < 10 ) {
 				backBufferGraphics.drawString(Integer.toString(skill1.returnCoolTime()), 267 + 22* 0 + 4 , y);
 			}
@@ -626,13 +625,13 @@ public final class DrawManager {
 		backBufferGraphics.drawString(string, screen.getWidth() / 2
 				- fontBigMetrics.stringWidth(string) / 2, height);
 	}
-
+	//정한위치에 string을 적어줌.
 	public void drawString(final String string, final int x,final int y){
 		backBufferGraphics.setFont(fontRegular);
 		backBufferGraphics.setColor(Color.yellow);
 		backBufferGraphics.drawString(string,x,y);
 	}
-
+	//작은글씨 그리기, 스킬발동로그용
 	public void drawSmallString(final String string, final int x, final int y){
 		backBufferGraphics.setFont(fontSmall);
 		backBufferGraphics.setColor(Color.yellow);

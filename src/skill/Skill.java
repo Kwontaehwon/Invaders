@@ -20,12 +20,10 @@ abstract class Skill extends Entity {
 
     protected Logger logger;
 
-    public DrawManager drawManager;
 
     public Skill(int positionX, int positionY, int width, int height, Color color) {
         super(0, 0, 8*2, 8*2, Color.white);
         this.logger = Core.getLogger();
-        this.drawManager = Core.getDrawManager();
     }
 
     abstract void startActivate();

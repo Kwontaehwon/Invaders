@@ -35,7 +35,6 @@ public class Skill1 extends Skill{
     //활성화
     public void startActivate(){
         activation = true;
-        drawManager.drawString("SKILL1 IS USED",10,70);
         duration.reset();
     }
     //활성화 중, true면 활성화중.
