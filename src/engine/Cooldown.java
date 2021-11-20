@@ -58,6 +58,10 @@ public class Cooldown {
 		return false;
 	}
 
+	public int passedCooldown(){
+		return (int)(System.currentTimeMillis() - this.time)/1000;
+	}
+
 	/**
 	 * Restarts the cooldown.
 	 */

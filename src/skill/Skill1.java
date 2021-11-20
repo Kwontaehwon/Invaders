@@ -8,7 +8,7 @@ import java.awt.*;
 //무적
 public class Skill1 extends Skill{
 
-    private final int SKILL_COOLDOWN = 10 * 1000 ;  //쿨타임
+    private final int SKILL_COOLDOWN = 15 * 1000 ;  //쿨타임
 
     private final int DURATION_COOLDOWN = 5 * 1000; //지속시간
 
@@ -35,10 +35,12 @@ public class Skill1 extends Skill{
     //활성화
     public void startActivate(){
         activation = true;
+        drawManager.drawString("SKILL1 IS USED",10,70);
         duration.reset();
     }
     //활성화 중, true면 활성화중.
     public boolean checkActivate(){ return activation; }
+
 
     //지속시간 체크
     public boolean checkDuration() {
@@ -67,5 +69,12 @@ public class Skill1 extends Skill{
         this.skillCooldown.reset();
     }
 
+    public int returnCoolTime(){
+
+        return this.SKILL_COOLDOWN/1000 - this.skillCooldown.passedCooldown();
+    }
+
+
     public boolean checkOpen() { return this.open; }
+
 }

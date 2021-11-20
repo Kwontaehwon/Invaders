@@ -90,7 +90,7 @@ public class GameScreen extends Screen {
 	private Set<Boom> booms; //화면상 발사된 폭탄
 	private Boom boomItem; // 폭탄아이템(떨어지는)
 	private int skillCursor; // 스킬 커서
-	private Cooldown SkillInputDelay; //
+	private Cooldown SkillInputDelay; 
 	private Skill1 skill1;
 	private Skill2 skill2;
 	private Skill3 skill3;
@@ -257,10 +257,10 @@ public class GameScreen extends Screen {
 							this.skill3.startCollTime(); //쿨타임다시시작
 						}
 					}
-					else if (this.skillCursor == 3 && this.skill3.checkOpen()) { //폭탄전방으로 세개
-							if (this.skill3.checkCoolTime()) {
-								this.skill3.startActivate(); //활성화
-								this.skill3.startCollTime(); //쿨타임다시시작
+					else if (this.skillCursor == 3 && this.skill4.checkOpen()) { //폭탄전방으로 세개
+							if (this.skill4.checkCoolTime()) {
+								this.skill4.startActivate(); //활성화
+								this.skill4.startCollTime(); //쿨타임다시시작
 								//폭탄이 세갈래로 나감.
 								this.ship.boomSkillShoot(this.booms, -1); //폭탄스킬
 								this.ship.boomSkillShoot(this.booms, 0);
@@ -409,6 +409,15 @@ public class GameScreen extends Screen {
 					this.enemyShipSpecial.getPositionY());
 
 		enemyShipFormation.draw();
+		if(this.skill1.checkActivate()){
+			drawManager.drawSmallString("SKILL 1 : SHIELD IS USED",8,55);
+		}
+		if(this.skill2.checkActivate()){
+			drawManager.drawSmallString("SKILL 2 : ENEMYSHIP STOP",8 ,66);
+		}
+		if(this.skill3.checkActivate()){
+			drawManager.drawSmallString("SKILL 3 : ENEMY BULLET SLOW",8 ,77);
+		}
 
 		for (Bullet bullet : this.bullets)
 			drawManager.drawEntity(bullet, bullet.getPositionX(),
@@ -444,7 +453,7 @@ public class GameScreen extends Screen {
 		// 폭탄 인터페이스 추가
 		drawManager.drawBooms(this, this.boomTimes);
 		// 스킬 인터페이스 추가
-		drawManager.drawSkills(skillCursor,skill1,skill2,skill3,skill4);
+		drawManager.drawSkills(this,skillCursor,skill1,skill2,skill3,skill4);
 
 		// Countdown to game start.
 		if (!this.inputDelay.checkFinished()) {

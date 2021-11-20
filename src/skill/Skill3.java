@@ -8,7 +8,7 @@ import java.awt.*;
 //적총알느려짐
 public class Skill3 extends Skill {
 
-    private final int SKILL_COOLDOWN = 10 * 1000 ; //30seconds
+    private final int SKILL_COOLDOWN = 15 * 1000 ; //30seconds
 
     private final int DURATION_COOLDOWN = 5 * 1000; //3초동안 지속
 
@@ -68,4 +68,9 @@ public class Skill3 extends Skill {
     }
 
     public boolean checkOpen() { return this.open; }
+
+    public int returnCoolTime(){
+
+        return this.SKILL_COOLDOWN/1000 - this.skillCooldown.passedCooldown();
+    }
 }

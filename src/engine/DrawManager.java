@@ -51,6 +51,8 @@ public final class DrawManager {
 	/** Big sized font properties. */
 	private static FontMetrics fontBigMetrics;
 
+	private static Font fontSmall;
+
 	/** Sprite types mapped to their images. */
 	private static Map<SpriteType, int[][]> spriteMap;
 
@@ -137,6 +139,7 @@ public final class DrawManager {
 			// Font loading.
 			fontRegular = fileManager.loadFont(14f);
 			fontBig = fileManager.loadFont(24f);
+			fontSmall = fileManager.loadFont(10f);
 			logger.info("Finished loading the fonts.");
 
 		} catch (IOException e) {
@@ -314,18 +317,43 @@ public final class DrawManager {
 	}
 
 	//stageLevel에 따른 스킬해제. cursor의 위치에 따른 효과
-	public void drawSkills(final int cursor, Skill1 skill1, Skill2 skill2, Skill3 skill3 , Skill4 skill4){
+	public void drawSkills(final Screen screen,final int cursor, Skill1 skill1, Skill2 skill2, Skill3 skill3 , Skill4 skill4){
+		int y = 36;
+		drawString("SKILL",213,25);
+		backBufferGraphics.setFont(fontSmall);
 		if (skill1.checkOpen()) {
-			drawEntity(skill1,270 + 20 * 0, 10);
+			drawEntity(skill1,267 + 22 * 0, 10);
+			backBufferGraphics.setFont(fontSmall);
+			if(skill1.returnCoolTime() > 0  && skill1.returnCoolTime() < 10 ) {
+				backBufferGraphics.drawString(Integer.toString(skill1.returnCoolTime()), 267 + 22* 0 + 4 , y);
+			}
+			else if(skill1.returnCoolTime() > 9){
+				backBufferGraphics.drawString(Integer.toString(skill1.returnCoolTime()),267 + 22 * 0 + 3,y);
+			}
 		}
 		if (skill2.checkOpen()) {
-			drawEntity(skill2,270 + 20 * 1, 10);
+			drawEntity(skill2,267 + 22 * 1, 10);
+			if(skill2.returnCoolTime() > 0  && skill2.returnCoolTime() < 10)
+				backBufferGraphics.drawString(Integer.toString(skill2.returnCoolTime()),270 + 22 * 1 + 3,y);
+			else if(skill2.returnCoolTime() > 9){
+				backBufferGraphics.drawString(Integer.toString(skill2.returnCoolTime()),267 + 22 * 1 + 3,y);
+			}
 		}
 		if (skill3.checkOpen()) {
-			drawEntity(skill3,270 + 20 * 2, 10);
+			drawEntity(skill3,267 + 22 * 2, 10);
+			if(skill3.returnCoolTime() > 0 && skill3.returnCoolTime() < 10)
+				backBufferGraphics.drawString(Integer.toString(skill3.returnCoolTime()),270 + 22 * 2 + 3,y);
+			else if(skill3.returnCoolTime() > 9){
+				backBufferGraphics.drawString(Integer.toString(skill3.returnCoolTime()),267 + 22 * 2 + 3,y);
+			}
 		}
 		if (skill4.checkOpen()) {
-			drawEntity(skill4,270 + 20 * 3, 10);
+			drawEntity(skill4,267 + 22 * 3, 10);
+			if(skill4.returnCoolTime() > 0 && skill4.returnCoolTime() < 10)
+				backBufferGraphics.drawString(Integer.toString(skill4.returnCoolTime()),270 + 22 * 3 + 3,y);
+			else if(skill4.returnCoolTime() > 9){
+				backBufferGraphics.drawString(Integer.toString(skill4.returnCoolTime()),267 + 22 * 3 + 3 ,y);
+			}
 		}
 		for (int i = 0; i < 4; i++) {
 			if( i == cursor){
@@ -334,7 +362,7 @@ public final class DrawManager {
 			else {
 				backBufferGraphics.setColor(Color.gray);
 			}
-			backBufferGraphics.drawRect(270 + 20 * i, 10, skill1.getWidth(), skill1.getHeight());
+			backBufferGraphics.drawRect(267 + 22 * i, 10, skill1.getWidth(), skill1.getHeight());
 		}
 	}
 
@@ -597,6 +625,18 @@ public final class DrawManager {
 		backBufferGraphics.setFont(fontBig);
 		backBufferGraphics.drawString(string, screen.getWidth() / 2
 				- fontBigMetrics.stringWidth(string) / 2, height);
+	}
+
+	public void drawString(final String string, final int x,final int y){
+		backBufferGraphics.setFont(fontRegular);
+		backBufferGraphics.setColor(Color.yellow);
+		backBufferGraphics.drawString(string,x,y);
+	}
+
+	public void drawSmallString(final String string, final int x, final int y){
+		backBufferGraphics.setFont(fontSmall);
+		backBufferGraphics.setColor(Color.yellow);
+		backBufferGraphics.drawString(string,x,y);
 	}
 
 	/**
