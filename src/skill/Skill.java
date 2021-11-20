@@ -32,7 +32,7 @@ abstract class Skill extends Entity {
 
     abstract boolean checkCoolTime();
 
-    abstract void startCollTime();
+    abstract void startCoolTime();
 
     abstract boolean checkOpen();
 }

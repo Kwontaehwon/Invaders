@@ -174,13 +174,13 @@ public class GameScreen extends Screen {
 		this.SkillInputDelay = Core.getCooldown(SKILL_CURSOR_DELAY);
 		this.SkillInputDelay.reset();
 		this.skill1 = new Skill1(20); // this.level로 차후에 바꿔줌.
-		this.skill1.startCollTime(); // 쿨타임시작.
+		this.skill1.startCoolTime(); // 쿨타임시작.
 		this.skill2 = new Skill2(20); // this.level로 차후에 바꿔줌.
-		this.skill2.startCollTime();
+		this.skill2.startCoolTime();
 		this.skill3 = new Skill3(20); // this.level로 차후에 바꿔줌.
-		this.skill3.startCollTime();
+		this.skill3.startCoolTime();
 		this.skill4 = new Skill4(20); // this.level로 차후에 바꿔줌.
-		this.skill4.startCollTime();
+		this.skill4.startCoolTime();
 		this.largeBoomTimes = 1; // 추후에 보스스테이지 깨면 하나얻게 조건수정.
 		this.pauseTime = 0;
 		// Special input delay / countdown.
@@ -252,25 +252,25 @@ public class GameScreen extends Screen {
 					if (this.skillCursor == 0 && this.skill1.checkOpen()) { //무적
 						if (this.skill1.checkCoolTime()) {
 							this.skill1.startActivate(); //활성화
-							this.skill1.startCollTime(); //쿨타임다시시작
+							this.skill1.startCoolTime(); //쿨타임다시시작
 						}
 					}
 					else if (this.skillCursor == 1 && this.skill2.checkOpen()) { // 일정시간 적움직임멈추기.
 							if (this.skill2.checkCoolTime()) {
 								this.skill2.startActivate(); //활성화
-								this.skill2.startCollTime(); //쿨타임다시시작
+								this.skill2.startCoolTime(); //쿨타임다시시작
 							}
 					}
 					else if (this.skillCursor == 2 && this.skill3.checkOpen()) { // 적Bullet속도 낮추기.
 						if (this.skill3.checkCoolTime()) {
 							this.skill3.startActivate(); //활성화
-							this.skill3.startCollTime(); //쿨타임다시시작
+							this.skill3.startCoolTime(); //쿨타임다시시작
 						}
 					}
 					else if (this.skillCursor == 3 && this.skill4.checkOpen()) { //폭탄전방으로 세개
 							if (this.skill4.checkCoolTime()) {
 								this.skill4.startActivate(); //활성화
-								this.skill4.startCollTime(); //쿨타임다시시작
+								this.skill4.startCoolTime(); //쿨타임다시시작
 								//폭탄이 세갈래로 나감.
 								this.ship.boomSkillShoot(this.booms, -1); //폭탄스킬
 								this.ship.boomSkillShoot(this.booms, 0);

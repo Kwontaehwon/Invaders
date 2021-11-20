@@ -64,7 +64,7 @@ public class Skill2 extends Skill{
         }
     }
     // 스킬쿨타임 다시시작.
-    public void startCollTime(){
+    public void startCoolTime(){
         this.skillCooldown.reset();
     }
 
