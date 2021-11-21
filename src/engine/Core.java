@@ -128,7 +128,8 @@ public final class Core {
 		int returnCode = 1;
 		do {
 			flag_main = false;
-			gameState = new GameState(1, 0, MAX_LIVES, 0, 0,3);
+			// 맨처음 폭탄발사횟수,스킬쿨타임, 필살기횟수지정(나중에 0으로수정.)
+			gameState = new GameState(1, 0, MAX_LIVES, 0, 0,3, new int[]{15, 15, 15, 15},1);
 
 			switch (returnCode) {
 			case 1:
@@ -169,7 +170,9 @@ public final class Core {
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
 							gameState.getShipsDestroyed(),
-							gameState.getBoomtimes());
+							gameState.getBoomtimes(),
+							gameState.getSkillCool(),
+							gameState.getLargeBoomTimes());
 
 				} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);
@@ -196,7 +199,14 @@ public final class Core {
 			case 4:
 				// Game & score. (Restart)
 				do {
-					gameState = new GameState(1, 0, MAX_LIVES, 0, 0,3);
+					gameState = new GameState(gameState.getLevel(),
+							gameState.getScore(),
+							gameState.getLivesRemaining(),
+							gameState.getBulletsShot(),
+							gameState.getShipsDestroyed(),
+							gameState.getBoomtimes(),
+							gameState.getSkillCool(),
+							gameState.getLargeBoomTimes());
 
 					// One extra live every few levels.
 					boolean bonusLife = gameState.getLevel()
@@ -225,7 +235,9 @@ public final class Core {
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
 							gameState.getShipsDestroyed(),
-							gameState.getBoomtimes());
+							gameState.getBoomtimes(),
+							gameState.getSkillCool(),
+							gameState.getLargeBoomTimes());
 
 				} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);
@@ -284,7 +296,9 @@ public final class Core {
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
 							gameState.getShipsDestroyed(),
-							gameState.getBoomtimes());
+							gameState.getBoomtimes(),
+							gameState.getSkillCool(),
+							gameState.getLargeBoomTimes());
 
 				} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);

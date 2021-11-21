@@ -8,7 +8,7 @@ import java.awt.*;
 // 폭탄 3갈로 나감.
 public class Skill4 extends Skill {
 
-    private final int SKILL_COOLDOWN = 15 * 1000 ; //30seconds
+    private int SKILL_COOLDOWN ; //메모장에서 불러와 지정함.
 
     private final int DURATION_COOLDOWN = 3 * 1000; //3초동안 지속
 
@@ -72,6 +72,10 @@ public class Skill4 extends Skill {
     public int returnSkillCoolTime(){
 
         return this.SKILL_COOLDOWN/1000 - this.skillCooldown.passedCooldown();
+    }
+
+    public void setSkillCooldown(int time){
+        this.SKILL_COOLDOWN = time * 1000;
     }
 
     //pause한 시간만큼 시간을 시작시간에 더해줌.

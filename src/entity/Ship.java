@@ -91,7 +91,7 @@ public class Ship extends Entity {
 	
 	//폭탄스킬발사
 	public final void boomSkillShoot(final Set<Boom> booms, int speedX ){
-		booms.add(BoomPool.getBoom(positionX + this.width / 2,
+		booms.add(BoomPool.getBoom(positionX + this.width / 2  ,
 				positionY, speedX,BULLET_SPEED));
 	}
 	/**

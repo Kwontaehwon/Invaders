@@ -92,6 +92,7 @@ public class GameScreen extends Screen {
 	private Skill2 skill2;
 	private Skill3 skill3;
 	private Skill4 skill4;
+	private int[] skillCool; // 스킬4개의 쿨타임을 저장, 다음스테이지에 적용시키기위해.
 	private LargeBoom largeBoom;
 	private int largeBoomTimes;
 	private long pauseTime ; //pause시작했을때의 시간을잼.
@@ -140,7 +141,19 @@ public class GameScreen extends Screen {
 
 		// 추가한 부분,다음세이브 폭탄추가
 		this.boomTimes = gameState.getBoomtimes();
-
+		// 스킬 선언
+		this.skill1 = new Skill1(20); // this.level로 차후에 바꿔줌.
+		this.skill2 = new Skill2(20); // this.level로 차후에 바꿔줌.
+		this.skill3 = new Skill3(20); // this.level로 차후에 바꿔줌.
+		this.skill4 = new Skill4(20); // this.level로 차후에 바꿔줌.
+		// 스킬쿨 저장된것을 적용.
+		this.skillCool = gameState.getSkillCool();
+		this.skill1.setSkillCooldown(this.skillCool[0]);
+		this.skill2.setSkillCooldown(this.skillCool[1]);
+		this.skill3.setSkillCooldown(this.skillCool[2]);
+		this.skill4.setSkillCooldown(this.skillCool[3]);
+		// 필살기 횟수 적용
+		this.largeBoomTimes = gameState.getLargeBoomTimes();
 		// 추가한 부분
 		this.initScore = this.score;
 		this.initLive = this.lives;
@@ -173,15 +186,13 @@ public class GameScreen extends Screen {
 		this.skillCursor = 0;
 		this.SkillInputDelay = Core.getCooldown(SKILL_CURSOR_DELAY);
 		this.SkillInputDelay.reset();
-		this.skill1 = new Skill1(20); // this.level로 차후에 바꿔줌.
+
 		this.skill1.startCoolTime(); // 쿨타임시작.
-		this.skill2 = new Skill2(20); // this.level로 차후에 바꿔줌.
-		this.skill2.startCoolTime();
-		this.skill3 = new Skill3(20); // this.level로 차후에 바꿔줌.
 		this.skill3.startCoolTime();
-		this.skill4 = new Skill4(20); // this.level로 차후에 바꿔줌.
 		this.skill4.startCoolTime();
-		this.largeBoomTimes = 1; // 추후에 보스스테이지 깨면 하나얻게 조건수정.
+		this.skill2.startCoolTime();
+
+
 		this.pauseTime = 0;
 		// Special input delay / countdown.
 		this.gameStartTime = System.currentTimeMillis();
@@ -310,8 +321,7 @@ public class GameScreen extends Screen {
 				}
 				//필살기사용
 				if(!isPauseScreen&&inputManager.isKeyDown(KeyEvent.VK_C) && largeBoomTimes > 0){
-					System.out.println("test");
-					this.largeBoom = new LargeBoom(this.ship.getPositionX() + this.ship.getWidth()/ 2,
+					this.largeBoom = new LargeBoom(this.ship.getPositionX() + this.ship.getWidth()/ 2-100,
 							this.ship.getPositionY());
 					largeBoomTimes--;
 					this.logger.info("The large boom has been launched.");
@@ -416,6 +426,11 @@ public class GameScreen extends Screen {
 		draw();
 		if ((this.enemyShipFormation.isEmpty() || this.lives == 0)
 				&& !this.levelFinished) {
+			//남은스킬쿨 저장
+			this.skillCool[0] = this.skill1.returnSkillCoolTime();
+			this.skillCool[1] = this.skill2.returnSkillCoolTime();
+			this.skillCool[2] = this.skill3.returnSkillCoolTime();
+			this.skillCool[3] = this.skill4.returnSkillCoolTime();
 			this.levelFinished = true;
 			this.screenFinishedCooldown.reset();
 		}
@@ -726,6 +741,6 @@ public class GameScreen extends Screen {
 	 */
 	public final GameState getGameState() {
 		return new GameState(this.level, this.score, this.lives,
-				this.bulletsShot, this.shipsDestroyed,this.boomTimes);
+				this.bulletsShot, this.shipsDestroyed,this.boomTimes,this.skillCool,this.largeBoomTimes);
 	}
 }

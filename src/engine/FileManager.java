@@ -345,7 +345,12 @@ public final class FileManager {
 						Integer.parseInt(gameStatesArr[2]),
 						Integer.parseInt(gameStatesArr[3]),
 						Integer.parseInt(gameStatesArr[4]),
-						Integer.parseInt(gameStatesArr[5]));
+						Integer.parseInt(gameStatesArr[5]),
+						new int[] {Integer.parseInt(gameStatesArr[6]),
+								Integer.parseInt(gameStatesArr[7]),
+								Integer.parseInt(gameStatesArr[8]),
+								Integer.parseInt(gameStatesArr[9])},
+						Integer.parseInt(gameStatesArr[10]));
 
 				gameSettings = new GameSettings(Integer.parseInt(gameSettingslArr[0]),
 						Integer.parseInt(gameSettingslArr[1]),
@@ -409,7 +414,12 @@ public final class FileManager {
 						Integer.parseInt(gameStatesArr[2]),
 						Integer.parseInt(gameStatesArr[3]),
 						Integer.parseInt(gameStatesArr[4]),
-						Integer.parseInt(gameStatesArr[5]));
+						Integer.parseInt(gameStatesArr[5]),
+						new int[] {Integer.parseInt(gameStatesArr[6]),
+								Integer.parseInt(gameStatesArr[7]),
+								Integer.parseInt(gameStatesArr[8]),
+								Integer.parseInt(gameStatesArr[9])},
+						Integer.parseInt(gameStatesArr[10]));
 
 				gameSettings = new GameSettings(Integer.parseInt(gameSettingslArr[0]),
 						Integer.parseInt(gameSettingslArr[1]),

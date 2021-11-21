@@ -8,7 +8,7 @@ import java.awt.*;
 //무적
 public class Skill1 extends Skill{
 
-    private final int SKILL_COOLDOWN = 15 * 1000 ;  //쿨타임
+    private int SKILL_COOLDOWN = 15 * 1000 ;  //쿨타임
 
     private final int DURATION_COOLDOWN = 5 * 1000; //지속시간
 
@@ -79,6 +79,9 @@ public class Skill1 extends Skill{
         this.duration.pause(time);
     }
 
+    public void setSkillCooldown(int time){
+        this.SKILL_COOLDOWN = time * 1000;
+    }
 
     public boolean checkOpen() { return this.open; }
 
