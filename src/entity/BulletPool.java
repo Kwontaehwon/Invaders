@@ -2,7 +2,6 @@ package entity;
 
 import java.util.HashSet;
 import java.util.Set;
-
 /**
  * Implements a pool of recyclable bullets.
  * 
@@ -15,6 +14,8 @@ public final class BulletPool {
 
 	/** Set of already created bullets. */
 	private static Set<Bullet> pool = new HashSet<Bullet>();
+	/** Set of already created bossbullets. */
+	private static Set<BossBullet> bossPool = new HashSet<BossBullet>();
 
 	/**
 	 * Constructor, not called.
@@ -54,6 +55,23 @@ public final class BulletPool {
 		return bullet;
 	}
 
+	public static BossBullet getBossBullet(final int positionX,
+								   final int positionY, final int speed, int x) {
+		BossBullet bossBullet;
+		if (!bossPool.isEmpty()) {
+			bossBullet = bossPool.iterator().next();
+			bossPool.remove(bossBullet);
+			bossBullet.setPositionX(positionX - bossBullet.getWidth() / 2);
+			bossBullet.setPositionY(positionY);
+			bossBullet.setSpeed(speed);
+			bossBullet.setSprite();
+		} else {
+			bossBullet = new BossBullet(positionX, positionY, speed, x);
+			bossBullet.setPositionX(positionX - bossBullet.getWidth() / 2);
+		}
+		return bossBullet;
+	}
+
 	/**
 	 * Adds one or more bullets to the list of available ones.
 	 * 
@@ -63,4 +81,8 @@ public final class BulletPool {
 	public static void recycle(final Set<Bullet> bullet) {
 		pool.addAll(bullet);
 	}
+	public static void bossRecycle(final Set<BossBullet> bossBullet) {
+		bossPool.addAll(bossBullet);
+	}
+
 }

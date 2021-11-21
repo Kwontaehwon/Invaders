@@ -1,31 +1,21 @@
 package screen;
 
+import engine.*;
+import entity.*;
+
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import engine.Cooldown;
-import engine.Core;
-import engine.GameSettings;
-import engine.GameState;
-import entity.*;
-import engine.*;
-import entity.Bullet;
-import entity.BulletPool;
-import entity.EnemyShip;
-import entity.EnemyShipFormation;
-import entity.Entity;
-import entity.Ship;
-
 import static engine.Core.effectSound;
 
 /**
  * Implements the game screen, where the action happens.
- * 
+ *
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
- * 
+ *
  */
 public class GameScreen extends Screen {
 
@@ -50,6 +40,8 @@ public class GameScreen extends Screen {
 	private int level;
 	/** Formation of enemy ships. */
 	private EnemyShipFormation enemyShipFormation;
+	/** Formation of boss ship. */
+	private BossShipFormation bossShipFormation;
 	/** Player's ship. */
 	private Ship ship;
 	/** Bonus enemy ship that appears sometimes. */
@@ -62,6 +54,8 @@ public class GameScreen extends Screen {
 	private Cooldown screenFinishedCooldown;
 	/** Set of all bullets fired by on screen ships. */
 	private Set<Bullet> bullets;
+	/** Set of all bullets fired by on screen ships. */
+	private Set<BossBullet> bossBullets;
 	/** Current score. */
 	private int score;
 	/** Player lives left. */
@@ -95,7 +89,7 @@ public class GameScreen extends Screen {
 
 	/**
 	 * Constructor, establishes the properties of the screen.
-	 * 
+	 *
 	 * @param gameState
 	 *            Current game state.
 	 * @param gameSettings
@@ -142,8 +136,15 @@ public class GameScreen extends Screen {
 	public final void initialize() {
 		super.initialize();
 
-		enemyShipFormation = new EnemyShipFormation(this.gameSettings);
-		enemyShipFormation.attach(this);
+		if(level == 8){
+			bossShipFormation = new BossShipFormation(this.gameSettings);
+			bossShipFormation.attach(this);
+		}
+		else{
+			enemyShipFormation = new EnemyShipFormation(this.gameSettings);
+			enemyShipFormation.attach(this);
+		}
+
 
 		this.ship = new Ship(this.width / 2, this.height - 30, designSetting.getShipType());
 		//this.ship = new Ship(this.width / 2, this.height - 30, gameSettings.getShipColor());
@@ -155,6 +156,9 @@ public class GameScreen extends Screen {
 				.getCooldown(BONUS_SHIP_EXPLOSION);
 		this.screenFinishedCooldown = Core.getCooldown(SCREEN_CHANGE_INTERVAL);
 		this.bullets = new HashSet<Bullet>();
+		this.bossBullets = new HashSet<BossBullet>();
+
+
 
 		//폭탄집합 생성
 		this.booms = new HashSet<Boom>();
@@ -168,7 +172,7 @@ public class GameScreen extends Screen {
 
 	/**
 	 * Starts the action.
-	 * 
+	 *
 	 * @return Next screen code.
 	 */
 	public final int run() {
@@ -208,9 +212,9 @@ public class GameScreen extends Screen {
 				}
 				//총알발사부분 (+일시정지 확인 추가)
 				if (!isPauseScreen&&inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
-					if (this.ship.shoot(this.bullets)) {
+					if (this.ship.shoot(this.bullets)) { //bullets는 null 아님, ship은 null 아님, shoot에 문제가 있는듯
 						this.bulletsShot++;
-						effectSound.shootingSound.start();		// 총 발사 소리
+						effectSound.shootingSound.start();// 총 발사 소리
 					}
 				}
 				//폭탄발사부분
@@ -235,6 +239,7 @@ public class GameScreen extends Screen {
 					this.isRunning = false;
 			}
 
+			//스페셜쉽
 			if (this.enemyShipSpecial != null) {
 				if (!this.enemyShipSpecial.isDestroyed())
 					this.enemyShipSpecial.move(2, 0);
@@ -262,9 +267,17 @@ public class GameScreen extends Screen {
 			if(this.boomItem != null){
 				this.boomItem.update();
 			}
+
 			this.ship.update();
-			this.enemyShipFormation.update();
-			this.enemyShipFormation.shoot(this.bullets);
+
+			if(level == 8) {
+				this.bossShipFormation.update();
+				this.bossShipFormation.bossShoot(this.bossBullets);
+			}
+			else{
+				this.enemyShipFormation.update();
+				this.enemyShipFormation.shoot(this.bullets);
+			}
 		}
 
 		manageCollisions();
@@ -300,10 +313,16 @@ public class GameScreen extends Screen {
 		cleanBooms();
 
 		draw();
-		if ((this.enemyShipFormation.isEmpty() || this.lives == 0)
+		if (level == 8 && (this.bossShipFormation.isEmpty() || this.lives == 0)
 				&& !this.levelFinished) {
 			this.levelFinished = true;
 			this.screenFinishedCooldown.reset();
+		}
+		if(level != 8 && (this.enemyShipFormation.isEmpty() || this.lives == 0)
+				&& !this.levelFinished) {
+			this.levelFinished = true;
+			this.screenFinishedCooldown.reset();
+
 		}
 
 		if (this.levelFinished && this.screenFinishedCooldown.checkFinished())
@@ -324,11 +343,22 @@ public class GameScreen extends Screen {
 					this.enemyShipSpecial.getPositionX(),
 					this.enemyShipSpecial.getPositionY());
 
-		enemyShipFormation.draw();
+		if (level == 8) {
+			bossShipFormation.draw();
+			for (BossBullet bossBullet : this.bossBullets)
+				drawManager.drawEntity(bossBullet, bossBullet.getPositionX(),
+						bossBullet.getPositionY());
+			for (Bullet bullet : this.bullets)
+				drawManager.drawEntity(bullet, bullet.getPositionX(),
+						bullet.getPositionY());
+		}
+		else{
+			enemyShipFormation.draw();
+			for (Bullet bullet : this.bullets)
+				drawManager.drawEntity(bullet, bullet.getPositionX(),
+						bullet.getPositionY());
+		}
 
-		for (Bullet bullet : this.bullets)
-			drawManager.drawEntity(bullet, bullet.getPositionX(),
-					bullet.getPositionY());
 		// 내가 발사한 폭탄
 		for (Boom boom : this.booms)
 			drawManager.drawEntity(boom, boom.getPositionX(),
@@ -382,6 +412,7 @@ public class GameScreen extends Screen {
 	 */
 	private void cleanBullets() {
 		Set<Bullet> recyclable = new HashSet<Bullet>();
+		Set<BossBullet> bossRecyclable = new HashSet<BossBullet>();
 		for (Bullet bullet : this.bullets) {
 			bullet.update();
 			if (bullet.getPositionY() < SEPARATION_LINE_HEIGHT
@@ -390,6 +421,18 @@ public class GameScreen extends Screen {
 		}
 		this.bullets.removeAll(recyclable);
 		BulletPool.recycle(recyclable);
+		if(level == 8){
+			for (BossBullet bossBullet : this.bossBullets) {
+				bossBullet.update();
+				if (bossBullet.getPositionY() < SEPARATION_LINE_HEIGHT
+						|| bossBullet.getPositionY() > this.height)
+					bossRecyclable.add(bossBullet);
+			}
+			this.bossBullets.removeAll(recyclable);
+			BulletPool.recycle(recyclable);
+		}
+
+
 	}
 	//스크린밖으로 나간 폭탄없애기 + 폭탄 update
 	private void cleanBooms() {
@@ -410,87 +453,176 @@ public class GameScreen extends Screen {
 	 */
 	private void manageCollisions() {
 		Set<Bullet> recyclable = new HashSet<Bullet>();
+		Set<BossBullet> bossRecyclable = new HashSet<BossBullet>();
 		Set<Boom> recyclableBoom = new HashSet<Boom>();
 		//폭탄 충돌판단
-		for(Boom boom : this.booms) {
-			for (EnemyShip enemyShip : this.enemyShipFormation)
-				if (!enemyShip.isDestroyed() //enemyShip과 충돌을 하면
-						&& checkCollision(boom, enemyShip)) {
-					for (EnemyShip enemyShip2 : this.enemyShipFormation) {
-						if (!enemyShip2.isDestroyed() //좌표상 폭탄범위에 해당하는 enemyShip destroy.
-								&& checkBoomCollision(boom,enemyShip2)) {
-							if (enemyShip.getLive() >= 2) {
-								effectSound.hitEnemySound.start();			// 적이 폭탄에 타격되는 소리 (사라지지는 않음)
-								this.enemyShipFormation.destroy(enemyShip2);
-							} else {
-								effectSound.destroyedEnemySound.start();	// 적이 폭탄에 파괴되는 소리
-								this.score += enemyShip2.getPointValue();
+
+		//보스 스테이지 아닌경우
+		if(level != 8){
+			for(Boom boom : this.booms) {
+				for (EnemyShip enemyShip : this.enemyShipFormation)
+					if (!enemyShip.isDestroyed() //enemyShip과 충돌을 하면
+							&& checkCollision(boom, enemyShip)) {
+						for (EnemyShip enemyShip2 : this.enemyShipFormation) {
+							if (!enemyShip2.isDestroyed() //좌표상 폭탄범위에 해당하는 enemyShip destroy.
+									&& checkBoomCollision(boom,enemyShip2)) {
+								if (enemyShip.getLive() >= 2) {
+									effectSound.hitEnemySound.start();			// 적이 폭탄에 타격되는 소리 (사라지지는 않음)
+									this.enemyShipFormation.destroy(enemyShip2);
+								} else {
+									effectSound.destroyedEnemySound.start();	// 적이 폭탄에 파괴되는 소리
+									this.score += enemyShip2.getPointValue();
+									this.shipsDestroyed++;
+									this.enemyShipFormation.destroy(enemyShip2);
+									// item 떨어짐.
+									dropItem(enemyShip);
+								}
+							}
+						}
+						recyclableBoom.add(boom); //충돌에 사용된 폭탄제거.
+					}
+				if (this.enemyShipSpecial != null
+						&& !this.enemyShipSpecial.isDestroyed()
+						&& checkCollision(boom, this.enemyShipSpecial)) {
+					this.score += this.enemyShipSpecial.getPointValue();
+					this.shipsDestroyed++;
+					this.enemyShipSpecial.destroy();
+					this.enemyShipSpecialExplosionCooldown.reset();
+					recyclableBoom.add(boom);
+				}
+			}
+
+			for (Bullet bullet : this.bullets)
+				if (bullet.getSpeed() > 0) { //적이 발사한 경우
+					if (checkCollision(bullet, this.ship) && !this.levelFinished) {
+						recyclable.add(bullet);
+						if (!this.ship.isDestroyed()) {
+							effectSound.deathSound.start();		// 플레이어가 총알에 맞는 소리
+							this.ship.destroy();
+							this.lives--;
+							this.logger.info("Hit on player ship, " + this.lives
+									+ " lives remaining.");
+						}
+					}
+				} else { // 내가 발사한 경우.
+					// 적ship 총알 하나하나마다 충돌되었는지 확인
+					for (EnemyShip enemyShip : this.enemyShipFormation)
+						if (!enemyShip.isDestroyed() //파괴된 적비행기가아니고
+								&& checkCollision(bullet, enemyShip)) {
+							if(enemyShip.getLive()>=2){			// 기본 live값이 2 이상인 적을 카운트하지 않음.
+								effectSound.hitEnemySound.start();			// 적이 총알에 타격되는 소리 (사라지지는 않음)
+								this.enemyShipFormation.destroy(enemyShip);
+							}
+							else{
+								effectSound.destroyedEnemySound.start();	// 적이 총알에 파괴되는 소리
+								this.score += enemyShip.getPointValue();
 								this.shipsDestroyed++;
-								this.enemyShipFormation.destroy(enemyShip2);
+								this.enemyShipFormation.destroy(enemyShip);
 								// item 떨어짐.
 								dropItem(enemyShip);
 							}
+							recyclable.add(bullet); //충돌에 사용된 총알제거.
 						}
+
+					// 적특별개체 판단여부
+					if (this.enemyShipSpecial != null
+							&& !this.enemyShipSpecial.isDestroyed()
+							&& checkCollision(bullet, this.enemyShipSpecial)) {
+						effectSound.destroyedEnemySound.start();	// 적이 총알에 파괴되는 소리
+						this.score += this.enemyShipSpecial.getPointValue();
+						this.shipsDestroyed++;
+						this.enemyShipSpecial.destroy();
+						this.enemyShipSpecialExplosionCooldown.reset();
+						recyclable.add(bullet);
 					}
-					recyclableBoom.add(boom); //충돌에 사용된 폭탄제거.
+
 				}
-			if (this.enemyShipSpecial != null
-					&& !this.enemyShipSpecial.isDestroyed()
-					&& checkCollision(boom, this.enemyShipSpecial)) {
-				this.score += this.enemyShipSpecial.getPointValue();
-				this.shipsDestroyed++;
-				this.enemyShipSpecial.destroy();
-				this.enemyShipSpecialExplosionCooldown.reset();
-				recyclableBoom.add(boom);
-			}
 		}
-		for (Bullet bullet : this.bullets)
-			if (bullet.getSpeed() > 0) { //적이 발사한 경우
-				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
-					recyclable.add(bullet);
-					if (!this.ship.isDestroyed()) {
-						effectSound.deathSound.start();		// 플레이어가 총알에 맞는 소리
-						this.ship.destroy();
-						this.lives--;
-						this.logger.info("Hit on player ship, " + this.lives
-								+ " lives remaining.");
+		else{ //보스 스테이지인 경우
+			for(Boom boom : this.booms) {
+				for (EnemyShip enemyShip : this.bossShipFormation)
+					if (!enemyShip.isDestroyed() // 폭탄이 enemyShip과 충돌을 하면
+							&& checkCollision(boom, enemyShip)) {
+						for (EnemyShip enemyShip2 : this.bossShipFormation) {
+							if (!enemyShip2.isDestroyed() //좌표상 폭탄범위에 해당하는 enemyShip destroy.
+									&& checkBoomCollision(boom,enemyShip2)) {
+								if (enemyShip.getLive() >= 2) {
+									effectSound.hitEnemySound.start();			// 적이 폭탄에 타격되는 소리 (사라지지는 않음)
+									this.bossShipFormation.destroy(enemyShip2);
+								} else {
+									effectSound.destroyedEnemySound.start();	// 적이 폭탄에 파괴되는 소리
+									this.score += enemyShip2.getPointValue();
+									this.shipsDestroyed++;
+									this.bossShipFormation.destroy(enemyShip2);
+									// item 떨어짐.
+									dropItem(enemyShip);
+								}
+							}
+						}
+						recyclableBoom.add(boom); //충돌에 사용된 폭탄제거.
+					}
+				if (this.enemyShipSpecial != null
+						&& !this.enemyShipSpecial.isDestroyed()
+						&& checkCollision(boom, this.enemyShipSpecial)) {
+					this.score += this.enemyShipSpecial.getPointValue();
+					this.shipsDestroyed++;
+					this.enemyShipSpecial.destroy();
+					this.enemyShipSpecialExplosionCooldown.reset();
+					recyclableBoom.add(boom);
+				}
+			}
+			for (BossBullet bossBullet : this.bossBullets)
+				if (bossBullet.getSpeed() > 0) { //보스가 발사한 경우
+					if (checkCollision(bossBullet, this.ship) && !this.levelFinished) {
+						bossRecyclable.add(bossBullet);
+						if (!this.ship.isDestroyed()) {
+							effectSound.deathSound.start();		// 플레이어가 총알에 맞는 소리
+							this.ship.destroy();
+							this.lives--;
+							this.logger.info("Hit on player ship, " + this.lives
+									+ " lives remaining.");
+						}
 					}
 				}
-			} else { // 내가 발사한 경우.
-				// 적ship 총알 하나하나마다 충돌되었는지 확인
-				for (EnemyShip enemyShip : this.enemyShipFormation)
+			for (Bullet bullet : this.bullets) {
+				for (EnemyShip enemyShip : this.bossShipFormation)
 					if (!enemyShip.isDestroyed() //파괴된 적비행기가아니고
-							&& checkCollision(bullet, enemyShip)) {
-						if(enemyShip.getLive()>=2){			// 기본 live값이 2 이상인 적을 카운트하지 않음.
-							effectSound.hitEnemySound.start();			// 적이 총알에 타격되는 소리 (사라지지는 않음)
-							this.enemyShipFormation.destroy(enemyShip);
-						}
-						else{
-							effectSound.destroyedEnemySound.start();	// 적이 총알에 파괴되는 소리
+							&& checkBossCollision(bullet, enemyShip)) {
+						if (enemyShip.getLive() >= 2) {            // 기본 live값이 2 이상인 적을 카운트하지 않음.
+							effectSound.hitEnemySound.start();            // 적이 총알에 타격되는 소리 (사라지지는 않음)
+							this.bossShipFormation.destroy(enemyShip);
+						} else {
+							effectSound.destroyedEnemySound.start();    // 적이 총알에 파괴되는 소리
 							this.score += enemyShip.getPointValue();
 							this.shipsDestroyed++;
-							this.enemyShipFormation.destroy(enemyShip);
+							this.bossShipFormation.destroy(enemyShip);
 							// item 떨어짐.
 							dropItem(enemyShip);
 						}
 						recyclable.add(bullet); //충돌에 사용된 총알제거.
 					}
-				// 적특별개체 판단여부
-				if (this.enemyShipSpecial != null
-						&& !this.enemyShipSpecial.isDestroyed()
-						&& checkCollision(bullet, this.enemyShipSpecial)) {
-					effectSound.destroyedEnemySound.start();	// 적이 총알에 파괴되는 소리
-					this.score += this.enemyShipSpecial.getPointValue();
-					this.shipsDestroyed++;
-					this.enemyShipSpecial.destroy();
-					this.enemyShipSpecialExplosionCooldown.reset();
-					recyclable.add(bullet);
-				}
 
+
+					if (this.enemyShipSpecial != null
+							&& !this.enemyShipSpecial.isDestroyed()
+							&& checkCollision(bullet, this.enemyShipSpecial)) {
+						effectSound.destroyedEnemySound.start();    // 적이 총알에 파괴되는 소리
+						this.score += this.enemyShipSpecial.getPointValue();
+						this.shipsDestroyed++;
+						this.enemyShipSpecial.destroy();
+						this.enemyShipSpecialExplosionCooldown.reset();
+						recyclable.add(bullet);
+					}
 			}
+		}
+
 
 		this.bullets.removeAll(recyclable); //충돌에 사용된 총알제거.
-		BulletPool.recycle(recyclable); // Pool업데이트한후 Pool내 에서 제거해주는듯
+		BulletPool.recycle(recyclable);
+
+		this.bossBullets.removeAll(bossRecyclable);
+		BulletPool.bossRecycle(bossRecyclable);
+
 		//폭탄도 똑같이해줌.
 		this.booms.removeAll(recyclableBoom); // 충돌에 사용된 폭탄제거
 		BoomPool.recycle(recyclableBoom); // Pool업데이트한후 Pool내 에서 제거해주는듯
@@ -498,7 +630,7 @@ public class GameScreen extends Screen {
 
 	/**
 	 * Checks if two entities are colliding.
-	 * 
+	 *
 	 * @param a
 	 *            First entity, the bullet.
 	 * @param b
@@ -513,6 +645,23 @@ public class GameScreen extends Screen {
 		int centerBY = b.getPositionY() + b.getHeight() / 2;
 		// Calculate maximum distance without collision.
 		int maxDistanceX = a.getWidth() / 2 + b.getWidth() / 2;
+		int maxDistanceY = a.getHeight() / 2 + b.getHeight() / 2;
+		// Calculates distance.
+		int distanceX = Math.abs(centerAX - centerBX);
+		int distanceY = Math.abs(centerAY - centerBY);
+
+		return distanceX < maxDistanceX && distanceY < maxDistanceY;
+	}
+
+	//보스몬스터
+	private boolean checkBossCollision(final Entity a, final Entity b) {
+		// Calculate center point of the entities in both axis.
+		int centerAX = a.getPositionX() + a.getWidth() / 2;
+		int centerAY = a.getPositionY() + a.getHeight() / 2;
+		int centerBX = b.getPositionX() + b.getWidth() / 2 + 45;
+		int centerBY = b.getPositionY() + b.getHeight() / 2 + 45;
+   		// Calculate maximum distance without collision.
+		int maxDistanceX = a.getWidth() / 2 + b.getWidth() / 2 +50;
 		int maxDistanceY = a.getHeight() / 2 + b.getHeight() / 2;
 		// Calculates distance.
 		int distanceX = Math.abs(centerAX - centerBX);
@@ -560,7 +709,7 @@ public class GameScreen extends Screen {
 
 	/**
 	 * Returns a GameState object representing the status of the game.
-	 * 
+	 *
 	 * @return Current game state.
 	 */
 	public final GameState getGameState() {

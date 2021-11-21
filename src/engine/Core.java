@@ -1,20 +1,11 @@
 package engine;
 
+import screen.*;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import screen.GameScreen;
-import screen.HighScoreScreen;
-import screen.ScoreScreen;
-import screen.Screen;
-import screen.TitleScreen;
-import screen.ShipScreen;
+import java.util.logging.*;
 
 /**
  * Implements core game logic.
@@ -59,6 +50,9 @@ public final class Core {
 	/** Difficulty settings for level 7. */
 	private static final GameSettings SETTINGS_LEVEL_7 =
 			new GameSettings(8, 7, 2, 500);
+	/** Boss settings */
+	private static final GameSettings SETTINGS_LEVEL_8 =
+			new GameSettings(1, 1, 2, 500);
 	
 	/** Frame to draw the screen on. */
 	private static Frame frame;
@@ -121,14 +115,15 @@ public final class Core {
 		gameSettings.add(SETTINGS_LEVEL_5);
 		gameSettings.add(SETTINGS_LEVEL_6);
 		gameSettings.add(SETTINGS_LEVEL_7);
+		gameSettings.add(SETTINGS_LEVEL_8);
 
 		DesignSetting designSetting = new DesignSetting(DrawManager.SpriteType.Ship);
 		GameState gameState;
 
-		int returnCode = 1;
+		int returnCode = 2;
 		do {
 			flag_main = false;
-			gameState = new GameState(1, 0, MAX_LIVES, 0, 0,3);
+			gameState = new GameState(8, 0, MAX_LIVES, 0, 0,30);
 
 			switch (returnCode) {
 			case 1:
@@ -146,10 +141,10 @@ public final class Core {
 					boolean bonusLife = gameState.getLevel()
 							% EXTRA_LIFE_FRECUENCY == 0
 							&& gameState.getLivesRemaining() < MAX_LIVES;
-					
 					currentScreen = new GameScreen(gameState,
 							gameSettings.get(gameState.getLevel() - 1),
 							bonusLife, designSetting, width, height, FPS, frame);
+
 					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 							+ " game screen at " + FPS + " fps.");
 					frame.setScreen(currentScreen);

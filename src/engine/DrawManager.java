@@ -1,10 +1,11 @@
 package engine;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
+import entity.Boom;
+import entity.Entity;
+import entity.Ship;
+import screen.Screen;
+
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,11 +13,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-
-import entity.Boom;
-import screen.Screen;
-import entity.Entity;
-import entity.Ship;
 
 /**
  * Manages screen drawing.
@@ -86,7 +82,13 @@ public final class DrawManager {
 		EnemyShipD1,
 		EnemyShipD2,
 		EnemyShipD3,
-		EnemyShipD4
+		EnemyShipD4,
+		/** BossShip1 */
+		BossShip1,
+		/** BossShip2 */
+		BossShip2,
+		/** BossShip3 */
+		BossShip3
 	};
 
 	/**
@@ -119,6 +121,10 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.EnemyShipD2, new int[12][8]);
 			spriteMap.put(SpriteType.EnemyShipD3, new int[12][8]);
 			spriteMap.put(SpriteType.EnemyShipD4, new int[12][8]);
+			spriteMap.put(SpriteType.BossShip1, new int[50][40]);
+			spriteMap.put(SpriteType.BossShip2, new int[50][40]);
+			spriteMap.put(SpriteType.BossShip3, new int[50][40]);
+
 
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");

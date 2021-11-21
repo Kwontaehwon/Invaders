@@ -1,10 +1,10 @@
 package entity;
 
-import java.awt.Color;
-
 import engine.Cooldown;
 import engine.Core;
 import engine.DrawManager.SpriteType;
+
+import java.awt.*;
 
 /**
  * Implements a enemy ship, to be destroyed by the player.
@@ -23,6 +23,8 @@ public class EnemyShip extends Entity {
 	/** Point value of a bonus enemy. */
 	private static final int BONUS_TYPE_POINTS = 100;
 	private static final int D_TYPE_POINTS = 40; // 두번 피격해야 죽는 적 D의 포인트.
+	/** Point value of a boss enemy. */
+	private static final int BOSS_TYPE_POINTS = 300;
 
 	/** Cooldown between sprite changes. */
 	private Cooldown animationCooldown;
@@ -68,6 +70,11 @@ public class EnemyShip extends Entity {
 		case EnemyShipD2:
 			this.pointValue = D_TYPE_POINTS;
 			this.live = 2;
+			break;
+		case BossShip1:
+		case BossShip2:
+			this.pointValue = BOSS_TYPE_POINTS;
+			this.live = 10;
 			break;
 		default:
 			this.pointValue = 0;
@@ -165,6 +172,12 @@ public class EnemyShip extends Entity {
 		}
 		else if(this.spriteType == SpriteType.EnemyShipD2 && this.live==1){
 			this.spriteType = SpriteType.EnemyShipD3;
+		}
+		else if(this.spriteType == SpriteType.BossShip1 && this.live==7){
+			this.spriteType = SpriteType.BossShip2;
+		}
+		else if(this.spriteType == SpriteType.BossShip2 && this.live==3){
+			this.spriteType = SpriteType.BossShip3;
 		}
 		if(this.live<=0){		// live가 0 이하면 isDestroyed 를 바꿈.
 			this.isDestroyed = true;

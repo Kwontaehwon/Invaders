@@ -1,18 +1,14 @@
 package entity;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import screen.Screen;
 import engine.Cooldown;
 import engine.Core;
 import engine.DrawManager;
 import engine.DrawManager.SpriteType;
 import engine.GameSettings;
+import screen.Screen;
+
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Groups enemy ships into a formation that moves together.
@@ -152,6 +148,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 								+ positionY, spriteType));
 				this.shipCount++;
 			}
+
 		}
 
 		this.shipWidth = this.enemyShips.get(0).get(0).getWidth();
@@ -338,6 +335,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		if (this.shootingCooldown.checkFinished()) {
 			this.shootingCooldown.reset();
 			bullets.add(BulletPool.getBullet(shooter.getPositionX()
+					+ shooter.width / 2, shooter.getPositionY(), BULLET_SPEED));
+			bullets.add(BulletPool.getBullet(shooter.getPositionX()+20
 					+ shooter.width / 2, shooter.getPositionY(), BULLET_SPEED));
 		}
 	}

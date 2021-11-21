@@ -1,11 +1,11 @@
 package entity;
 
-import java.awt.Color;
-import java.util.Set;
-
 import engine.Cooldown;
 import engine.Core;
 import engine.DrawManager.SpriteType;
+
+import java.awt.*;
+import java.util.Set;
 
 /**
  * Implements a ship, to be controlled by the player.
@@ -68,16 +68,17 @@ public class Ship extends Entity {
 	 *            List of bullets on screen, to add the new bullet.
 	 * @return Checks if the bullet was shot correctly.
 	 */
-	//Colldown이 슈팅쿨타운을 조절하는것을 알수있음.
+	//Cooldown이 슈팅쿨다운을 조절하는것을 알수있음.
 	public final boolean shoot(final Set<Bullet> bullets) {
 		if (this.shootingCooldown.checkFinished()) {
 			this.shootingCooldown.reset();
-			bullets.add(BulletPool.getBullet(positionX + this.width / 2,
+			bullets.add(BulletPool.getBullet(positionX + this.width / 2, // BulletPool이 문제인가 ?
 					positionY, BULLET_SPEED));
 			return true;
 		}
 		return false;
 	}
+
 	//폭탄발사부분
 	public final boolean boomShoot(final Set<Boom> booms) {
 		if (this.shootingCooldown.checkFinished()) {
