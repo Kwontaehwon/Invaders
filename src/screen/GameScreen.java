@@ -222,9 +222,9 @@ public class GameScreen extends Screen {
 	protected final void update() {
 		super.update();
 
-		if (this.inputDelay.checkFinished() && !this.levelFinished) {
-			if(pauseTime != 0 ){ //pause한 시간만큼 더해줌.
-				this.skill1.pause(System.currentTimeMillis() - this.pauseTime);
+		if (this.inputDelay.checkFinished() && !this.levelFinished) { //5초 스테이지전 인풋딜레이
+			if(pauseTime != 0 ){ //pause한 시간이 있다면 pause한 만큼 더해줌.
+				this.skill1.pause(System.currentTimeMillis() - this.pauseTime); //현재시간-멈췃을떄 시간
 				this.skill2.pause(System.currentTimeMillis() - this.pauseTime);
 				this.skill3.pause(System.currentTimeMillis() - this.pauseTime);
 				this.skill4.pause(System.currentTimeMillis() - this.pauseTime);
@@ -378,7 +378,7 @@ public class GameScreen extends Screen {
 			this.enemyShipFormation.update(this.skill2.checkActivate());
 			this.enemyShipFormation.shoot(this.bullets);
 		}
-		else{
+		else{ //5초 스테이지전 인풋딜레이가 안끝낫다면 , pause한 시간을잼.
 			//스킬쿨타임에 적용시키기위해, 시간을잼.
 			if(pauseTime ==  0) pauseTime = System.currentTimeMillis();
 		}
@@ -424,6 +424,7 @@ public class GameScreen extends Screen {
 		cleanBooms();
 
 		draw();
+		//스테이지가 끝나면
 		if ((this.enemyShipFormation.isEmpty() || this.lives == 0)
 				&& !this.levelFinished) {
 			//남은스킬쿨 저장
@@ -739,6 +740,7 @@ public class GameScreen extends Screen {
 	 * 
 	 * @return Current game state.
 	 */
+	//스테이지를 클리어했으면 지금현재 스테이트를 넘겨줌.
 	public final GameState getGameState() {
 		return new GameState(this.level, this.score, this.lives,
 				this.bulletsShot, this.shipsDestroyed,this.boomTimes,this.skillCool,this.largeBoomTimes);
