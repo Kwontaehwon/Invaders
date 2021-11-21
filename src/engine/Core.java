@@ -50,7 +50,7 @@ public final class Core {
 	/** Difficulty settings for level 7. */
 	private static final GameSettings SETTINGS_LEVEL_7 =
 			new GameSettings(8, 7, 2, 500);
-	/** Boss settings */
+	/** Boss settings for level 8 */
 	private static final GameSettings SETTINGS_LEVEL_8 =
 			new GameSettings(1, 1, 2, 500);
 	
