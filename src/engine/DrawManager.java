@@ -219,6 +219,19 @@ public final class DrawManager {
 				}
 	}
 
+	public void drawShadowedEntity(final Entity entity, final int positionX,
+								   final int positionY) {
+		int[][] image = spriteMap.get(entity.getSpriteType());
+
+		backBufferGraphics.setColor(Color.GRAY);
+		for (int i = 0; i < image.length; i++)
+			for (int j = 0; j < image[i].length; j++)
+				if (image[i][j] != 0)
+					backBufferGraphics.drawRect(positionX + i * 2, positionY
+							+ j * 2, 1, 1);
+
+	}
+
 	/**
 	 * For debugging purpouses, draws the canvas borders.
 	 * 
@@ -712,40 +725,48 @@ public final class DrawManager {
 	 */
 	public void drawShipCustomMenu(final Screen screen) {
 		String customString = "Customize";
-		String instructionsString = "Press Space to return";
+		String instructionsString1 = "Press Space to apply";
+		String instructionsString2 = "Press Escape to return";
 		String currentString = "Current";
 
 		backBufferGraphics.setColor(Color.GREEN);
 		drawCenteredBigString(screen, customString, screen.getHeight() / 8);
 
 		backBufferGraphics.setColor(Color.GRAY);
-		drawCenteredRegularString(screen, instructionsString,
+		drawCenteredRegularString(screen, instructionsString1,
 				screen.getHeight() / 5);
+		backBufferGraphics.setColor(Color.GRAY);
+		drawCenteredRegularString(screen, instructionsString2,
+				screen.getHeight() / 5 + 20);
 		backBufferGraphics.setColor(Color.GREEN);
 		drawCenteredRegularString(screen, currentString,
 				screen.getHeight() / 3);
 
 	}
 	/**
-	 * Draws sprites given as list and cursor.
+	 * Draws cursor and sprites given in List of Entries.
 	 *
 	 * @param screen
 	 * 				Screen to draw on.
-	 * @param list
-	 * 				List of sprites to draw.
 	 * @param option
 	 * 				Cursor index.
+	 * @param designSetting
+	 * 				DesignSetting has current design and design list.
 	 */
-	public void drawDesigns(final Screen screen, final ArrayList<SpriteType> list, int option, DesignSetting designSetting){
+	public void drawDesigns(final Screen screen, int option, DesignSetting designSetting){
 		int count = 0;
 		int positionX = 40;
 		int j = 0, positionY = screen.getWidth()-60;
 		int cursorX = 0;
 		int cursorY = 0;
 		int margin = 10;
+		ArrayList<Map.Entry<SpriteType, Boolean>> designList = designSetting.getDesignList();
 
 		// 두 줄에 다 안들어오는 경우는 고려하지 못함.
-		for(SpriteType sprite: list){
+		for(Map.Entry<SpriteType, Boolean> entry: designList){
+			SpriteType sprite = entry.getKey();
+			boolean isAchieved = entry.getValue();
+
 			if( positionX + spriteMap.get(sprite).length*2 + margin >= frame.getWidth() ){
 				j++;
 				positionX = 40;
@@ -756,7 +777,12 @@ public final class DrawManager {
 				cursorY = positionY;
 			}
 			Ship dummyShip = new Ship(0, 0, sprite);
-			drawEntity(dummyShip, positionX, positionY);
+
+			if(isAchieved)
+				drawEntity(dummyShip, positionX, positionY);
+			else
+				drawShadowedEntity(dummyShip, positionX, positionY);
+
 			if(designSetting.getShipType() == sprite){
 				drawEntity(dummyShip, 200, screen.getHeight() / 3 + 20);
 			}
