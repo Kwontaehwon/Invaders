@@ -90,6 +90,9 @@ public class GameScreen extends Screen {
 	private int initShip;
 	Frame frame;
 
+	/** Set position of background image */
+	private int backgroundPos = 0;
+
 
 	private DesignSetting designSetting;
 
@@ -316,6 +319,9 @@ public class GameScreen extends Screen {
 	 */
 	private void draw() {
 		drawManager.initDrawing(this);
+		if(drawManager.drawFlowBackground(this, backgroundPos))
+			backgroundPos = 0;
+		backgroundPos++;
 
 		drawManager.drawEntity(this.ship, this.ship.getPositionX(),
 				this.ship.getPositionY());

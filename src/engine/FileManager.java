@@ -2,6 +2,8 @@ package engine;
 
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.Image;
+import javax.swing.ImageIcon;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -122,6 +124,22 @@ public final class FileManager {
 		}
 
 		return font;
+	}
+
+	/**
+	 *	load Background Image on Game
+	 *	@return Background Image.
+	 */
+	public Image loadGameBackImage() {
+		ImageIcon imageIcon;
+		Image img;
+		// Image loading.
+		imageIcon = new ImageIcon("res/gameBackground.png");
+		img = imageIcon.getImage();
+		if(img != null) {
+			logger.info("Background Image("+ img.getWidth(null) + "x" + img.getHeight(null) +") loaded.");
+		}
+		return img;
 	}
 
 	/**

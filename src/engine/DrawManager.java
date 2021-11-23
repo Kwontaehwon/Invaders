@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,6 +49,8 @@ public final class DrawManager {
 	private static Font fontBig;
 	/** Big sized font properties. */
 	private static FontMetrics fontBigMetrics;
+	/** Image for game screen. */
+	private static Image gameBackground;
 
 	/** Sprite types mapped to their images. */
 	private static Map<SpriteType, int[][]> spriteMap;
@@ -122,6 +125,9 @@ public final class DrawManager {
 
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");
+
+			gameBackground = fileManager.loadGameBackImage();
+			logger.info("Finished loading the background game image.");
 
 			// Font loading.
 			fontRegular = fileManager.loadFont(14f);
@@ -249,6 +255,25 @@ public final class DrawManager {
 			backBufferGraphics.drawLine(0, i, screen.getWidth() - 1, i);
 		for (int j = 0; j < screen.getWidth() - 1; j += 2)
 			backBufferGraphics.drawLine(j, 0, j, screen.getHeight() - 1);
+	}
+
+	/**
+	 * @param screen
+	 * 			Screen to draw in.
+	 * @param imgPos
+	 * 			position of background image.
+	 * @return true if image position meets limit, false otherwise.
+	 */
+	public boolean drawFlowBackground(final Screen screen, int imgPos) {
+		int imageHeight = gameBackground.getHeight(null);
+		boolean limit = false;
+		if(imageHeight - screen.getHeight() - imgPos<=0) {
+			imgPos = 0;
+			limit = true;
+		}
+		backBufferGraphics.drawImage(gameBackground, 0, 0, screen.getWidth(), screen.getHeight(),
+				0, imageHeight - screen.getHeight() - imgPos, screen.getWidth(), imageHeight - imgPos,null);
+		return limit;
 	}
 
 	/**
