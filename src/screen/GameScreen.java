@@ -142,16 +142,12 @@ public class GameScreen extends Screen {
 		// 추가한 부분,다음세이브 폭탄추가
 		this.boomTimes = gameState.getBoomtimes();
 		// 스킬 선언
-		this.skill1 = new Skill1(20); // this.level로 차후에 바꿔줌.
-		this.skill2 = new Skill2(20); // this.level로 차후에 바꿔줌.
-		this.skill3 = new Skill3(20); // this.level로 차후에 바꿔줌.
-		this.skill4 = new Skill4(20); // this.level로 차후에 바꿔줌.
-		// 스킬쿨 저장된것을 적용.
 		this.skillCool = gameState.getSkillCool();
-		this.skill1.setSkillCooldown(this.skillCool[0]);
-		this.skill2.setSkillCooldown(this.skillCool[1]);
-		this.skill3.setSkillCooldown(this.skillCool[2]);
-		this.skill4.setSkillCooldown(this.skillCool[3]);
+		this.skill1 = new Skill1(20,this.skillCool[0]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
+		this.skill2 = new Skill2(20,this.skillCool[1]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
+		this.skill3 = new Skill3(20,this.skillCool[2]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
+		this.skill4 = new Skill4(20,this.skillCool[3]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
+
 		// 필살기 횟수 적용
 		this.largeBoomTimes = gameState.getLargeBoomTimes();
 		// 추가한 부분
@@ -192,7 +188,6 @@ public class GameScreen extends Screen {
 		this.skill4.startCoolTime();
 		this.skill2.startCoolTime();
 
-
 		this.pauseTime = 0;
 		// Special input delay / countdown.
 		this.gameStartTime = System.currentTimeMillis();
@@ -229,6 +224,7 @@ public class GameScreen extends Screen {
 				this.skill3.pause(System.currentTimeMillis() - this.pauseTime);
 				this.skill4.pause(System.currentTimeMillis() - this.pauseTime);
 				this.pauseTime = 0;
+
 			}
 
 			if (!this.ship.isDestroyed()) {
@@ -261,13 +257,13 @@ public class GameScreen extends Screen {
 				//스킬사용
 				if( this.SkillInputDelay.checkFinished()&&inputManager.isKeyDown(KeyEvent.VK_X)) {
 					if (this.skillCursor == 0 && this.skill1.checkOpen()) { //무적
-						if (this.skill1.checkCoolTime()) {
+						if (this.skill1.returnSkillCoolTime() == 0 ) {
 							this.skill1.startActivate(); //활성화
 							this.skill1.startCoolTime(); //쿨타임다시시작
 						}
 					}
 					else if (this.skillCursor == 1 && this.skill2.checkOpen()) { // 일정시간 적움직임멈추기.
-							if (this.skill2.checkCoolTime()) {
+						if (this.skill2.checkCoolTime()) {
 								this.skill2.startActivate(); //활성화
 								this.skill2.startCoolTime(); //쿨타임다시시작
 							}
