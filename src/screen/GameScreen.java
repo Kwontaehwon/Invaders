@@ -140,16 +140,11 @@ public class GameScreen extends Screen {
 		// 추가한 부분,다음세이브 폭탄추가
 		this.boomTimes = gameState.getBoomtimes();
 		// 스킬 선언
-		this.skill1 = new Skill1(20); // this.level로 차후에 바꿔줌.
-		this.skill2 = new Skill2(20); // this.level로 차후에 바꿔줌.
-		this.skill3 = new Skill3(20); // this.level로 차후에 바꿔줌.
-		this.skill4 = new Skill4(20); // this.level로 차후에 바꿔줌.
-		// 스킬쿨 저장된것을 적용.
 		this.skillCool = gameState.getSkillCool();
-		this.skill1.setSkillCooldown(this.skillCool[0]);
-		this.skill2.setSkillCooldown(this.skillCool[1]);
-		this.skill3.setSkillCooldown(this.skillCool[2]);
-		this.skill4.setSkillCooldown(this.skillCool[3]);
+		this.skill1 = new Skill1(20,this.skillCool[0]); // this.level로 차후에 바꿔줌.
+		this.skill2 = new Skill2(20,this.skillCool[1]); // this.level로 차후에 바꿔줌.
+		this.skill3 = new Skill3(20,this.skillCool[2]); // this.level로 차후에 바꿔줌.
+		this.skill4 = new Skill4(20,this.skillCool[3]); // this.level로 차후에 바꿔줌.
 		// 추가한 부분
 		this.initScore = this.score;
 		this.initLive = this.lives;

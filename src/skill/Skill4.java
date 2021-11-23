@@ -8,9 +8,11 @@ import java.awt.*;
 // 폭탄 3갈로 나감.
 public class Skill4 extends Skill {
 
-    private int SKILL_COOLDOWN ; //메모장에서 불러와 지정함.
+    private final int SKILL_COOLDOWN = 15 * 1000      ;  //쿨타임
 
-    private final int DURATION_COOLDOWN = 3 * 1000; //3초동안 지속
+    private final int DURATION_COOLDOWN = 5 * 1000; //지속시간
+
+    private int currentSkillCooldown ;
 
     private Cooldown skillCooldown;
 
@@ -20,14 +22,16 @@ public class Skill4 extends Skill {
 
     private boolean open; //열려있는지 체크
 
-    public Skill4(int level) {
+    public Skill4(int level,int currentSkillCooldown) {
         super(0, 0, 8*2, 8*2, Color.white);
 
         this.activation = false;
-        this.skillCooldown = Core.getCooldown(SKILL_COOLDOWN);
+        //load된 쿨타임을 적용하기위해
+        this.currentSkillCooldown = currentSkillCooldown;
+        this.skillCooldown = Core.getCooldown(currentSkillCooldown * 1000);
         this.duration = Core.getCooldown(DURATION_COOLDOWN);
         this.spriteType =  DrawManager.SpriteType.Skill4;
-        if(level >= 5) this.open = true; //20레벨이상이면 오픈.
+        if(level >= 5) this.open = true;
         else this.open = false;
 
     }
@@ -36,9 +40,12 @@ public class Skill4 extends Skill {
     public void startActivate(){
         activation = true;
         duration.reset();
+        //활성화하면 다시 쿨타임이 15초부터 돌기때문에
+        this.skillCooldown = Core.getCooldown(SKILL_COOLDOWN);
     }
     //활성화 중, true면 활성화중.
     public boolean checkActivate(){ return activation; }
+
 
     //지속시간 체크
     public boolean checkDuration() {
@@ -62,20 +69,16 @@ public class Skill4 extends Skill {
             return false;
         }
     }
-    // 스킬쿨타임 다시시작.
+
     public void startCoolTime(){
         this.skillCooldown.reset();
     }
 
-    public boolean checkOpen() { return this.open; }
-
+    //스킬 남은시간을 돌려줌
     public int returnSkillCoolTime(){
-
-        return this.SKILL_COOLDOWN/1000 - this.skillCooldown.passedCooldown();
-    }
-
-    public void setSkillCooldown(int time){
-        this.SKILL_COOLDOWN = time * 1000;
+        // -인 경우를 처리해주기위해.
+        if(this.skillCooldown.getDuration() - this.skillCooldown.passedCooldown() < 0) return 0;
+        else return this.skillCooldown.getDuration() - this.skillCooldown.passedCooldown();
     }
 
     //pause한 시간만큼 시간을 시작시간에 더해줌.
@@ -83,4 +86,5 @@ public class Skill4 extends Skill {
         this.skillCooldown.pause(time);
         this.duration.pause(time);
     }
+    public boolean checkOpen() { return this.open; }
 }

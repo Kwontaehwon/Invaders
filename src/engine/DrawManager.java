@@ -647,6 +647,7 @@ public final class DrawManager {
 	}
 	//작은글씨 그리기, 스킬발동로그용
 	public void drawSmallString(final String string, final int x, final int y){
+		backBufferGraphics.setColor(Color.yellow);
 		backBufferGraphics.setFont(fontSmall);
 		backBufferGraphics.drawString(string,x,y);
 	}
