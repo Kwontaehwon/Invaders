@@ -181,7 +181,12 @@ public class PauseScreen extends Screen{
                     ", " + Integer.toString(gameStatus.getStates().getLivesRemaining()) +
                     ", " + Integer.toString(gameStatus.getStates().getBulletsShot()) +
                     ", " + Integer.toString(gameStatus.getStates().getShipsDestroyed()) +
-                    ", " + Integer.toString(gameStatus.getStates().getBoomtimes());
+                    ", " + Integer.toString(gameStatus.getStates().getBoomtimes()) +
+                    ", " + Integer.toString(gameStatus.getStates().getSkillCool()[0]) +
+                    ", " + Integer.toString(gameStatus.getStates().getSkillCool()[1]) +
+                    ", " + Integer.toString(gameStatus.getStates().getSkillCool()[2]) +
+                    ", " + Integer.toString(gameStatus.getStates().getSkillCool()[3]) +
+                    ", " + Integer.toString(gameStatus.getStates().getLargeBoomTimes());
             String settings = Integer.toString(gameStatus.getSettings().getFormationWidth()) +
                     ", " + Integer.toString(gameStatus.getSettings().getFormationHeight()) +
                     ", " + Integer.toString(gameStatus.getSettings().getBaseSpeed()) +
