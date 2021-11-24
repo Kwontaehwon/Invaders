@@ -768,7 +768,7 @@ public class GameScreen extends Screen {
 	private void dropItem(EnemyShip enemyShip){
 		int r = random.nextInt(5);
 		if(r == 1) { // 5분의 1의확률, 중복으로 아이템 생성x
-			int c = random.nextInt(5); // 난이도 조절을 위해 보너스 점수 아이템 확률 40%, 나머지 20%
+			int c = random.nextInt(5);
 			if(c == 0){
 				if(this.shootingCoolItem == null){ // 연사속도
 					effectSound.dropItemSound.start();
@@ -794,6 +794,7 @@ public class GameScreen extends Screen {
 				}
 			}
 			else {
+				// 점수 오름차순으로 1/2, 1/3, 1/6 확률
 				r = random.nextInt(6);
 				if(r == 0){
 					if(this.bonusScoreItem == null){
