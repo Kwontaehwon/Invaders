@@ -21,6 +21,7 @@ import entity.Ship;
 import skill.*;
 
 import static engine.Core.effectSound;
+import static engine.Core.getCooldown;
 
 /**
  * Implements the game screen, where the action happens.
@@ -46,6 +47,9 @@ public class GameScreen extends Screen {
 	private static final int SEPARATION_LINE_HEIGHT = 40;
 
 	private static final int SKILL_CURSOR_DELAY = 200;
+
+	/** 보너스 스테이지 shootingFrequency */
+	private static final int BONUS_LEVEL_SHOOTING_FREQ = 2100000;
 
 	/** Current game difficulty settings. */
 	private GameSettings gameSettings;
@@ -99,6 +103,8 @@ public class GameScreen extends Screen {
 	private int initLive;
 	private int initBullet;
 	private int initShip;
+	// Bonus Stage
+	private Cooldown bonusTime;
 	Frame frame;
 
 
@@ -151,6 +157,7 @@ public class GameScreen extends Screen {
 		this.initBullet = bulletsShot;
 		this.initShip = this.shipsDestroyed;
 		this.frame = frame;
+		this.bonusTime = null;
 	}
 
 	/**
@@ -190,6 +197,10 @@ public class GameScreen extends Screen {
 		this.inputDelay = Core.getCooldown(INPUT_DELAY);
 		this.inputDelay.reset();
 
+		if(gameSettings.getShootingFrecuency() ==  BONUS_LEVEL_SHOOTING_FREQ){
+			this.bonusTime = getCooldown(10000);
+			bonusTime.reset();
+		}
 
 	}
 
@@ -219,6 +230,9 @@ public class GameScreen extends Screen {
 				this.skill2.pause(System.currentTimeMillis() - this.pauseTime);
 				this.skill3.pause(System.currentTimeMillis() - this.pauseTime);
 				this.skill4.pause(System.currentTimeMillis() - this.pauseTime);
+				if(bonusTime != null && !bonusTime.checkFinished()){
+					bonusTime.pause(System.currentTimeMillis() - this.pauseTime);
+				}
 				this.pauseTime = 0;
 			}
 
@@ -421,7 +435,7 @@ public class GameScreen extends Screen {
 		cleanBooms();
 
 		draw();
-		if ((this.enemyShipFormation.isEmpty() || this.lives == 0)
+		if ((this.enemyShipFormation.isEmpty() || this.lives == 0 || (gameSettings.getShootingFrecuency() ==  BONUS_LEVEL_SHOOTING_FREQ && bonusTime.checkFinished()))
 				&& !this.levelFinished) {
 			//남은스킬쿨 저장
 			this.skillCool[0] = this.skill1.returnSkillCoolTime();
@@ -434,7 +448,6 @@ public class GameScreen extends Screen {
 
 		if (this.levelFinished && this.screenFinishedCooldown.checkFinished())
 			this.isRunning = false;
-
 	}
 
 	/**
@@ -497,6 +510,9 @@ public class GameScreen extends Screen {
 		drawManager.drawBooms(this, this.boomTimes);
 		// 스킬 인터페이스 추가,pause상태에서는 쿨타임을 그리지않음.
 		drawManager.drawSkills(skillCursor, skill1, skill2, skill3, skill4,this.pauseTime);
+		if(gameSettings.getShootingFrecuency() ==  BONUS_LEVEL_SHOOTING_FREQ){
+			drawManager.drawBonusTime(this, bonusTime, this.pauseTime);
+		}
 
 		// Countdown to game start. 스테이지 시작전 5초
 		if (!this.inputDelay.checkFinished()) {

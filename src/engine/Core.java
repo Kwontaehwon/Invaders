@@ -34,13 +34,14 @@ public final class Core {
 	/** Max lives. */
 	private static final int MAX_LIVES = 3;
 	/** Levels between extra life. */
-	private static final int EXTRA_LIFE_FRECUENCY = 3;
+	private static final int EXTRA_LIFE_FREQUENCY = 3;
 	/** Total number of levels. */
 	private static final int NUM_LEVELS = 7;
+
 	
 	/** Difficulty settings for level 1. */
 	private static final GameSettings SETTINGS_LEVEL_1 =
-			new GameSettings(5, 4, 60, 2000);
+			new GameSettings(5, 3, 50, 3000);
 	/** Difficulty settings for level 2. */
 	private static final GameSettings SETTINGS_LEVEL_2 =
 			new GameSettings(5, 5, 50, 2500);
@@ -59,6 +60,8 @@ public final class Core {
 	/** Difficulty settings for level 7. */
 	private static final GameSettings SETTINGS_LEVEL_7 =
 			new GameSettings(8, 7, 2, 500);
+	private static final GameSettings SETTINGS_LEVEL_BONUS =
+			new GameSettings(12, 7, 50, 2100000);
 	
 	/** Frame to draw the screen on. */
 	private static Frame frame;
@@ -114,7 +117,9 @@ public final class Core {
 		int height = frame.getHeight();
 
 		gameSettings = new ArrayList<GameSettings>();
+		gameSettings.add(SETTINGS_LEVEL_BONUS);
 		gameSettings.add(SETTINGS_LEVEL_1);
+
 		gameSettings.add(SETTINGS_LEVEL_2);
 		gameSettings.add(SETTINGS_LEVEL_3);
 		gameSettings.add(SETTINGS_LEVEL_4);
@@ -145,7 +150,7 @@ public final class Core {
 				do {
 					// One extra live every few levels.
 					boolean bonusLife = gameState.getLevel()
-							% EXTRA_LIFE_FRECUENCY == 0
+							% EXTRA_LIFE_FREQUENCY == 0
 							&& gameState.getLivesRemaining() < MAX_LIVES;
 					
 					currentScreen = new GameScreen(gameState,
@@ -210,7 +215,7 @@ public final class Core {
 
 					// One extra live every few levels.
 					boolean bonusLife = gameState.getLevel()
-							% EXTRA_LIFE_FRECUENCY == 0
+							% EXTRA_LIFE_FREQUENCY == 0
 							&& gameState.getLivesRemaining() < MAX_LIVES;
 
 					currentScreen = new GameScreen(gameState,
@@ -270,7 +275,7 @@ public final class Core {
 					// One extra live every few levels.
 					if(isFirst){
 						boolean bonusLife = gameState.getLevel()
-								% EXTRA_LIFE_FRECUENCY == 0
+								% EXTRA_LIFE_FREQUENCY == 0
 								&& gameState.getLivesRemaining() < MAX_LIVES;
 
 						currentScreen = new GameScreen(gameState,
