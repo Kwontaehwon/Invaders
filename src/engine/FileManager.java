@@ -393,14 +393,12 @@ public final class FileManager {
 			String savesPath = new File(jarPath).getParent();
 			savesPath += File.separator;
 			savesPath += "saves";
-
 			File savesFile = new File(savesPath);
 			inputStream = new FileInputStream(savesFile);
+
 			bufferedReader = new BufferedReader(new InputStreamReader(
 					inputStream, Charset.forName("UTF-8")));
-
 			logger.info("Loading user saves.");
-
 			String gameStatesl = bufferedReader.readLine();
 			String gameSettingsl = bufferedReader.readLine();
 			String bonusl = bufferedReader.readLine();
@@ -408,7 +406,6 @@ public final class FileManager {
 			if ((gameStatesl != null) && (gameSettingsl != null) && (bonusl != null)) {
 				String[] gameStatesArr = gameStatesl.split(", ");
 				String[] gameSettingslArr = gameSettingsl.split(", ");
-
 				gameStates = new GameState(Integer.parseInt(gameStatesArr[0]),
 						Integer.parseInt(gameStatesArr[1]),
 						Integer.parseInt(gameStatesArr[2]),

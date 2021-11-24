@@ -327,6 +327,11 @@ public class GameScreen extends Screen {
 					if(this.pauseTime == 0 ) this.pauseTime = System.currentTimeMillis();
 					GameState gameState = getGameState();
 					gameState.setState(initScore, initLive, initBullet, initShip);
+					//남은스킬쿨 저장해서 pauseScreen에 gameStatus에 넘겨줘야됨.
+					this.skillCool[0] = this.skill1.returnSkillCoolTime();
+					this.skillCool[1] = this.skill2.returnSkillCoolTime();
+					this.skillCool[2] = this.skill3.returnSkillCoolTime();
+					this.skillCool[3] = this.skill4.returnSkillCoolTime();
 					GameStatus gameStatus = new GameStatus(gameState, gameSettings, bonusLife);
 					Screen currentScreen = new PauseScreen(width, height, fps, gameStatus);
 					Logger LOGGER = Logger.getLogger(Core.class
