@@ -79,5 +79,7 @@ public class Cooldown {
 	public int getDuration(){
 		return this.duration/1000;
 	}
+
+	public int getMilliseconds() { return milliseconds; }
 }
 
