@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.logging.Logger;
 
 import entity.Boom;
@@ -760,10 +761,10 @@ public final class DrawManager {
 		int cursorX = 0;
 		int cursorY = 0;
 		int margin = 10;
-		ArrayList<Map.Entry<SpriteType, Boolean>> designList = designSetting.getDesignList();
+		ArrayList<SimpleEntry<SpriteType, Boolean>> designList = designSetting.getDesignList();
 
 		// 두 줄에 다 안들어오는 경우는 고려하지 못함.
-		for(Map.Entry<SpriteType, Boolean> entry: designList){
+		for(SimpleEntry<SpriteType, Boolean> entry: designList){
 			SpriteType sprite = entry.getKey();
 			boolean isAchieved = entry.getValue();
 
