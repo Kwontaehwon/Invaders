@@ -100,6 +100,9 @@ public class GameScreen extends Screen {
 	private int initBullet;
 	private int initShip;
 	Frame frame;
+	// 보너스 라이프, 스코어 아이템 추가.
+	private Item bonusLifeItem;
+	private Item bonusScoreItem;
 
 
 	private DesignSetting designSetting;
@@ -366,6 +369,14 @@ public class GameScreen extends Screen {
 			if(this.item != null ){ //아이템이 존재한다면, 아이템을 아래로떨어짐.
 				this.item.update();
 			}
+			//보너스 라이프 아이템움직임
+			if(this.bonusLifeItem != null){
+				this.bonusLifeItem.update();
+			}
+			//보너스 스코어 아이템움직임
+			if(this.bonusScoreItem != null){
+				this.bonusScoreItem.update();
+			}
 			//폭탄아이템움직임.
 			if(this.boomItem != null){
 				this.boomItem.update();
@@ -404,6 +415,18 @@ public class GameScreen extends Screen {
 			this.ship.setBulletSpeed(-6);
 			this.itemCooldown = null;
 			this.logger.info("Bullet Item Cooldown is over. ");
+		}
+		// ship과 보너스 라이프 아이템의 충돌
+		if(this.bonusLifeItem != null && checkCollision(this.bonusLifeItem,this.ship)){
+			this.lives++;
+			this.bonusLifeItem=null;
+			effectSound.getItemSound.start();
+		}
+		// ship과 보너스 점수 아이템의 충돌
+		if(this.bonusScoreItem != null && checkCollision(this.bonusScoreItem,this.ship)){
+			this.score = this.score + this.bonusScoreItem.getPointValue();
+			this.bonusScoreItem=null;
+			effectSound.getItemSound.start();
 		}
 		//ship과 폭탄아이템의 충돌
 		if(this.boomItem != null && checkCollision(this.boomItem,this.ship)){
@@ -476,6 +499,24 @@ public class GameScreen extends Screen {
 			}
 			else {
 				drawManager.drawEntity(this.item, this.item.getPositionX(), this.item.getPositionY());
+			}
+		}
+		// 보너스 라이프아이템생성.
+		if(this.bonusLifeItem != null ){ //아이템이 존재하면
+			if (bonusLifeItem.getPositionY() > this.height){ //아이템이 맵밖으로 떨어지면 사라짐.
+				this.bonusLifeItem = null;
+			}
+			else {
+				drawManager.drawEntity(this.bonusLifeItem, this.bonusLifeItem.getPositionX(), this.bonusLifeItem.getPositionY());
+			}
+		}
+		// 보너스 스코어아이템생성.
+		if(this.bonusScoreItem != null ){ //아이템이 존재하면
+			if (bonusScoreItem.getPositionY() > this.height){ //아이템이 맵밖으로 떨어지면 사라짐.
+				this.bonusScoreItem = null;
+			}
+			else {
+				drawManager.drawEntity(this.bonusScoreItem, this.bonusScoreItem.getPositionX(), this.bonusScoreItem.getPositionY());
 			}
 		}
 		// 아이템 폭탄
@@ -687,20 +728,48 @@ public class GameScreen extends Screen {
 
 	// 적개체 부서였을때 확률적으로 아이템을 드랍.
 	private void dropItem(EnemyShip enemyShip){
-		if(random.nextInt(5) == 1 ) { // 5분의 1의확률, 중복으로아이템생성x
-			if(random.nextInt(2) == 1 ){ // 폭탄과 아이템중
+		int r = random.nextInt(5);
+		if(r == 1) { // 5분의 1의확률, 중복으로아이템생성x
+			r = random.nextInt(4);
+			if(r == 0){ // 폭탄과 아이템중
 				if(this.item == null) { //아이템이 존재하지않으면
 					effectSound.dropItemSound.start();		// 아이템 드랍 소리
 					this.item = new Item(enemyShip.getPositionX(), enemyShip.getPositionX());
 				}
 			}
-			else { //폭탄이드랍.
+			else if(r == 1) { //폭탄이드랍.
 				if(this.boomItem == null){
 					effectSound.dropItemSound.start();		// 폭탄 아이템 드랍 소리
 					this.boomItem = new Boom(enemyShip.getPositionX(), enemyShip.getPositionX(),0,2);
 				}
 			}
-
+			else if(r == 2){
+				if(this.bonusLifeItem == null){
+					effectSound.dropItemSound.start();		// 보너스 라이프 아이템 드랍 소리
+					this.bonusLifeItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionX(), DrawManager.SpriteType.BonusLifeItem);
+				}
+			}
+			else if(r == 3){
+				r = random.nextInt(6);
+				if(r == 0){
+					if(this.bonusScoreItem == null){
+						effectSound.dropItemSound.start();		// 보너스 라이프 아이템 드랍 소리
+						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionX(), DrawManager.SpriteType.BonusScoreItem3);
+					}
+				}
+				else if(r == 1 || r == 2){
+					if(this.bonusScoreItem == null){
+						effectSound.dropItemSound.start();		// 보너스 라이프 아이템 드랍 소리
+						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionX(), DrawManager.SpriteType.BonusScoreItem2);
+					}
+				}
+				else{
+					if(this.bonusScoreItem == null){
+						effectSound.dropItemSound.start();		// 보너스 스코어 아이템 드랍 소리
+						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionX(), DrawManager.SpriteType.BonusScoreItem1);
+					}
+				}
+			}
 		}
 	}
 
