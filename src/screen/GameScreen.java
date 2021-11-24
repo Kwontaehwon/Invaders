@@ -241,14 +241,25 @@ public class GameScreen extends Screen {
 					this.ship.moveLeft();
 				}
 				//스킬커서
-				if ( this.SkillInputDelay.checkFinished() &&this.inputDelay.checkFinished() && SkillCursorRight && skillCursor < 3) {
-					this.skillCursor++;
-					this.SkillInputDelay.reset();
+				if ( this.SkillInputDelay.checkFinished() &&this.inputDelay.checkFinished()) {
+					if(SkillCursorRight && skillCursor < 3){
+						this.skillCursor++;
+						this.SkillInputDelay.reset();
+					}
+					else if(SkillCursorRight && skillCursor == 3){
+						this.skillCursor = 0;
+						this.SkillInputDelay.reset();
+					}
+					else if(SkillCursorLeft && skillCursor > 0){
+						this.skillCursor--;
+						this.SkillInputDelay.reset();
+					}
+					else if(SkillCursorLeft && skillCursor == 0){
+						this.skillCursor = 3;
+						this.SkillInputDelay.reset();
+					}
 				}
-				if (this.SkillInputDelay.checkFinished()&&this.inputDelay.checkFinished() && SkillCursorLeft && skillCursor > 0) {
-					this.skillCursor--;
-					this.SkillInputDelay.reset();
-				}
+
 				//스킬사용
 				if( this.SkillInputDelay.checkFinished()&&inputManager.isKeyDown(KeyEvent.VK_X)) {
 					if (this.skillCursor == 0 && this.skill1.checkOpen()) { //무적
