@@ -9,8 +9,6 @@ import java.util.Set;
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  * 
  */
-// 충돌된에 사용된 총알들을 삭제하고, 다시 recycle하는데 사용되는듯함.
-// 그와중에 총알을 만들어주는 함수를 추가해준듯.
 public final class BulletPool {
 
 	/** Set of already created bullets. */

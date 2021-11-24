@@ -79,16 +79,21 @@ public class Ship extends Entity {
 		return false;
 	}
 	//폭탄발사부분
-	public final boolean boomShoot(final Set<Boom> booms) {
+	public final boolean boomShoot(final Set<Boom> booms ) {
 		if (this.shootingCooldown.checkFinished()) {
 			this.shootingCooldown.reset();
 			booms.add(BoomPool.getBoom(positionX + this.width / 2,
-					positionY, BULLET_SPEED));
+					positionY, 0, BULLET_SPEED));
 			return true;
 		}
 		return false;
 	}
-
+	
+	//폭탄스킬발사
+	public final void boomSkillShoot(final Set<Boom> booms, int speedX ){
+		booms.add(BoomPool.getBoom(positionX + this.width / 2  ,
+				positionY, speedX,BULLET_SPEED));
+	}
 	/**
 	 * Updates status of the ship.
 	 */
