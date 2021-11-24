@@ -443,7 +443,7 @@ public class GameScreen extends Screen {
 
 		// ship과 보너스 라이프 아이템의 충돌
 		if(this.bonusLifeItem != null && checkCollision(this.bonusLifeItem,this.ship)){
-			this.lives++;
+			if(this.lives < 3) this.lives++;
 			this.bonusLifeItem=null;
 			effectSound.getItemSound.start();
 		}
@@ -766,35 +766,34 @@ public class GameScreen extends Screen {
 
 	// 적개체 부서였을때 확률적으로 아이템을 드랍.
 	private void dropItem(EnemyShip enemyShip){
-		int r = 1;
-//		int r = random.nextInt(5);
-		if(r == 1) { // 5분의 1의확률, 중복으로 아이템생성x
-			r = random.nextInt(2);
-			if(r == 0){ // 폭탄과 아이템중
-				if(this.shootingCoolItem == null){
-					effectSound.dropItemSound.start(); // 폭탄 아이템 드랍 소리
+		int r = random.nextInt(5);
+		if(r == 1) { // 5분의 1의확률, 중복으로 아이템 생성x
+			int c = random.nextInt(5); // 난이도 조절을 위해 보너스 점수 아이템 확률 40%, 나머지 20%
+			if(c == 0){
+				if(this.shootingCoolItem == null){ // 연사속도
+					effectSound.dropItemSound.start();
 					this.shootingCoolItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(),DrawManager.SpriteType.ShootingCoolItem);
 				}
 			}
-			else if(r == 1) { //폭탄이드랍.
-				if(this.bulletSpeedItem== null){
-					effectSound.dropItemSound.start(); // 폭탄 아이템 드랍 소리
+			else if(c == 1) {
+				if(this.bulletSpeedItem== null){ // 총알속도
+					effectSound.dropItemSound.start();
 					this.bulletSpeedItem= new Item(enemyShip.getPositionX(), enemyShip.getPositionY(),DrawManager.SpriteType.BulletSpeedItem);
 				}
 			}
-			else if(r == 2) { //폭탄이드랍.
+			else if(c == 2) { //폭탄이드랍.
 				if(this.boomItem == null){
 					effectSound.dropItemSound.start();		// 폭탄 아이템 드랍 소리
 					this.boomItem = new Boom(enemyShip.getPositionX(), enemyShip.getPositionY(),0,2);
 				}
 			}
-			else if(r == 3){
+			else if(c == 3){
 				if(this.bonusLifeItem == null){
 					effectSound.dropItemSound.start();		// 보너스 라이프 아이템 드랍 소리
 					this.bonusLifeItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), DrawManager.SpriteType.BonusLifeItem);
 				}
 			}
-			else if(r == 4){
+			else {
 				r = random.nextInt(6);
 				if(r == 0){
 					if(this.bonusScoreItem == null){

@@ -60,7 +60,9 @@ public final class DrawManager {
 		/** Destroyed player ship. */
 		ShipDestroyed,
 		/** Player bullet. */
-		Bullet,
+		Bullet1,
+		Bullet2,
+		Bullet3,
 		/** Enemy bullet. */
 		EnemyBullet,
 		/** First enemy ship - first form. */
@@ -114,7 +116,9 @@ public final class DrawManager {
 			// 각각의 이름그대로, 배, 배파괴되어을때, 총알등등이있음.
 			spriteMap.put(SpriteType.Ship, new int[13][8]);
 			spriteMap.put(SpriteType.ShipDestroyed, new int[13][8]);
-			spriteMap.put(SpriteType.Bullet, new int[5][5]);
+			spriteMap.put(SpriteType.Bullet1, new int[5][5]);
+			spriteMap.put(SpriteType.Bullet2, new int[5][5]);
+			spriteMap.put(SpriteType.Bullet3, new int[5][5]);
 			spriteMap.put(SpriteType.EnemyBullet, new int[3][5]);
 			spriteMap.put(SpriteType.EnemyShipA1, new int[12][8]);
 			spriteMap.put(SpriteType.EnemyShipA2, new int[12][8]);
