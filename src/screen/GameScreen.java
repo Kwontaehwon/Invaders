@@ -85,7 +85,6 @@ public class GameScreen extends Screen {
 	private Random random = new Random();
 	private int boomTimes ; //폭탄발사횟수.
 	private Set<Boom> booms; //화면상 발사된 폭탄
-	private Boom boomItem; // 폭탄아이템(떨어지는)
 	private int skillCursor; // 스킬 커서
 	private Cooldown SkillInputDelay;
 	private Skill1 skill1;
@@ -105,6 +104,7 @@ public class GameScreen extends Screen {
 	private Item shootingCoolItem;
 	private Item bonusLifeItem;
 	private Item bonusScoreItem;
+	private Item boomItem;
 
 
 	private DesignSetting designSetting;
@@ -784,7 +784,7 @@ public class GameScreen extends Screen {
 			else if(c == 2) { //폭탄이드랍.
 				if(this.boomItem == null){
 					effectSound.dropItemSound.start();		// 폭탄 아이템 드랍 소리
-					this.boomItem = new Boom(enemyShip.getPositionX(), enemyShip.getPositionY(),0,2);
+					this.boomItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(),DrawManager.SpriteType.Boom);
 				}
 			}
 			else if(c == 3){
