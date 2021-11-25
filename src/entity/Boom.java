@@ -6,7 +6,8 @@ import java.awt.*;
 
 public class Boom extends Entity {
 
-    private int speed ;
+    private int speedX ;
+    private int speedY ;
     /**
      * Constructor, establishes the entity's generic properties.
      *
@@ -14,23 +15,23 @@ public class Boom extends Entity {
      * @param positionY Initial position of the entity in the Y axis.
 
      */
-    public Boom(int positionX, int positionY,int speed){
+    public Boom(int positionX, int positionY,int speedX, int speedY){
         super(positionX, positionY, 8 * 2, 8 * 2, Color.white);
 
-        this.speed = speed;
+        this.speedX = speedX;
+        this.speedY = speedY;
         this.spriteType = DrawManager.SpriteType.Boom;
     }
 
     public final void update() {
-        this.positionY += this.speed;
+        this.positionX += this.speedX;
+        this.positionY += this.speedY;
     }
 
-    public final void setSpeed(final int speed) {
-        this.speed = speed;
+    public final void setSpeed(final int speedX, final int speedY) {
+        this.speedX = speedX;
+        this.speedY = speedY;
     }
 
-    public final int getSpeed() {
-        return this.speed;
-    }
 
 }

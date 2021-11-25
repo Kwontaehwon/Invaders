@@ -12,12 +12,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.logging.Logger;
 
-import entity.Boom;
+import entity.*;
 import screen.Screen;
-import entity.Entity;
-import entity.Ship;
+import skill.*;
 
 /**
  * Manages screen drawing.
@@ -53,6 +53,8 @@ public final class DrawManager {
 	private static Image backgroundImage;
 	/** Template Image of background*/
 	private static Image templateImage;
+
+	private static Font fontSmall;
 
 	/** Sprite types mapped to their images. */
 	private static Map<SpriteType, int[][]> spriteMap;
@@ -91,7 +93,12 @@ public final class DrawManager {
 		EnemyShipD1,
 		EnemyShipD2,
 		EnemyShipD3,
-		EnemyShipD4
+		EnemyShipD4,
+		Skill1,
+		Skill2,
+		Skill3,
+		Skill4,
+		LargeBoom
 	};
 
 	/**
@@ -124,6 +131,12 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.EnemyShipD2, new int[12][8]);
 			spriteMap.put(SpriteType.EnemyShipD3, new int[12][8]);
 			spriteMap.put(SpriteType.EnemyShipD4, new int[12][8]);
+			spriteMap.put(SpriteType.Skill1, new int[8][8]);
+			spriteMap.put(SpriteType.Skill2, new int[8][8]);
+			spriteMap.put(SpriteType.Skill3, new int[8][8]);
+			spriteMap.put(SpriteType.Skill4, new int[8][8]);
+			spriteMap.put(SpriteType.LargeBoom, new int[100][100]);
+
 
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");
@@ -134,6 +147,7 @@ public final class DrawManager {
 			// Font loading.
 			fontRegular = fileManager.loadFont(14f);
 			fontBig = fileManager.loadFont(24f);
+			fontSmall = fileManager.loadFont(10f);
 			logger.info("Finished loading the fonts.");
 
 		} catch (IOException e) {
@@ -189,8 +203,6 @@ public final class DrawManager {
 			backgroundImage = makeBackgroundImage();
 		}
 
-		// drawBorders(screen);
-		// drawGrid(screen);
 	}
 
 	/**
@@ -229,6 +241,19 @@ public final class DrawManager {
 					backBufferGraphics.drawRect(positionX + i * 2, positionY
 							+ j * 2, 1, 1);
 				}
+	}
+
+	public void drawShadowedEntity(final Entity entity, final int positionX,
+								   final int positionY) {
+		int[][] image = spriteMap.get(entity.getSpriteType());
+
+		backBufferGraphics.setColor(Color.GRAY);
+		for (int i = 0; i < image.length; i++)
+			for (int j = 0; j < image[i].length; j++)
+				if (image[i][j] != 0)
+					backBufferGraphics.drawRect(positionX + i * 2, positionY
+							+ j * 2, 1, 1);
+
 	}
 
 	/**
@@ -363,9 +388,73 @@ public final class DrawManager {
 	}
 
 	public void drawBooms(final Screen screen , final int boomtimes){
-		Boom dummyBoom = new Boom(0,0,0);
+		Boom dummyBoom = new Boom(0,0,0,0);
 		for (int i = 0; i < boomtimes; i++)
 			drawEntity(dummyBoom,150+ 20 * i,10);
+	}
+
+	//stageLevel에 따른 스킬해제. cursor의 위치에 따른 효과
+	public void drawSkills(final int cursor, Skill1 skill1, Skill2 skill2, Skill3 skill3 , Skill4 skill4,long pauseTime){
+		int y = 36;
+		int sizePlus = 72; //화면이 늘어남에 따라
+		drawString("SKILL",213 +sizePlus ,25);
+		backBufferGraphics.setFont(fontSmall);
+		if (skill1.checkOpen()) { //열려있으면 그려줌.
+			drawEntity(skill1,267 + 22 * 0 +sizePlus, 10);
+			if(pauseTime == 0) {
+				if (skill1.returnSkillCoolTime() > 0 && skill1.returnSkillCoolTime() < 10) {
+					backBufferGraphics.drawString(Integer.toString(skill1.returnSkillCoolTime()), 267 + 22 * 0 + 4 + sizePlus, y);
+				} else if (skill1.returnSkillCoolTime() > 9) {
+					backBufferGraphics.drawString(Integer.toString(skill1.returnSkillCoolTime()), 267 + 22 * 0 + 3 + sizePlus, y);
+				}
+			}
+		}
+		if (skill2.checkOpen()) {
+			drawEntity(skill2, 267 + 22 * 1 + sizePlus, 10);
+			if(pauseTime == 0) {
+				if (skill2.returnSkillCoolTime() > 0 && skill2.returnSkillCoolTime() < 10)
+					backBufferGraphics.drawString(Integer.toString(skill2.returnSkillCoolTime()), 270 + 22 * 1 + 3 + sizePlus, y);
+				else if (skill2.returnSkillCoolTime() > 9) {
+					backBufferGraphics.drawString(Integer.toString(skill2.returnSkillCoolTime()), 267 + 22 * 1 + 3 + sizePlus, y);
+				}
+			}
+		}
+		if (skill3.checkOpen()) {
+			drawEntity(skill3, 267 + 22 * 2 + sizePlus, 10);
+			if(pauseTime == 0) {
+				if (skill3.returnSkillCoolTime() > 0 && skill3.returnSkillCoolTime() < 10)
+					backBufferGraphics.drawString(Integer.toString(skill3.returnSkillCoolTime()), 270 + 22 * 2 + 3 + sizePlus, y);
+				else if (skill3.returnSkillCoolTime() > 9) {
+					backBufferGraphics.drawString(Integer.toString(skill3.returnSkillCoolTime()), 267 + 22 * 2 + 3 + sizePlus, y);
+				}
+			}
+		}
+		if (skill4.checkOpen()) {
+			drawEntity(skill4, 267 + 22 * 3 + sizePlus, 10);
+			if(pauseTime == 0) {
+				if (skill4.returnSkillCoolTime() > 0 && skill4.returnSkillCoolTime() < 10)
+					backBufferGraphics.drawString(Integer.toString(skill4.returnSkillCoolTime()), 270 + 22 * 3 + 3 + sizePlus, y);
+				else if (skill4.returnSkillCoolTime() > 9) {
+					backBufferGraphics.drawString(Integer.toString(skill4.returnSkillCoolTime()), 267 + 22 * 3 + 3 + sizePlus, y);
+				}
+			}
+		}
+		for (int i = 0; i < 4; i++) {
+			if( i == cursor){
+				backBufferGraphics.setColor(Color.green);
+			}
+			else {
+				backBufferGraphics.setColor(Color.gray);
+			}
+			backBufferGraphics.drawRect(267 + 22 * i + sizePlus, 10, skill1.getWidth(), skill1.getHeight());
+		}
+	}
+	//필살기 인터페이스
+	public void drawLargeBoom(final int largeBoomtimes){
+		if(largeBoomtimes == 1) backBufferGraphics.setColor(Color.green);
+		else backBufferGraphics.setColor(Color.gray);
+		drawSmallString("Large", 230,20);
+		drawSmallString(" Boom!", 230,31);
 	}
 
 	/**
@@ -628,6 +717,18 @@ public final class DrawManager {
 		backBufferGraphics.drawString(string, screen.getWidth() / 2
 				- fontBigMetrics.stringWidth(string) / 2, height);
 	}
+	//정한위치에 string을 적어줌.
+	public void drawString(final String string, final int x,final int y){
+		backBufferGraphics.setFont(fontRegular);
+		backBufferGraphics.setColor(Color.yellow);
+		backBufferGraphics.drawString(string,x,y);
+	}
+	//작은글씨 그리기, 스킬발동로그용
+	public void drawSmallString(final String string, final int x, final int y){
+		backBufferGraphics.setColor(Color.yellow);
+		backBufferGraphics.setFont(fontSmall);
+		backBufferGraphics.drawString(string,x,y);
+	}
 
 	/**
 	 * Countdown to game start.
@@ -650,15 +751,21 @@ public final class DrawManager {
 				rectWidth, rectHeight);
 		backBufferGraphics.setColor(Color.GREEN);
 		if (number >= 4)
-			if (!bonusLife) {
-				drawCenteredBigString(screen, "Level " + level,
+			if(level == 2 || level == 3 ||level == 4 || level ==5) {
+				drawCenteredBigString(screen, "Level " + level + " NEW SKILL!",
 						screen.getHeight() / 2
-						+ fontBigMetrics.getHeight() / 3);
-			} else {
-				drawCenteredBigString(screen, "Level " + level
-						+ " - Bonus life!",
-						screen.getHeight() / 2
-						+ fontBigMetrics.getHeight() / 3);
+								+ fontBigMetrics.getHeight() / 3);
+			}
+			else if (!bonusLife) {
+					drawCenteredBigString(screen, "Level " + level,
+							screen.getHeight() / 2
+									+ fontBigMetrics.getHeight() / 3);
+				}
+			else {
+					drawCenteredBigString(screen, "Level " + level
+									+ " - Bonus life!",
+							screen.getHeight() / 2
+									+ fontBigMetrics.getHeight() / 3);
 			}
 		else if (number != 0)
 			drawCenteredBigString(screen, Integer.toString(number),
@@ -776,40 +883,48 @@ public final class DrawManager {
 	 */
 	public void drawShipCustomMenu(final Screen screen) {
 		String customString = "Customize";
-		String instructionsString = "Press Space to return";
+		String instructionsString1 = "Press Space to apply";
+		String instructionsString2 = "Press Escape to return";
 		String currentString = "Current";
 
 		backBufferGraphics.setColor(Color.GREEN);
 		drawCenteredBigString(screen, customString, screen.getHeight() / 8);
 
 		backBufferGraphics.setColor(Color.GRAY);
-		drawCenteredRegularString(screen, instructionsString,
+		drawCenteredRegularString(screen, instructionsString1,
 				screen.getHeight() / 5);
+		backBufferGraphics.setColor(Color.GRAY);
+		drawCenteredRegularString(screen, instructionsString2,
+				screen.getHeight() / 5 + 20);
 		backBufferGraphics.setColor(Color.GREEN);
 		drawCenteredRegularString(screen, currentString,
 				screen.getHeight() / 3);
 
 	}
 	/**
-	 * Draws sprites given as list and cursor.
+	 * Draws cursor and sprites given in List of Entries.
 	 *
 	 * @param screen
 	 * 				Screen to draw on.
-	 * @param list
-	 * 				List of sprites to draw.
 	 * @param option
 	 * 				Cursor index.
+	 * @param designSetting
+	 * 				DesignSetting has current design and design list.
 	 */
-	public void drawDesigns(final Screen screen, final ArrayList<SpriteType> list, int option, DesignSetting designSetting){
+	public void drawDesigns(final Screen screen, int option, DesignSetting designSetting){
 		int count = 0;
 		int positionX = 40;
 		int j = 0, positionY = screen.getWidth()-60;
 		int cursorX = 0;
 		int cursorY = 0;
 		int margin = 10;
+		ArrayList<SimpleEntry<SpriteType, Boolean>> designList = designSetting.getDesignList();
 
 		// 두 줄에 다 안들어오는 경우는 고려하지 못함.
-		for(SpriteType sprite: list){
+		for(SimpleEntry<SpriteType, Boolean> entry: designList){
+			SpriteType sprite = entry.getKey();
+			boolean isAchieved = entry.getValue();
+
 			if( positionX + spriteMap.get(sprite).length*2 + margin >= frame.getWidth() ){
 				j++;
 				positionX = 40;
@@ -820,7 +935,12 @@ public final class DrawManager {
 				cursorY = positionY;
 			}
 			Ship dummyShip = new Ship(0, 0, sprite);
-			drawEntity(dummyShip, positionX, positionY);
+
+			if(isAchieved)
+				drawEntity(dummyShip, positionX, positionY);
+			else
+				drawShadowedEntity(dummyShip, positionX, positionY);
+
 			if(designSetting.getShipType() == sprite){
 				drawEntity(dummyShip, 200, screen.getHeight() / 3 + 20);
 			}

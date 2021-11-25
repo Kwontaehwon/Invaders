@@ -49,8 +49,14 @@ public class Bullet extends Entity {
 	/**
 	 * Updates the bullet's position.
 	 */
-	public final void update() {
-		this.positionY += this.speed;
+	public final void update(boolean skill3) {
+		if(skill3 && this.speed > 0){
+			this.positionY += 1;
+		}
+		else {
+			this.positionY += this.speed;
+		}
+
 	}
 
 	/**

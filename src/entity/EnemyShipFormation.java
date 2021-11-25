@@ -189,7 +189,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/**
 	 * Updates the position of the ships.
 	 */
-	public final void update() {
+	public final void update(boolean skill2) {
 		if(this.shootingCooldown == null) {
 			this.shootingCooldown = Core.getVariableCooldown(shootingInterval,
 					shootingVariance);
@@ -273,11 +273,13 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				column.removeAll(destroyed);
 			}
 
-			for (List<EnemyShip> column : this.enemyShips)
-				for (EnemyShip enemyShip : column) {
-					enemyShip.move(movementX, movementY);
-					enemyShip.update();
-				}
+			if (!skill2) { //스킬 2가 활성화중이 아니면 적개체가 움직임.
+				for (List<EnemyShip> column : this.enemyShips)
+					for (EnemyShip enemyShip : column) {
+						enemyShip.move(movementX, movementY);
+						enemyShip.update();
+					}
+			}
 		}
 	}
 
