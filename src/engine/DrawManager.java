@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,6 +49,10 @@ public final class DrawManager {
 	private static Font fontBig;
 	/** Big sized font properties. */
 	private static FontMetrics fontBigMetrics;
+	/** Image for game screen. */
+	private static Image backgroundImage;
+	/** Template Image of background*/
+	private static Image templateImage;
 
 	private static Font fontSmall;
 
@@ -136,6 +141,9 @@ public final class DrawManager {
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");
 
+			templateImage = fileManager.loadBackgroundTemplate();
+			logger.info("Finished loading the template image.");
+
 			// Font loading.
 			fontRegular = fileManager.loadFont(14f);
 			fontBig = fileManager.loadFont(24f);
@@ -190,6 +198,10 @@ public final class DrawManager {
 
 		fontRegularMetrics = backBufferGraphics.getFontMetrics(fontRegular);
 		fontBigMetrics = backBufferGraphics.getFontMetrics(fontBig);
+
+		if(backgroundImage == null){
+			backgroundImage = makeBackgroundImage();
+		}
 
 	}
 
@@ -274,6 +286,58 @@ public final class DrawManager {
 			backBufferGraphics.drawLine(0, i, screen.getWidth() - 1, i);
 		for (int j = 0; j < screen.getWidth() - 1; j += 2)
 			backBufferGraphics.drawLine(j, 0, j, screen.getHeight() - 1);
+	}
+
+	/**
+	 * make background image fit to frame size.
+	 *
+	 * @return adjusted Image
+	 */
+	private Image makeBackgroundImage(){
+		// 원래 이미지에서 높이를 늘린 이미지 생성
+		BufferedImage bufferedImage = new BufferedImage(templateImage.getWidth(null),
+				templateImage.getHeight(null) + frame.getHeight(), BufferedImage.TYPE_INT_RGB);
+		Graphics graphics = bufferedImage.getGraphics();
+
+		int stretched = bufferedImage.getHeight() - templateImage.getHeight(null);
+
+		// 원래 이미지를 밑에서부터 그리기
+		graphics.drawImage(templateImage, 0, stretched,
+				bufferedImage.getWidth(), templateImage.getHeight(null), null);
+		// 중복될 이미지를 잘라서 그리기
+		graphics.drawImage(templateImage, 0, 0, bufferedImage.getWidth(), stretched,
+				0, templateImage.getHeight(null) - stretched,
+				bufferedImage.getWidth(), templateImage.getHeight(null), null);
+
+		graphics.dispose();
+
+		// 파일로 저장
+		fileManager.saveImage(bufferedImage);
+		return bufferedImage;
+	}
+
+	/**
+	 * @param screen
+	 * 			Screen to draw in.
+	 * @param imgPos
+	 * 			position of background image.
+	 * @return true if image position meets limit, false otherwise.
+	 */
+	public boolean drawFlowBackground(final Screen screen, int imgPos) {
+		int imageHeight = backgroundImage.getHeight(null);
+		boolean isExceeded = false;
+
+		// 범위 초과 여부
+		if(imageHeight - screen.getHeight()  - imgPos<=0) {
+			imgPos = 0;
+			isExceeded = true;
+		}
+
+		// 그림 아래부터 그려서 올라가는 방향으로 동작.
+		backBufferGraphics.drawImage(backgroundImage, 0, 0, screen.getWidth(), screen.getHeight(),
+				0, imageHeight - screen.getHeight() - imgPos,
+				screen.getWidth(), imageHeight - imgPos, null);
+		return isExceeded;
 	}
 
 	/**
