@@ -24,9 +24,9 @@ import static engine.Core.effectSound;
 
 /**
  * Implements the game screen, where the action happens.
- * 
+ *
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
- * 
+ *
  */
 public class GameScreen extends Screen {
 
@@ -85,7 +85,6 @@ public class GameScreen extends Screen {
 	private Random random = new Random();
 	private int boomTimes ; //폭탄발사횟수.
 	private Set<Boom> booms; //화면상 발사된 폭탄
-	private Boom boomItem; // 폭탄아이템(떨어지는)
 	private int skillCursor; // 스킬 커서
 	private Cooldown SkillInputDelay;
 	private Skill1 skill1;
@@ -101,15 +100,18 @@ public class GameScreen extends Screen {
 	private int initShip;
 	Frame frame;
 	// 보너스 라이프, 스코어 아이템 추가.
+	private Item bulletSpeedItem;
+	private Item shootingCoolItem;
 	private Item bonusLifeItem;
 	private Item bonusScoreItem;
+	private Item boomItem;
 
 
 	private DesignSetting designSetting;
 
 	/**
 	 * Constructor, establishes the properties of the screen.
-	 * 
+	 *
 	 * @param gameState
 	 *            Current game state.
 	 * @param gameSettings
@@ -198,7 +200,7 @@ public class GameScreen extends Screen {
 
 	/**
 	 * Starts the action.
-	 * 
+	 *
 	 * @return Next screen code.
 	 */
 	public final int run() {
@@ -272,10 +274,10 @@ public class GameScreen extends Screen {
 						}
 					}
 					else if (this.skillCursor == 1 && this.skill2.checkOpen()) { // 일정시간 적움직임멈추기.
-							if (this.skill2.checkCoolTime()) {
-								this.skill2.startActivate(); //활성화
-								this.skill2.startCoolTime(); //쿨타임다시시작
-							}
+						if (this.skill2.checkCoolTime()) {
+							this.skill2.startActivate(); //활성화
+							this.skill2.startCoolTime(); //쿨타임다시시작
+						}
 					}
 					else if (this.skillCursor == 2 && this.skill3.checkOpen()) { // 적Bullet속도 낮추기.
 						if (this.skill3.checkCoolTime()) {
@@ -284,18 +286,18 @@ public class GameScreen extends Screen {
 						}
 					}
 					else if (this.skillCursor == 3 && this.skill4.checkOpen()) { //폭탄전방으로 세개
-							if (this.skill4.checkCoolTime()) {
-								this.skill4.startActivate(); //활성화
-								this.skill4.startCoolTime(); //쿨타임다시시작
-								//폭탄이 세갈래로 나감.
-								this.ship.boomSkillShoot(this.booms, -1); //폭탄스킬
-								this.ship.boomSkillShoot(this.booms, 0);
-								this.ship.boomSkillShoot(this.booms, +1);
-								effectSound.boomingSound.start();        // 폭탄 발사 소리
-							}
+						if (this.skill4.checkCoolTime()) {
+							this.skill4.startActivate(); //활성화
+							this.skill4.startCoolTime(); //쿨타임다시시작
+							//폭탄이 세갈래로 나감.
+							this.ship.boomSkillShoot(this.booms, -1); //폭탄스킬
+							this.ship.boomSkillShoot(this.booms, 0);
+							this.ship.boomSkillShoot(this.booms, +1);
+							effectSound.boomingSound.start();        // 폭탄 발사 소리
 						}
-					this.SkillInputDelay.reset();
 					}
+					this.SkillInputDelay.reset();
+				}
 
 				if(this.skill1.checkActivate()){ //활성화중일떄
 					this.skill1.checkDuration(); //지속시간이끝나면 다시 원상태로 돌려줌.
@@ -365,9 +367,13 @@ public class GameScreen extends Screen {
 				this.logger.info("The special ship has escaped");
 			}
 
-			//아이템움직임
-			if(this.item != null ){ //아이템이 존재한다면, 아이템을 아래로떨어짐.
-				this.item.update();
+			// 탄속 아이템
+			if(this.bulletSpeedItem != null ){ //아이템이 존재한다면, 아이템을 아래로떨어짐.
+				this.bulletSpeedItem.update();
+			}
+			// Shooting 주기 아이템
+			if(this.shootingCoolItem != null ){ //아이템이 존재한다면, 아이템을 아래로떨어짐.
+				this.shootingCoolItem .update();
 			}
 			//보너스 라이프 아이템움직임
 			if(this.bonusLifeItem != null){
@@ -394,31 +400,50 @@ public class GameScreen extends Screen {
 
 		manageCollisions();
 		//ship과 아이템의 충돌
-		if(this.item != null && checkCollision(this.item,this.ship)){
-			if(random.nextInt(2) == 1) {
-				this.ship.setShootingCooldown(100);
-				this.logger.info("Get Item : Bullet ShootingCooldown Up ! ");
+		if(this.shootingCoolItem != null && checkCollision(this.shootingCoolItem, this.ship)){
+			if(this.ship.getShootingCoolDown() > 300){
+				this.ship.setShootingCoolDown(this.ship.getShootingCoolDown()-150);
 			}
-			else {
-				this.ship.setBulletSpeed(-9);
-				this.logger.info("Get Item : Bullet Speed Up ! ");
+			this.logger.info("Get Item : Bullet Shooting Cooldown Up ! " + this.ship.getShootingCoolDown());
+			this.shootingCoolItem = null;
+			effectSound.getItemSound.start();	// 드랍된 아이템 얻는 소리
+		}
+		if(this.bulletSpeedItem != null && checkCollision(this.bulletSpeedItem, this.ship)){
+			if(this.ship.getBulletSpeed() > -9){
+				this.ship.setBulletSpeed(this.ship.getBulletSpeed()-1);
 			}
-			//아이템쿨타임 시작.item 쿨타임 5초
-			this.itemCooldown = Core.getCooldown(5000);
-			this.itemCooldown.reset();
-			this.item = null;
-			effectSound.getItemSound.start();		// 드랍된 아이템 얻는 소리
+			this.logger.info("Get Item : Bullet Shooting Cool down Up ! " + this.ship.getBulletSpeed());
+			this.bulletSpeedItem = null;
+			effectSound.getItemSound.start();	// 드랍된 아이템 얻는 소리
 		}
-		// 아이템 지속시간이끝나면 원래대로 돌아옴.
-		if(this.itemCooldown != null && this.itemCooldown.checkFinished()){
-			this.ship.setShootingCooldown(750);
-			this.ship.setBulletSpeed(-6);
-			this.itemCooldown = null;
-			this.logger.info("Bullet Item Cooldown is over. ");
-		}
+
+//
+//		if(this.item != null && checkCollision(this.item,this.ship)){
+//			if(random.nextInt(2) == 1) {
+//				this.ship.setShootingCooldown(100);
+//				this.logger.info("Get Item : Bullet ShootingCooldown Up ! ");
+//			}
+//			else {
+//				this.ship.setBulletSpeed(-9);
+//				this.logger.info("Get Item : Bullet Speed Up ! ");
+//			}
+//			//아이템쿨타임 시작.item 쿨타임 5초
+//			this.itemCooldown = Core.getCooldown(5000);
+//			this.itemCooldown.reset();
+//			this.item = null;
+//			effectSound.getItemSound.start();		// 드랍된 아이템 얻는 소리
+//		}
+//		// 아이템 지속시간이끝나면 원래대로 돌아옴.
+//		if(this.itemCooldown != null && this.itemCooldown.checkFinished()){
+//			this.ship.setShootingCooldown(750);
+//			this.ship.setBulletSpeed(-6);
+//			this.itemCooldown = null;
+//			this.logger.info("Bullet Item Cooldown is over. ");
+//		}
+
 		// ship과 보너스 라이프 아이템의 충돌
 		if(this.bonusLifeItem != null && checkCollision(this.bonusLifeItem,this.ship)){
-			this.lives++;
+			if(this.lives < 3) this.lives++;
 			this.bonusLifeItem=null;
 			effectSound.getItemSound.start();
 		}
@@ -493,15 +518,25 @@ public class GameScreen extends Screen {
 			drawManager.drawEntity(boom, boom.getPositionX(),
 					boom.getPositionY());
 		// 아이템생성.
-		if(this.item != null ){ //아이템이 존재하면
-			if (item.getPositionY() > this.height){ //아이템이 맵밖으로 떨어지면 사라짐.
-				this.item = null;
+
+
+		if(this.bulletSpeedItem != null ){ //아이템이 존재하면
+			if (bulletSpeedItem.getPositionY() > this.height){ //아이템이 맵밖으로 떨어지면 사라짐.
+				this.bulletSpeedItem = null;
 			}
 			else {
-				drawManager.drawEntity(this.item, this.item.getPositionX(), this.item.getPositionY());
+				drawManager.drawEntity(this.bulletSpeedItem, this.bulletSpeedItem.getPositionX(), this.bulletSpeedItem.getPositionY());
 			}
 		}
-		// 보너스 라이프아이템생성.
+		if(this.shootingCoolItem != null ){ //아이템이 존재하면
+			if (shootingCoolItem.getPositionY() > this.height){ //아이템이 맵밖으로 떨어지면 사라짐.
+				this.shootingCoolItem = null;
+			}
+			else {
+				drawManager.drawEntity(this.shootingCoolItem, this.shootingCoolItem.getPositionX(), this.shootingCoolItem.getPositionY());
+			}
+		}
+		// 보너스 라이프 아이템생성.
 		if(this.bonusLifeItem != null ){ //아이템이 존재하면
 			if (bonusLifeItem.getPositionY() > this.height){ //아이템이 맵밖으로 떨어지면 사라짐.
 				this.bonusLifeItem = null;
@@ -544,7 +579,7 @@ public class GameScreen extends Screen {
 
 			int countdown = (int) ((INPUT_DELAY
 					- (System.currentTimeMillis()
-							- this.gameStartTime)) / 1000);
+					- this.gameStartTime)) / 1000);
 			drawManager.drawCountDown(this, this.level, countdown,
 					this.bonusLife);
 			drawManager.drawHorizontalLine(this, this.height / 2 - this.height
@@ -626,7 +661,7 @@ public class GameScreen extends Screen {
 			}
 		}
 		for (Bullet bullet : this.bullets)
-			if (bullet.getSpeed() > 0) { //적이 발사한 경우
+			if (bullet.getSpeedY() > 0) { //적이 발사한 경우
 				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
 					recyclable.add(bullet);
 					if (!this.ship.isDestroyed()) {
@@ -636,6 +671,9 @@ public class GameScreen extends Screen {
 							this.lives--;
 							this.logger.info("Hit on player ship, " + this.lives
 									+ " lives remaining.");
+							// 죽었으므로 총알 속도와 연사 속도 초기화
+							this.ship.setBulletSpeed(-6);
+							this.ship.setShootingCoolDown(750);
 						}
 						else{
 							this.logger.info("This skill1 is being defended. ! ");
@@ -685,7 +723,7 @@ public class GameScreen extends Screen {
 
 	/**
 	 * Checks if two entities are colliding.
-	 * 
+	 *
 	 * @param a
 	 *            First entity, the bullet.
 	 * @param b
@@ -729,44 +767,51 @@ public class GameScreen extends Screen {
 	// 적개체 부서였을때 확률적으로 아이템을 드랍.
 	private void dropItem(EnemyShip enemyShip){
 		int r = random.nextInt(5);
-		if(r == 1) { // 5분의 1의확률, 중복으로아이템생성x
-			r = random.nextInt(4);
-			if(r == 0){ // 폭탄과 아이템중
-				if(this.item == null) { //아이템이 존재하지않으면
-					effectSound.dropItemSound.start();		// 아이템 드랍 소리
-					this.item = new Item(enemyShip.getPositionX(), enemyShip.getPositionX());
+		if(r == 1) { // 5분의 1의확률, 중복으로 아이템 생성x
+			int c = random.nextInt(5);
+			if(c == 0){
+				if(this.shootingCoolItem == null){ // 연사속도
+					effectSound.dropItemSound.start();
+					this.shootingCoolItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(),DrawManager.SpriteType.ShootingCoolItem);
 				}
 			}
-			else if(r == 1) { //폭탄이드랍.
+			else if(c == 1) {
+				if(this.bulletSpeedItem== null){ // 총알속도
+					effectSound.dropItemSound.start();
+					this.bulletSpeedItem= new Item(enemyShip.getPositionX(), enemyShip.getPositionY(),DrawManager.SpriteType.BulletSpeedItem);
+				}
+			}
+			else if(c == 2) { //폭탄이드랍.
 				if(this.boomItem == null){
 					effectSound.dropItemSound.start();		// 폭탄 아이템 드랍 소리
-					this.boomItem = new Boom(enemyShip.getPositionX(), enemyShip.getPositionX(),0,2);
+					this.boomItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(),DrawManager.SpriteType.Boom);
 				}
 			}
-			else if(r == 2){
+			else if(c == 3){
 				if(this.bonusLifeItem == null){
 					effectSound.dropItemSound.start();		// 보너스 라이프 아이템 드랍 소리
-					this.bonusLifeItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionX(), DrawManager.SpriteType.BonusLifeItem);
+					this.bonusLifeItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), DrawManager.SpriteType.BonusLifeItem);
 				}
 			}
-			else if(r == 3){
+			else {
+				// 점수 오름차순으로 1/2, 1/3, 1/6 확률
 				r = random.nextInt(6);
 				if(r == 0){
 					if(this.bonusScoreItem == null){
 						effectSound.dropItemSound.start();		// 보너스 라이프 아이템 드랍 소리
-						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionX(), DrawManager.SpriteType.BonusScoreItem3);
+						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), DrawManager.SpriteType.BonusScoreItem3);
 					}
 				}
 				else if(r == 1 || r == 2){
 					if(this.bonusScoreItem == null){
 						effectSound.dropItemSound.start();		// 보너스 라이프 아이템 드랍 소리
-						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionX(), DrawManager.SpriteType.BonusScoreItem2);
+						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), DrawManager.SpriteType.BonusScoreItem2);
 					}
 				}
 				else{
 					if(this.bonusScoreItem == null){
 						effectSound.dropItemSound.start();		// 보너스 스코어 아이템 드랍 소리
-						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionX(), DrawManager.SpriteType.BonusScoreItem1);
+						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), DrawManager.SpriteType.BonusScoreItem1);
 					}
 				}
 			}
@@ -775,7 +820,7 @@ public class GameScreen extends Screen {
 
 	/**
 	 * Returns a GameState object representing the status of the game.
-	 * 
+	 *
 	 * @return Current game state.
 	 */
 	public final GameState getGameState() {
