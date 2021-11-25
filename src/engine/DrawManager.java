@@ -375,8 +375,9 @@ public final class DrawManager {
 	public void drawLargeBoom(final int largeBoomtimes){
 		if(largeBoomtimes == 1) backBufferGraphics.setColor(Color.green);
 		else backBufferGraphics.setColor(Color.gray);
-		drawSmallString("Large", 230,20);
-		drawSmallString(" Boom!", 230,31);
+		backBufferGraphics.setFont(fontSmall);
+		backBufferGraphics.drawString("Large", 230,20);
+		backBufferGraphics.drawString(" Boom!", 230,31);
 	}
 
 	/**
@@ -647,6 +648,7 @@ public final class DrawManager {
 	}
 	//작은글씨 그리기, 스킬발동로그용
 	public void drawSmallString(final String string, final int x, final int y){
+		backBufferGraphics.setColor(Color.yellow);
 		backBufferGraphics.setFont(fontSmall);
 		backBufferGraphics.drawString(string,x,y);
 	}

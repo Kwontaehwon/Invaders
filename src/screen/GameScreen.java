@@ -47,6 +47,7 @@ public class GameScreen extends Screen {
 
 	private static final int SKILL_CURSOR_DELAY = 200;
 
+
 	/** Current game difficulty settings. */
 	private GameSettings gameSettings;
 	/** Current difficulty level number. */
@@ -93,9 +94,9 @@ public class GameScreen extends Screen {
 	private Skill3 skill3;
 	private Skill4 skill4;
 	private int[] skillCool; // 스킬4개의 쿨타임을 저장, 다음스테이지에 적용시키기위해.
+	private long pauseTime ; //pause시작했을때의 시간을잼.
 	private LargeBoom largeBoom;
 	private int largeBoomTimes;
-	private long pauseTime ; //pause시작했을때의 시간을잼.
 	// 추가한 부분 (세이브, 로드 관련)
 	private int initScore;
 	private int initLive;
@@ -143,13 +144,14 @@ public class GameScreen extends Screen {
 		this.boomTimes = gameState.getBoomtimes();
 		// 스킬 선언
 		this.skillCool = gameState.getSkillCool();
+
 		this.skill1 = new Skill1(20,this.skillCool[0]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
 		this.skill2 = new Skill2(20,this.skillCool[1]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
 		this.skill3 = new Skill3(20,this.skillCool[2]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
 		this.skill4 = new Skill4(20,this.skillCool[3]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
-
 		// 필살기 횟수 적용
 		this.largeBoomTimes = gameState.getLargeBoomTimes();
+
 		// 추가한 부분
 		this.initScore = this.score;
 		this.initLive = this.lives;
@@ -246,14 +248,25 @@ public class GameScreen extends Screen {
 					this.ship.moveLeft();
 				}
 				//스킬커서
-				if ( this.SkillInputDelay.checkFinished() &&this.inputDelay.checkFinished() && SkillCursorRight && skillCursor < 3) {
-					this.skillCursor++;
-					this.SkillInputDelay.reset();
+				if ( this.SkillInputDelay.checkFinished() &&this.inputDelay.checkFinished()) {
+					if(SkillCursorRight && skillCursor < 3){
+						this.skillCursor++;
+						this.SkillInputDelay.reset();
+					}
+					else if(SkillCursorRight && skillCursor == 3){
+						this.skillCursor = 0;
+						this.SkillInputDelay.reset();
+					}
+					else if(SkillCursorLeft && skillCursor > 0){
+						this.skillCursor--;
+						this.SkillInputDelay.reset();
+					}
+					else if(SkillCursorLeft && skillCursor == 0){
+						this.skillCursor = 3;
+						this.SkillInputDelay.reset();
+					}
 				}
-				if (this.SkillInputDelay.checkFinished()&&this.inputDelay.checkFinished() && SkillCursorLeft && skillCursor > 0) {
-					this.skillCursor--;
-					this.SkillInputDelay.reset();
-				}
+
 				//스킬사용
 				if( this.SkillInputDelay.checkFinished()&&inputManager.isKeyDown(KeyEvent.VK_X)) {
 					if (this.skillCursor == 0 && this.skill1.checkOpen()) { //무적
@@ -328,6 +341,11 @@ public class GameScreen extends Screen {
 					if(this.pauseTime == 0 ) this.pauseTime = System.currentTimeMillis();
 					GameState gameState = getGameState();
 					gameState.setState(initScore, initLive, initBullet, initShip);
+					//남은스킬쿨 저장해서 pauseScreen에 gameStatus에 넘겨줘야됨.
+					this.skillCool[0] = this.skill1.returnSkillCoolTime();
+					this.skillCool[1] = this.skill2.returnSkillCoolTime();
+					this.skillCool[2] = this.skill3.returnSkillCoolTime();
+					this.skillCool[3] = this.skill4.returnSkillCoolTime();
 					GameStatus gameStatus = new GameStatus(gameState, gameSettings, bonusLife);
 					Screen currentScreen = new PauseScreen(width, height, fps, gameStatus);
 					Logger LOGGER = Logger.getLogger(Core.class
@@ -358,6 +376,10 @@ public class GameScreen extends Screen {
 				this.logger.info("The special ship has escaped");
 			}
 
+			//필살기 움직임
+			if(this.largeBoom != null){
+				this.largeBoom.update();
+			}
 			//아이템움직임
 			if(this.item != null ){ //아이템이 존재한다면, 아이템을 아래로떨어짐.
 				this.item.update();
@@ -366,10 +388,7 @@ public class GameScreen extends Screen {
 			if(this.boomItem != null){
 				this.boomItem.update();
 			}
-			//필살기 움직임
-			if(this.largeBoom != null){
-				this.largeBoom.update();
-			}
+
 			this.ship.update();
 			this.enemyShipFormation.update(this.skill2.checkActivate());
 			this.enemyShipFormation.shoot(this.bullets);
@@ -453,6 +472,7 @@ public class GameScreen extends Screen {
 		enemyShipFormation.draw();
 		//활성화중인 스킬의 로그를 그림
 		if(this.skill1.checkActivate()){
+
 			drawManager.drawSmallString("SKILL 1 : SHIELD IS USED",8,55);
 		}
 		if(this.skill2.checkActivate()){
@@ -469,6 +489,15 @@ public class GameScreen extends Screen {
 		for (Boom boom : this.booms)
 			drawManager.drawEntity(boom, boom.getPositionX(),
 					boom.getPositionY());
+		// 필살기
+		if(this.largeBoom != null){
+			if (this.largeBoom.getPositionY() + 200 < 0){
+				this.largeBoom = null;
+			}
+			else {
+				drawManager.drawEntity(this.largeBoom, this.largeBoom.getPositionX(), this.largeBoom.getPositionY());
+			}
+		}
 		// 아이템생성.
 		if(this.item != null ){ //아이템이 존재하면
 			if (item.getPositionY() > this.height){ //아이템이 맵밖으로 떨어지면 사라짐.
@@ -487,16 +516,8 @@ public class GameScreen extends Screen {
 				drawManager.drawEntity(this.boomItem, this.boomItem.getPositionX(), this.boomItem.getPositionY());
 			}
 		}
-		// 필살기
-		if(this.largeBoom != null){
-			if (this.largeBoom.getPositionY() + 200 < 0){
-				this.largeBoom = null;
-			}
-			else {
-				drawManager.drawEntity(this.largeBoom, this.largeBoom.getPositionX(), this.largeBoom.getPositionY());
-			}
-		}
-
+		//필살기 인터페이스 추가
+		drawManager.drawLargeBoom(this.largeBoomTimes);
 
 		//
 		// Interface.
@@ -507,9 +528,6 @@ public class GameScreen extends Screen {
 		drawManager.drawBooms(this, this.boomTimes);
 		// 스킬 인터페이스 추가,pause상태에서는 쿨타임을 그리지않음.
 		drawManager.drawSkills(skillCursor, skill1, skill2, skill3, skill4,this.pauseTime);
-
-		//필살기 인터페이스 추가
-		drawManager.drawLargeBoom(this.largeBoomTimes);
 
 		// Countdown to game start. 스테이지 시작전 5초
 		if (!this.inputDelay.checkFinished()) {
@@ -660,8 +678,6 @@ public class GameScreen extends Screen {
 					this.logger.info("The item is falling !");
 				}
 		}
-
-
 		this.bullets.removeAll(recyclable); //충돌에 사용된 총알제거.
 		BulletPool.recycle(recyclable); // Pool업데이트한후 Pool내 에서 제거해주는듯
 		//폭탄도 똑같이해줌.

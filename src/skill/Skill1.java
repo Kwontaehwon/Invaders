@@ -62,7 +62,7 @@ public class Skill1 extends Skill{
     public boolean checkCoolTime(){
         if(this.skillCooldown.checkFinished()) {
             this.logger.info("Skill1 was used. ");
-            return true; 
+            return true;
         }
         else {
             this.logger.info("Skill1 Cooldown left");
@@ -87,5 +87,4 @@ public class Skill1 extends Skill{
         this.duration.pause(time);
     }
     public boolean checkOpen() { return this.open; }
-
 }
