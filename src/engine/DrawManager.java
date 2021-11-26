@@ -98,7 +98,7 @@ public final class DrawManager {
 		Skill2,
 		Skill3,
 		Skill4,
-		LargeBoom
+		Ultimate
 	};
 
 	/**
@@ -135,7 +135,7 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.Skill2, new int[8][8]);
 			spriteMap.put(SpriteType.Skill3, new int[8][8]);
 			spriteMap.put(SpriteType.Skill4, new int[8][8]);
-			spriteMap.put(SpriteType.LargeBoom, new int[100][100]);
+			spriteMap.put(SpriteType.Ultimate, new int[100][100]);
 
 
 			fileManager.loadSprite(spriteMap);
@@ -450,11 +450,11 @@ public final class DrawManager {
 		}
 	}
 	//필살기 인터페이스
-	public void drawLargeBoom(final int largeBoomtimes){
-		if(largeBoomtimes == 1) backBufferGraphics.setColor(Color.green);
+	public void drawUltimate(final int UltimateTimes){
+		if(UltimateTimes == 1) backBufferGraphics.setColor(Color.green);
 		else backBufferGraphics.setColor(Color.gray);
-		drawSmallString("Large", 230,20);
-		drawSmallString(" Boom!", 230,31);
+		backBufferGraphics.setFont(fontSmall);
+		backBufferGraphics.drawString("Ultimate", 215,25);
 	}
 
 	/**

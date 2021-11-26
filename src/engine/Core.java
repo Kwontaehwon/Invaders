@@ -172,7 +172,7 @@ public final class Core {
 							gameState.getShipsDestroyed(),
 							gameState.getBoomtimes(),
 							gameState.getSkillCool(),
-							gameState.getLargeBoomTimes());
+							gameState.getUltimateTimes());
 
 				} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);
@@ -206,7 +206,7 @@ public final class Core {
 							gameState.getShipsDestroyed(),
 							gameState.getBoomtimes(),
 							gameState.getSkillCool(),
-							gameState.getLargeBoomTimes());
+							gameState.getUltimateTimes());
 
 					// One extra live every few levels.
 					boolean bonusLife = gameState.getLevel()
@@ -237,7 +237,7 @@ public final class Core {
 							gameState.getShipsDestroyed(),
 							gameState.getBoomtimes(),
 							gameState.getSkillCool(),
-							gameState.getLargeBoomTimes());
+							gameState.getUltimateTimes());
 
 				} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);
@@ -298,7 +298,7 @@ public final class Core {
 							gameState.getShipsDestroyed(),
 							gameState.getBoomtimes(),
 							gameState.getSkillCool(),
-							gameState.getLargeBoomTimes());
+							gameState.getUltimateTimes());
 
 				} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);
