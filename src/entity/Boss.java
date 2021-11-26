@@ -52,8 +52,6 @@ public class Boss extends Entity {
 
     /** DrawManager instance. */
     private DrawManager drawManager;
-    /** Application logger. */
-    private Logger logger;
     /** Screen to draw ships on. */
     private Screen screen;
 
@@ -82,7 +80,6 @@ public class Boss extends Entity {
     public Boss() {
         super(INIT_POS_X,INIT_POS_Y, 50 *2 , 40 * 2, Color.white);
         this.drawManager = Core.getDrawManager();
-        this.logger = Core.getLogger();
         this.movementInterval = 0;
         this.spriteType = DrawManager.SpriteType.BossShip1;
         this.isDestroyed = false;
