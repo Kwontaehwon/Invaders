@@ -16,7 +16,8 @@ public class Bullet extends Entity {
 	 * Speed of the bullet, positive or negative depending on direction -
 	 * positive is down.
 	 */
-	private int speed;
+	private int speedX;
+	private int speedY;
 
 	/**
 	 * Constructor, establishes the bullet's properties.
@@ -32,7 +33,16 @@ public class Bullet extends Entity {
 	public Bullet(final int positionX, final int positionY, final int speed) {
 		super(positionX, positionY, 3 * 2, 5 * 2, Color.WHITE);
 
-		this.speed = speed;
+		this.speedX = 0;
+		this.speedY = speed;
+		setSprite();
+	}
+
+	public Bullet(final int positionX, final int positionY, final int speedX, final int speedY) {
+		super(positionX, positionY, 3*2, 5*2, Color.WHITE);
+
+		this.speedX = speedX;
+		this.speedY = speedY;
 		setSprite();
 	}
 
@@ -40,7 +50,7 @@ public class Bullet extends Entity {
 	 * Sets correct sprite for the bullet, based on speed.
 	 */
 	public final void setSprite() {
-		if (speed < 0)
+		if (speedY < 0)
 			this.spriteType = SpriteType.Bullet;
 		else
 			this.spriteType = SpriteType.EnemyBullet;
@@ -50,11 +60,13 @@ public class Bullet extends Entity {
 	 * Updates the bullet's position.
 	 */
 	public final void update(boolean skill3) {
-		if(skill3 && this.speed > 0){
+		if(skill3 && this.speedY > 0){
+			this.positionX += speedX/speedY;
 			this.positionY += 1;
 		}
 		else {
-			this.positionY += this.speed;
+			this.positionY += this.speedY;
+			this.positionX += this.speedX;
 		}
 
 	}
@@ -62,19 +74,39 @@ public class Bullet extends Entity {
 	/**
 	 * Setter of the speed of the bullet.
 	 * 
-	 * @param speed
+	 * @param speedY
 	 *            New speed of the bullet.
 	 */
-	public final void setSpeed(final int speed) {
-		this.speed = speed;
+	public final void setSpeedY(final int speedY) {
+		this.speedY = speedY;
+	}
+
+	/**
+	 * Setter of the speeds of the bullet.
+	 *
+	 * @param speedX
+	 * 				New speedX of the bullet.
+	 * @param speedY
+	 * 				New speedY of the bullet.
+	 */
+	public final void setSpeed(final int speedX, final int speedY) {
+		this.speedX = speedX;
+		this.speedY = speedY;
 	}
 
 	/**
 	 * Getter for the speed of the bullet.
 	 * 
-	 * @return Speed of the bullet.
+	 * @return SpeedY of the bullet.
 	 */
-	public final int getSpeed() {
-		return this.speed;
+	public final int getSpeedY() {
+		return this.speedY;
 	}
+
+	/**
+	 * Getter for the speedX of the bullet.
+	 *
+	 * @return SpeedX of the Bullet
+	 */
+	public final int getSpeedX() { return this.speedX; }
 }

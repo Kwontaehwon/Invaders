@@ -59,7 +59,12 @@ public final class Core {
 	/** Difficulty settings for level 7. */
 	private static final GameSettings SETTINGS_LEVEL_7 =
 			new GameSettings(8, 7, 2, 500);
-	
+	/** boss statge */
+	private static final GameSettings SETTINGS_LEVEL_8 =
+			new GameSettings(8, 7, 2, 500);
+
+
+
 	/** Frame to draw the screen on. */
 	private static Frame frame;
 	/** Screen currently shown. */
@@ -121,6 +126,7 @@ public final class Core {
 		gameSettings.add(SETTINGS_LEVEL_5);
 		gameSettings.add(SETTINGS_LEVEL_6);
 		gameSettings.add(SETTINGS_LEVEL_7);
+		gameSettings.add(SETTINGS_LEVEL_8);
 
 		DesignSetting designSetting = new DesignSetting(DrawManager.SpriteType.Ship);
 		GameState gameState;
@@ -129,7 +135,7 @@ public final class Core {
 		do {
 			flag_main = false;
 			// 맨처음 폭탄발사횟수,스킬쿨타임, 필살기횟수지정(나중에 0으로수정.)
-			gameState = new GameState(1, 0, MAX_LIVES, 0, 0,3, new int[]{15, 15, 15, 15},1);
+			gameState = new GameState(8, 0, MAX_LIVES, 0, 0,3, new int[]{15, 15, 15, 15},1);
 
 			switch (returnCode) {
 			case 1:

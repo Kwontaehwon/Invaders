@@ -38,15 +38,49 @@ public final class BulletPool {
 			final int positionY, final int speed) {
 		Bullet bullet;
 		if (!pool.isEmpty()) {
-			bullet = pool.iterator().next(); // 객체로 Set의 모든 아이템을 순회(for loop 같은느낌)
-			pool.remove(bullet); //있으면 삭제. recycle을 통해 업데이트된 총알삭제하는듯.
+			bullet = pool.iterator().next();
+			pool.remove(bullet);
 			bullet.setPositionX(positionX - bullet.getWidth() / 2);
 			bullet.setPositionY(positionY);
-			bullet.setSpeed(speed);
+			bullet.setSpeedY(speed);
 			bullet.setSprite();
 
 		} else {
 			bullet = new Bullet(positionX, positionY, speed);
+			bullet.setPositionX(positionX - bullet.getWidth() / 2);
+		}
+		return bullet;
+	}
+
+	/**
+	 * Returns a bullet from the pool if one is available, a new one if there
+	 * isn't.
+	 *
+	 * @param positionX
+	 *            Requested position of the bullet in the X axis.
+	 * @param positionY
+	 *            Requested position of the bullet in the Y axis.
+	 * @param speedY
+	 *            Requested speed of the bullet, positive or negative depending
+	 *            on direction - positive is down.
+	 * @param speedY
+	 * 			  Requested speed of the bullet, positive or negative depending
+	 * 	 *            on direction - positive is down.
+	 * @return Requested bullet.
+	 */
+	public static Bullet getBullet(final int positionX, final int positionY,
+								   final int speedX, final int speedY) {
+		Bullet bullet;
+		if (!pool.isEmpty()) {
+			bullet = pool.iterator().next();
+			pool.remove(bullet);
+			bullet.setPositionX(positionX - bullet.getWidth() / 2);
+			bullet.setPositionY(positionY);
+			bullet.setSpeed(speedX, speedY);
+			bullet.setSprite();
+
+		} else {
+			bullet = new Bullet(positionX, positionY, speedX, speedY);
 			bullet.setPositionX(positionX - bullet.getWidth() / 2);
 		}
 		return bullet;

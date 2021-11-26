@@ -98,7 +98,13 @@ public final class DrawManager {
 		Skill2,
 		Skill3,
 		Skill4,
-		LargeBoom
+		LargeBoom,
+		/** BossShip1 */
+		BossShip1,
+		/** BossShip2 */
+		BossShip2,
+		/** BossShip3 */
+		BossShip3
 	};
 
 	/**
@@ -136,6 +142,9 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.Skill3, new int[8][8]);
 			spriteMap.put(SpriteType.Skill4, new int[8][8]);
 			spriteMap.put(SpriteType.LargeBoom, new int[100][100]);
+			spriteMap.put(SpriteType.BossShip1, new int[50][40]);
+			spriteMap.put(SpriteType.BossShip2, new int[50][40]);
+			spriteMap.put(SpriteType.BossShip3, new int[50][40]);
 
 
 			fileManager.loadSprite(spriteMap);

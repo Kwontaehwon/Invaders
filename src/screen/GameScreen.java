@@ -47,6 +47,8 @@ public class GameScreen extends Screen {
 
 	private static final int SKILL_CURSOR_DELAY = 200;
 
+	private static final int BOSS_STAGE_LEVEL = 8;
+
 	/** Current game difficulty settings. */
 	private GameSettings gameSettings;
 	/** Current difficulty level number. */
@@ -79,6 +81,9 @@ public class GameScreen extends Screen {
 	private boolean levelFinished;
 	/** Checks if a bonus life is received. */
 	private boolean bonusLife;
+	/** */
+	private Boss boss;
+
 	// 추가한 부분
 	private Item item;
 	private Cooldown itemCooldown;
@@ -161,10 +166,17 @@ public class GameScreen extends Screen {
 	 */
 	public final void initialize() {
 		super.initialize();
+		if(this.level == BOSS_STAGE_LEVEL ){
+			this.boss = new Boss();
+			this.boss.attach(this);
+		}
+		else {
+			enemyShipFormation = new EnemyShipFormation(this.gameSettings);
+			enemyShipFormation.attach(this);
 
-		enemyShipFormation = new EnemyShipFormation(this.gameSettings);
-		enemyShipFormation.attach(this);
 
+
+		}
 		this.ship = new Ship(this.width / 2, this.height - 30, designSetting.getShipType());
 		// Appears each 10-30 seconds.
 		this.enemyShipSpecialCooldown = Core.getVariableCooldown(
@@ -172,6 +184,7 @@ public class GameScreen extends Screen {
 		this.enemyShipSpecialCooldown.reset();
 		this.enemyShipSpecialExplosionCooldown = Core
 				.getCooldown(BONUS_SHIP_EXPLOSION);
+
 		this.screenFinishedCooldown = Core.getCooldown(SCREEN_CHANGE_INTERVAL);
 		this.bullets = new HashSet<Bullet>();
 
@@ -375,8 +388,20 @@ public class GameScreen extends Screen {
 			}
 
 			this.ship.update();
-			this.enemyShipFormation.update(this.skill2.checkActivate());
-			this.enemyShipFormation.shoot(this.bullets);
+			//적 움직임.
+			if(this.level == BOSS_STAGE_LEVEL ){
+				this.boss.update();
+				int r = random.nextInt(6);
+				if(r == 0) this.boss.pinwheelShoot(this.bullets);
+				else if( r == 1 || r== 2)
+					this.boss.targetingShoot(this.bullets,this.ship);
+				else this.boss.randomShoot(this.bullets);
+			}
+			else {
+				this.enemyShipFormation.update(this.skill2.checkActivate());
+				this.enemyShipFormation.targetingShoot(this.bullets, this.ship);
+			}
+
 		}
 		else{
 			//스킬쿨타임에 적용시키기위해, 시간을잼.
@@ -422,18 +447,34 @@ public class GameScreen extends Screen {
 		cleanBullets();
 		//스크린 밖으로 나간 폭탄없애기, 또한 Booms업데이트
 		cleanBooms();
-
 		draw();
-		if ((this.enemyShipFormation.isEmpty() || this.lives == 0)
-				&& !this.levelFinished) {
-			//남은스킬쿨 저장
-			this.skillCool[0] = this.skill1.returnSkillCoolTime();
-			this.skillCool[1] = this.skill2.returnSkillCoolTime();
-			this.skillCool[2] = this.skill3.returnSkillCoolTime();
-			this.skillCool[3] = this.skill4.returnSkillCoolTime();
-			this.levelFinished = true;
-			this.screenFinishedCooldown.reset();
+
+		if(this.level == BOSS_STAGE_LEVEL ){
+			if ((this.boss.isDestroyed() || this.lives == 0)
+					&& !this.levelFinished) {
+				//남은스킬쿨 저장
+				this.skillCool[0] = this.skill1.returnSkillCoolTime();
+				this.skillCool[1] = this.skill2.returnSkillCoolTime();
+				this.skillCool[2] = this.skill3.returnSkillCoolTime();
+				this.skillCool[3] = this.skill4.returnSkillCoolTime();
+				this.levelFinished = true;
+				this.screenFinishedCooldown.reset();
+			}
 		}
+		else {
+			if ((this.enemyShipFormation.isEmpty() || this.lives == 0)
+					&& !this.levelFinished) {
+				//남은스킬쿨 저장
+				this.skillCool[0] = this.skill1.returnSkillCoolTime();
+				this.skillCool[1] = this.skill2.returnSkillCoolTime();
+				this.skillCool[2] = this.skill3.returnSkillCoolTime();
+				this.skillCool[3] = this.skill4.returnSkillCoolTime();
+				this.levelFinished = true;
+				this.screenFinishedCooldown.reset();
+			}
+		}
+
+
 
 		if (this.levelFinished && this.screenFinishedCooldown.checkFinished())
 			this.isRunning = false;
@@ -456,7 +497,12 @@ public class GameScreen extends Screen {
 					this.enemyShipSpecial.getPositionX(),
 					this.enemyShipSpecial.getPositionY());
 
-		enemyShipFormation.draw();
+		if(this.level == BOSS_STAGE_LEVEL ){
+			this.boss.draw();
+		}
+		else {
+			enemyShipFormation.draw();
+		}
 		//활성화중인 스킬의 로그를 그림
 		if(this.skill1.checkActivate()){
 			drawManager.drawSmallString("SKILL 1 : SHIELD IS USED",8,55);
@@ -471,7 +517,6 @@ public class GameScreen extends Screen {
 		for (Bullet bullet : this.bullets)
 			drawManager.drawEntity(bullet, bullet.getPositionX(),
 					bullet.getPositionY());
-		// 내가 발사한 폭탄
 		for (Boom boom : this.booms)
 			drawManager.drawEntity(boom, boom.getPositionX(),
 					boom.getPositionY());
@@ -493,8 +538,6 @@ public class GameScreen extends Screen {
 				drawManager.drawEntity(this.boomItem, this.boomItem.getPositionX(), this.boomItem.getPositionY());
 			}
 		}
-
-		//
 		// Interface.
 		drawManager.drawScore(this, this.score);
 		drawManager.drawLives(this, this.lives,designSetting.getShipType());
@@ -557,29 +600,44 @@ public class GameScreen extends Screen {
 		Set<Boom> recyclableBoom = new HashSet<Boom>();
 		//폭탄 충돌판단
 		for(Boom boom : this.booms) {
-			for (EnemyShip enemyShip : this.enemyShipFormation)
-				if (!enemyShip.isDestroyed() //enemyShip과 충돌을 하면
-						&& checkCollision(boom, enemyShip)) {
-					for (EnemyShip enemyShip2 : this.enemyShipFormation) {
-						if (!enemyShip2.isDestroyed() //좌표상 폭탄범위에 해당하는 enemyShip destroy.
-								&& checkBoomCollision(boom,enemyShip2)) {
-							if (enemyShip.getLive() >= 2) {
-								effectSound.hitEnemySound.start();			// 적이 폭탄에 타격되는 소리 (사라지지는 않음)
-								this.enemyShipFormation.destroy(enemyShip2);
-							} else {
-								effectSound.destroyedEnemySound.start();	// 적이 폭탄에 파괴되는 소리
-								this.score += enemyShip2.getPointValue();
-								this.shipsDestroyed++;
-								this.enemyShipFormation.destroy(enemyShip2);
-								// item 떨어짐.
-								dropItem(enemyShip);
-								this.logger.info("The item is falling !");
+			if(this.level == BOSS_STAGE_LEVEL) {
+				if (this.level == BOSS_STAGE_LEVEL) {
+					if (checkCollision(boom, this.boss)) {
+						effectSound.destroyedEnemySound.start();
+						this.boss.destroy();
+						if (this.boss.isDestroyed()) {
+							this.score += boss.getPointValue();
+						}
+						recyclableBoom.add(boom); //충돌에 사용된 폭탄제거.
+					}
+				}
+			}
+			else {
+				for (EnemyShip enemyShip : this.enemyShipFormation)
+					if (!enemyShip.isDestroyed() //enemyShip과 충돌을 하면
+							&& checkCollision(boom, enemyShip)) {
+						for (EnemyShip enemyShip2 : this.enemyShipFormation) {
+							if (!enemyShip2.isDestroyed() //좌표상 폭탄범위에 해당하는 enemyShip destroy.
+									&& checkBoomCollision(boom,enemyShip2)) {
+								if (enemyShip.getLive() >= 2) {
+									effectSound.hitEnemySound.start();			// 적이 폭탄에 타격되는 소리 (사라지지는 않음)
+									this.enemyShipFormation.destroy(enemyShip2);
+								} else {
+									effectSound.destroyedEnemySound.start();	// 적이 폭탄에 파괴되는 소리
+									this.score += enemyShip2.getPointValue();
+									this.shipsDestroyed++;
+									this.enemyShipFormation.destroy(enemyShip2);
+									// item 떨어짐.
+									dropItem(enemyShip);
+									this.logger.info("The item is falling !");
 
+								}
 							}
 						}
+						recyclableBoom.add(boom); //충돌에 사용된 폭탄제거.
 					}
-					recyclableBoom.add(boom); //충돌에 사용된 폭탄제거.
-				}
+			}
+
 			if (this.enemyShipSpecial != null
 					&& !this.enemyShipSpecial.isDestroyed()
 					&& checkCollision(boom, this.enemyShipSpecial)) {
@@ -591,7 +649,7 @@ public class GameScreen extends Screen {
 			}
 		}
 		for (Bullet bullet : this.bullets)
-			if (bullet.getSpeed() > 0) { //적이 발사한 경우
+			if (bullet.getSpeedY() > 0) { //적이 발사한 경우
 				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
 					recyclable.add(bullet);
 					if (!this.ship.isDestroyed()) {
@@ -608,25 +666,35 @@ public class GameScreen extends Screen {
 					}
 				}
 			} else { // 내가 발사한 경우.
-				// 적ship 총알 하나하나마다 충돌되었는지 확인
-				for (EnemyShip enemyShip : this.enemyShipFormation)
-					if (!enemyShip.isDestroyed() //파괴된 적비행기가아니고
-							&& checkCollision(bullet, enemyShip)) {
-						if(enemyShip.getLive()>=2){			// 기본 live값이 2 이상인 적을 카운트하지 않음.
-							effectSound.hitEnemySound.start();			// 적이 총알에 타격되는 소리 (사라지지는 않음)
-							this.enemyShipFormation.destroy(enemyShip);
-						}
-						else{
-							effectSound.destroyedEnemySound.start();	// 적이 총알에 파괴되는 소리
-							this.score += enemyShip.getPointValue();
-							this.shipsDestroyed++;
-							this.enemyShipFormation.destroy(enemyShip);
-							// item 떨어짐.
-							dropItem(enemyShip);
-							this.logger.info("The item is falling !");
+				if(this.level == BOSS_STAGE_LEVEL){
+					if(checkCollision(bullet,this.boss)){
+						effectSound.destroyedEnemySound.start();
+						this.boss.destroy();
+						if(this.boss.isDestroyed()){
+							this.score += boss.getPointValue();
 						}
 						recyclable.add(bullet); //충돌에 사용된 총알제거.
 					}
+				}
+				else { // 적ship 총알 하나하나마다 충돌되었는지 확인
+					for (EnemyShip enemyShip : this.enemyShipFormation)
+						if (!enemyShip.isDestroyed() //파괴된 적비행기가아니고
+								&& checkCollision(bullet, enemyShip)) {
+							if (enemyShip.getLive() >= 2) { // 기본 live값이 2 이상인 적을 카운트하지 않음.
+								effectSound.hitEnemySound.start();
+								this.enemyShipFormation.destroy(enemyShip);
+							} else {
+								effectSound.destroyedEnemySound.start();
+								this.score += enemyShip.getPointValue();
+								this.shipsDestroyed++;
+								this.enemyShipFormation.destroy(enemyShip);
+								// item 떨어짐.
+								dropItem(enemyShip);
+								this.logger.info("The item is falling !");
+							}
+							recyclable.add(bullet); //충돌에 사용된 총알제거.
+						}
+				}
 				// 적특별개체 판단여부
 				if (this.enemyShipSpecial != null
 						&& !this.enemyShipSpecial.isDestroyed()
