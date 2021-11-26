@@ -84,7 +84,7 @@ public class Boss extends Entity {
         this.movementInterval = 0;
         this.spriteType = DrawManager.SpriteType.BossShip1;
         this.isDestroyed = false;
-
+        this.currentDirection = Direction.UP;
 
     }
 
@@ -215,8 +215,8 @@ public class Boss extends Entity {
 
             int difX = target.getPositionX() + target.width / 2 - this.getPositionX() - this.width / 2;
             int difY = target.getPositionY()-this.getPositionY();
-            bullets.add(BulletPool.getBullet(this.getPositionX() + this.width / 2,
-                    this.getPositionY(), difX*BULLET_SPEED/200, difY*BULLET_SPEED/200));
+            bullets.add(BulletPool.getBullet(this.getPositionX() + this.getWidth() / 2,
+                    this.getPositionY() + this.getHeight()/2, difX*BULLET_SPEED/200, difY*BULLET_SPEED/200));
         }
     }
     /**
@@ -231,7 +231,7 @@ public class Boss extends Entity {
             for (int j = 0; j>=-2; j--) {
                 for (int i = 30; i <= 150; i = i + 15) {
                     bullets.add(BulletPool.getBullet(this.getPositionX() + 40
-                                    + this.getWidth() / 2 + this.X_SPEED, this.getPositionY(),
+                                    + this.getWidth() / 2 + this.X_SPEED, this.getPositionY() + + this.getHeight()/2,
                             (int) Math.round((BULLET_SPEED+j) * Math.cos(Math.toRadians(i))),
                             (int) Math.round((BULLET_SPEED+j) * Math.sin(Math.toRadians(i)))));
                 }
@@ -256,7 +256,7 @@ public class Boss extends Entity {
 
             for(Iterator i = speedX.iterator(); i.hasNext();){
                 bullets.add(BulletPool.getBullet(this.getPositionX() + 40
-                        + this.getWidth() / 2, this.getPositionY(), Integer.parseInt(i.next().toString()), BULLET_SPEED));
+                        + this.getWidth() / 2, this.getPositionY()+this.getHeight()/2, Integer.parseInt(i.next().toString()), BULLET_SPEED));
             }
         }
     }

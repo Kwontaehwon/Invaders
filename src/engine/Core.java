@@ -135,7 +135,7 @@ public final class Core {
 		do {
 			flag_main = false;
 			// 맨처음 폭탄발사횟수,스킬쿨타임, 필살기횟수지정(나중에 0으로수정.)
-			gameState = new GameState(8, 0, MAX_LIVES, 0, 0,3, new int[]{15, 15, 15, 15},1);
+			gameState = new GameState(8, 0, MAX_LIVES, 0, 0,3, new int[]{15, 15, 15, 15},0);
 
 			switch (returnCode) {
 			case 1:
@@ -178,7 +178,7 @@ public final class Core {
 							gameState.getShipsDestroyed(),
 							gameState.getBoomtimes(),
 							gameState.getSkillCool(),
-							gameState.getLargeBoomTimes());
+							gameState.getUltimateTimes());
 
 				} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);
@@ -212,7 +212,7 @@ public final class Core {
 							gameState.getShipsDestroyed(),
 							gameState.getBoomtimes(),
 							gameState.getSkillCool(),
-							gameState.getLargeBoomTimes());
+							gameState.getUltimateTimes());
 
 					// One extra live every few levels.
 					boolean bonusLife = gameState.getLevel()
@@ -243,7 +243,7 @@ public final class Core {
 							gameState.getShipsDestroyed(),
 							gameState.getBoomtimes(),
 							gameState.getSkillCool(),
-							gameState.getLargeBoomTimes());
+							gameState.getUltimateTimes());
 
 				} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);
@@ -304,7 +304,7 @@ public final class Core {
 							gameState.getShipsDestroyed(),
 							gameState.getBoomtimes(),
 							gameState.getSkillCool(),
-							gameState.getLargeBoomTimes());
+							gameState.getUltimateTimes());
 
 				} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);

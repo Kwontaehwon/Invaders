@@ -88,4 +88,5 @@ public class Skill2 extends Skill{
         this.duration.pause(time);
     }
     public boolean checkOpen() { return this.open; }
+
 }
