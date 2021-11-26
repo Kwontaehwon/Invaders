@@ -12,6 +12,8 @@ import java.util.logging.Logger;
 
 public class Boss extends Entity {
 
+    protected Logger logger;
+
     private int live = 10;
 
     private static final int pointValue = 300;
@@ -85,6 +87,7 @@ public class Boss extends Entity {
         this.spriteType = DrawManager.SpriteType.BossShip1;
         this.isDestroyed = false;
         this.currentDirection = Direction.UP;
+        this.logger = Core.getLogger();
 
     }
 
@@ -98,18 +101,6 @@ public class Boss extends Entity {
         screen = newScreen;
     }
 
-    /**
-     * Moves the ship the specified distance.
-     *
-     * @param distanceX
-     *            Distance to move in the X axis.
-     * @param distanceY
-     *            Distance to move in the Y axis.
-     */
-    public final void move(final int distanceX, final int distanceY) {
-        this.positionX += distanceX;
-        this.positionY += distanceY;
-    }
 
     /**
      * Updates the position of the ships.
@@ -177,7 +168,7 @@ public class Boss extends Entity {
             positionY += -Y_SPEED;
         }
 
-        //bottom
+        //bottom 한계체크
         if(this.getPositionY()+ this.getHeight() >= this.screen.getHeight()-BOTTOM_MARGIN){
             positionY += -Y_SPEED;
         }
@@ -267,7 +258,6 @@ public class Boss extends Entity {
      */
     public final void destroy() {
         this.live--;
-        // 피격시 spriteType 을 바꿔줌
         if( this.live == 5){
             this.spriteType = DrawManager.SpriteType.BossShip2;
         }
@@ -277,21 +267,25 @@ public class Boss extends Entity {
         else if (this.live == 0){
             this.isDestroyed = true;
             this.spriteType = DrawManager.SpriteType.Explosion; //나중에 보스파괴모션.
+            this.logger.info("The Boss is destroyed." );
         }
     }
 
     /**
-     * Getter for the score bonus if this ship is destroyed.
+     * Getter for the score bonus if this boss is destroyed.
      *
-     * @return Value of the ship.
+     * @return Value of the boss.
      */
     public final int getPointValue() {
         return this.pointValue;
     }
-
+    /**
+     * Getter for the score bonus if this boss is destroyed.
+     *
+     * @return Value of the boss.
+     */
     public final boolean isDestroyed() {
         return this.isDestroyed;
     }
 
-    public int getLive() { return this.live; }
 }
