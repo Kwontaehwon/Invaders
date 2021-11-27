@@ -21,9 +21,9 @@ import skill.*;
 
 /**
  * Manages screen drawing.
- * 
+ *
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
- * 
+ *
  */
 public final class DrawManager {
 
@@ -66,7 +66,9 @@ public final class DrawManager {
 		/** Destroyed player ship. */
 		ShipDestroyed,
 		/** Player bullet. */
-		Bullet,
+		Bullet1,
+		Bullet2,
+		Bullet3,
 		/** Enemy bullet. */
 		EnemyBullet,
 		/** First enemy ship - first form. */
@@ -86,7 +88,9 @@ public final class DrawManager {
 		/** Destroyed enemy ship. */
 		Explosion,
 		//추가한것.
-		Box, Boom,
+		ShootingCoolItem,
+		BulletSpeedItem,
+		Boom,
 		/** test.*/
 		NewShipDesign,
 		// 두번피격적 추가.
@@ -98,6 +102,10 @@ public final class DrawManager {
 		Skill2,
 		Skill3,
 		Skill4,
+		BonusLifeItem,
+		BonusScoreItem1,
+		BonusScoreItem2,
+		BonusScoreItem3,
 		Ultimate
 	};
 
@@ -114,7 +122,9 @@ public final class DrawManager {
 			// 각각의 이름그대로, 배, 배파괴되어을때, 총알등등이있음.
 			spriteMap.put(SpriteType.Ship, new int[13][8]);
 			spriteMap.put(SpriteType.ShipDestroyed, new int[13][8]);
-			spriteMap.put(SpriteType.Bullet, new int[5][5]);
+			spriteMap.put(SpriteType.Bullet1, new int[5][5]);
+			spriteMap.put(SpriteType.Bullet2, new int[5][5]);
+			spriteMap.put(SpriteType.Bullet3, new int[5][5]);
 			spriteMap.put(SpriteType.EnemyBullet, new int[3][5]);
 			spriteMap.put(SpriteType.EnemyShipA1, new int[12][8]);
 			spriteMap.put(SpriteType.EnemyShipA2, new int[12][8]);
@@ -124,7 +134,8 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.EnemyShipC2, new int[12][8]);
 			spriteMap.put(SpriteType.EnemyShipSpecial, new int[16][7]);
 			spriteMap.put(SpriteType.Explosion, new int[13][7]);
-			spriteMap.put(SpriteType.Box, new int[13][8]);
+			spriteMap.put(SpriteType.ShootingCoolItem, new int[13][8]);
+			spriteMap.put(SpriteType.BulletSpeedItem, new int[13][8]);
 			spriteMap.put(SpriteType.Boom, new int[8][8]);
 			spriteMap.put(SpriteType.NewShipDesign, new int[13][8]);
 			spriteMap.put(SpriteType.EnemyShipD1, new int[12][8]);
@@ -136,6 +147,10 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.Skill3, new int[8][8]);
 			spriteMap.put(SpriteType.Skill4, new int[8][8]);
 			spriteMap.put(SpriteType.Ultimate, new int[100][100]);
+			spriteMap.put(SpriteType.BonusLifeItem, new int[8][8]);
+			spriteMap.put(SpriteType.BonusScoreItem1, new int[5][5]);
+			spriteMap.put(SpriteType.BonusScoreItem2, new int[5][5]);
+			spriteMap.put(SpriteType.BonusScoreItem3, new int[5][5]);
 
 
 			fileManager.loadSprite(spriteMap);
@@ -159,7 +174,7 @@ public final class DrawManager {
 
 	/**
 	 * Returns shared instance of DrawManager.
-	 * 
+	 *
 	 * @return Shared instance of DrawManager.
 	 */
 	protected static DrawManager getInstance() {
@@ -170,7 +185,7 @@ public final class DrawManager {
 
 	/**
 	 * Sets the frame to draw the image on.
-	 * 
+	 *
 	 * @param currentFrame
 	 *            Frame to draw on.
 	 */
@@ -181,7 +196,7 @@ public final class DrawManager {
 	/**
 	 * First part of the drawing process. Initialices buffers, draws the
 	 * background and prepares the images.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw in.
 	 */
@@ -207,7 +222,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws the completed drawing on screen.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 */
@@ -218,7 +233,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws an entity, using the apropiate image.
-	 * 
+	 *
 	 * @param entity
 	 *            Entity to be drawn.
 	 * @param positionX
@@ -258,7 +273,7 @@ public final class DrawManager {
 
 	/**
 	 * For debugging purpouses, draws the canvas borders.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw in.
 	 */
@@ -275,7 +290,7 @@ public final class DrawManager {
 
 	/**
 	 * For debugging purpouses, draws a grid over the canvas.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw in.
 	 */
@@ -342,7 +357,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws current score on screen.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param score
@@ -357,7 +372,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws number of remaining lives on screen.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param lives
@@ -374,7 +389,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws a thick line from side to side of the screen.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param positionY
@@ -476,7 +491,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws game title.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 */
@@ -495,7 +510,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws main menu.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param option
@@ -539,11 +554,11 @@ public final class DrawManager {
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, exitString, screen.getHeight() / 3
 				* 2 + fontRegularMetrics.getHeight() * 6);
-		}
+	}
 
 	/**
 	 * Draws game results.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param score
@@ -558,8 +573,8 @@ public final class DrawManager {
 	 *            If the score is a new high score.
 	 */
 	public void drawResults(final Screen screen, final int score,
-			final int livesRemaining, final int shipsDestroyed,
-			final float accuracy, final boolean isNewRecord) {
+							final int livesRemaining, final int shipsDestroyed,
+							final float accuracy, final boolean isNewRecord) {
 		String scoreString = String.format("score %04d", score);
 		String livesRemainingString = "lives remaining " + livesRemaining;
 		String shipsDestroyedString = "enemies destroyed " + shipsDestroyed;
@@ -583,7 +598,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws interactive characters for name input.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param name
@@ -592,7 +607,7 @@ public final class DrawManager {
 	 *            Current character selected for modification.
 	 */
 	public void drawNameInput(final Screen screen, final char[] name,
-			final int nameCharSelected) {
+							  final int nameCharSelected) {
 		String newRecordString = "New Record!";
 		String introduceNameString = "Introduce name:";
 
@@ -607,9 +622,9 @@ public final class DrawManager {
 		int positionX = screen.getWidth()
 				/ 2
 				- (fontRegularMetrics.getWidths()[name[0]]
-						+ fontRegularMetrics.getWidths()[name[1]]
-						+ fontRegularMetrics.getWidths()[name[2]]
-								+ fontRegularMetrics.getWidths()[' ']) / 2;
+				+ fontRegularMetrics.getWidths()[name[1]]
+				+ fontRegularMetrics.getWidths()[name[2]]
+				+ fontRegularMetrics.getWidths()[' ']) / 2;
 
 		for (int i = 0; i < 3; i++) {
 			if (i == nameCharSelected)
@@ -620,8 +635,8 @@ public final class DrawManager {
 			positionX += fontRegularMetrics.getWidths()[name[i]] / 2;
 			positionX = i == 0 ? positionX
 					: positionX
-							+ (fontRegularMetrics.getWidths()[name[i - 1]]
-									+ fontRegularMetrics.getWidths()[' ']) / 2;
+					+ (fontRegularMetrics.getWidths()[name[i - 1]]
+					+ fontRegularMetrics.getWidths()[' ']) / 2;
 
 			backBufferGraphics.drawString(Character.toString(name[i]),
 					positionX,
@@ -632,7 +647,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws basic content of game over screen.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param acceptsInput
@@ -641,7 +656,7 @@ public final class DrawManager {
 	 *            If the score is a new high score.
 	 */
 	public void drawGameOver(final Screen screen, final boolean acceptsInput,
-			final boolean isNewRecord) {
+							 final boolean isNewRecord) {
 		String gameOverString = "Game Over";
 		String continueOrExitString =
 				"Press Space to play again, Escape to exit";
@@ -662,7 +677,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws high score screen title and instructions.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 */
@@ -680,14 +695,14 @@ public final class DrawManager {
 
 	/**
 	 * Draws high scores.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param highScores
 	 *            List of high scores.
 	 */
 	public void drawHighScores(final Screen screen,
-			final List<Score> highScores) {
+							   final List<Score> highScores) {
 		backBufferGraphics.setColor(Color.WHITE);
 		int i = 0;
 		String scoreString = "";
@@ -703,7 +718,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws a centered string on regular font.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param string
@@ -712,7 +727,7 @@ public final class DrawManager {
 	 *            Height of the drawing.
 	 */
 	public void drawCenteredRegularString(final Screen screen,
-			final String string, final int height) {
+										  final String string, final int height) {
 		backBufferGraphics.setFont(fontRegular);
 		backBufferGraphics.drawString(string, screen.getWidth() / 2
 				- fontRegularMetrics.stringWidth(string) / 2, height);
@@ -720,7 +735,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws a centered string on big font.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param string
@@ -729,7 +744,7 @@ public final class DrawManager {
 	 *            Height of the drawing.
 	 */
 	public void drawCenteredBigString(final Screen screen, final String string,
-			final int height) {
+									  final int height) {
 		backBufferGraphics.setFont(fontBig);
 		backBufferGraphics.drawString(string, screen.getWidth() / 2
 				- fontBigMetrics.stringWidth(string) / 2, height);
@@ -749,7 +764,7 @@ public final class DrawManager {
 
 	/**
 	 * Countdown to game start.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param level
@@ -760,7 +775,7 @@ public final class DrawManager {
 	 *            Checks if a bonus life is received.
 	 */
 	public void drawCountDown(final Screen screen, final int level,
-			final int number, final boolean bonusLife) {
+							  final int number, final boolean bonusLife) {
 		int rectWidth = screen.getWidth();
 		int rectHeight = screen.getHeight() / 6;
 		backBufferGraphics.setColor(Color.BLACK);
@@ -780,15 +795,15 @@ public final class DrawManager {
 								+ fontBigMetrics.getHeight() / 3);
 			}
 			else if (!bonusLife) {
-					drawCenteredBigString(screen, "Level " + level,
-							screen.getHeight() / 2
-									+ fontBigMetrics.getHeight() / 3);
-				}
+				drawCenteredBigString(screen, "Level " + level,
+						screen.getHeight() / 2
+								+ fontBigMetrics.getHeight() / 3);
+			}
 			else {
-					drawCenteredBigString(screen, "Level " + level
-									+ " - Bonus life!",
-							screen.getHeight() / 2
-									+ fontBigMetrics.getHeight() / 3);
+				drawCenteredBigString(screen, "Level " + level
+								+ " - Bonus life!",
+						screen.getHeight() / 2
+								+ fontBigMetrics.getHeight() / 3);
 			}
 		else if (number != 0)
 			drawCenteredBigString(screen, Integer.toString(number),

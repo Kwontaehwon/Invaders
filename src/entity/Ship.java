@@ -15,7 +15,7 @@ import engine.DrawManager.SpriteType;
  */
 public class Ship extends Entity {
 	/** Time between shots. */
-	private static final int SHOOTING_INTERVAL = 750;
+	private static int SHOOTING_INTERVAL = 750;
 	/** Speed of the bullets shot by the ship. */
 	private static int BULLET_SPEED = -6;
 	/** Movement of the ship for each unit of time. */
@@ -129,16 +129,25 @@ public class Ship extends Entity {
 		return SPEED;
 	}
 	//추가한부분: 총알 쿨타움조절함수
-	public void setShootingCooldown(int interval){
-		this.shootingCooldown = Core.getCooldown(interval);
-	}
 	//추가한부분: 총알 속도조절
 	public void setBulletSpeed(int speed) {this.BULLET_SPEED = speed;}
 
+
+	public int getShootingCoolDown(){
+		return this.shootingCooldown.getMilliseconds();
+	}
+	public int getBulletSpeed(){
+		return this.BULLET_SPEED;
+	}
 
 	/**
 	 * Setter for the ship's spriteType.
 	 * @param type represents design
 	 */
 	public void setShipType(SpriteType type){ this.shipType = type; }
+
+	public void setShootingCoolDown(int interval) {
+		this.shootingCooldown = Core.getCooldown(interval);
+		SHOOTING_INTERVAL = interval;
+	}
 }
