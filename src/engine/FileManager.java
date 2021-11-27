@@ -2,6 +2,10 @@ package engine;
 
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.Image;
+import java.awt.image.RenderedImage;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -122,6 +126,34 @@ public final class FileManager {
 		}
 
 		return font;
+	}
+
+	/**
+	 * Save adjusted image for background.
+	 * @param img is adjusted image.
+	 */
+	public void saveImage(RenderedImage img) {
+		try {
+			ImageIO.write(img, "PNG", new File("res/gameBackground.PNG"));
+			logger.info("save new image.");
+		}
+		catch (IOException e) { e.printStackTrace(); }
+	}
+
+	/**
+	 *	load Template Image of background on play.
+	 *	@return Background Image.
+	 */
+	public Image loadBackgroundTemplate() {
+		ImageIcon imageIcon;
+		Image img;
+		// Image loading.
+		imageIcon = new ImageIcon("res/backgroundTemplate.png");
+		img = imageIcon.getImage();
+		if(img != null) {
+			logger.info("Background Image("+ img.getWidth(null) + "x" + img.getHeight(null) +") loaded.");
+		}
+		return img;
 	}
 
 	/**

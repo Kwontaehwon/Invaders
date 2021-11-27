@@ -5,13 +5,9 @@ import engine.Core;
 import engine.DesignSetting;
 import engine.DrawManager.SpriteType;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ShipScreen extends Screen{
 
-    private ArrayList<SpriteType> designList = new ArrayList<>(Arrays.asList(SpriteType.Ship, SpriteType.NewShipDesign));
-    //TODO 디자인 제한하고 해금 기능 만들기
     /** Milliseconds between changes in user selection. */
     private static final int SELECTION_TIME = 200;
     /** Time between changes in user selection. */
@@ -35,7 +31,7 @@ public class ShipScreen extends Screen{
         this.selectionCooldown = Core.getCooldown(SELECTION_TIME);
         this.selectionCooldown.reset();
         this.returnCode = 1;
-        this.cursor = designList.indexOf(designSetting.getShipType());
+        this.cursor = designSetting.designIndexOf(designSetting.getShipType());
     }
 
 
@@ -63,10 +59,10 @@ public class ShipScreen extends Screen{
                 nextItem();
                 this.selectionCooldown.reset();
             }
-            if (inputManager.isKeyDown(KeyEvent.VK_SPACE)){
-                designSetting.setShipType(designList.get(cursor));
+            if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
+                designSetting.setShipType(designSetting.getDesignList().get(cursor).getKey());
+            if (inputManager.isKeyDown(KeyEvent.VK_ESCAPE))
                 this.isRunning = false;
-            }
         }
 
     }
@@ -74,23 +70,30 @@ public class ShipScreen extends Screen{
     public void draw(){
         drawManager.initDrawing(this);
         drawManager.drawShipCustomMenu(this);
-        drawManager.drawDesigns(this, designList, this.cursor, designSetting);
-        //TODO 잠긴 색깔 구분하기
+        drawManager.drawDesigns(this, this.cursor, designSetting);
         drawManager.completeDrawing(this);
     }
 
     private void nextItem(){
-        if(this.cursor == designList.size()-1)
-            cursor = 0;
+        int next = cursor;
+        if(next == designSetting.getDesignList().size()-1)
+            next = 0;
         else
-            cursor++;
+            next++;
+
+        if(designSetting.getDesignList().get(next).getValue())
+            cursor = next;
     }
 
     private void prevItem(){
-        if(this.cursor == 0)
-            cursor = designList.size()-1;
+        int prev = cursor;
+        if(prev == 0)
+            prev = designSetting.getDesignList().size()-1;
         else
-            cursor--;
+            prev--;
+
+        if(designSetting.getDesignList().get(prev).getValue())
+            cursor = prev;
     }
 
 }
