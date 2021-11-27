@@ -109,7 +109,7 @@ public final class Core {
 			// TODO handle exception
 			e.printStackTrace();
 		}
-		backgroundMusic.start();
+		backgroundMusic.decrease();
 
 		frame = new Frame(WIDTH, HEIGHT);
 		DrawManager.getInstance().setFrame(frame);
@@ -141,10 +141,12 @@ public final class Core {
 				currentScreen = new TitleScreen(width, height, FPS);
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " title screen at " + FPS + " fps.");
+				backgroundMusic.start();
 				returnCode = frame.setScreen(currentScreen);
 				LOGGER.info("Closing title screen.");
 				break;
 			case 2:
+				backgroundMusic.stop();
 				// Game & score.
 				do {
 					// One extra live every few levels.
@@ -176,11 +178,12 @@ public final class Core {
 							gameState.getShipsDestroyed(),
 							gameState.getBoomtimes(),
 							gameState.getSkillCool(),
-							gameState.getLargeBoomTimes());
+							gameState.getUltimateTimes());
 
 				} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);
 
+				effectSound.roundEndSound.start();
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " score screen at " + FPS + " fps, with a score of "
 						+ gameState.getScore() + ", "
@@ -210,7 +213,7 @@ public final class Core {
 							gameState.getShipsDestroyed(),
 							gameState.getBoomtimes(),
 							gameState.getSkillCool(),
-							gameState.getLargeBoomTimes());
+							gameState.getUltimateTimes());
 
 					// One extra live every few levels.
 					boolean bonusLife = gameState.getLevel()
@@ -241,11 +244,12 @@ public final class Core {
 							gameState.getShipsDestroyed(),
 							gameState.getBoomtimes(),
 							gameState.getSkillCool(),
-							gameState.getLargeBoomTimes());
+							gameState.getUltimateTimes());
 
 				} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);
 
+				effectSound.roundEndSound.start();
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " score screen at " + FPS + " fps, with a score of "
 						+ gameState.getScore() + ", "
@@ -270,6 +274,7 @@ public final class Core {
 				currentScreen = new GameScreen(gameStatus.getStates(),
 						gameStatus.getSettings(),
 						gameStatus.getBonus(), designSetting, width, height, FPS, frame);
+				backgroundMusic.stop();
 				do {
 					// One extra live every few levels.
 					if(isFirst){
@@ -302,11 +307,11 @@ public final class Core {
 							gameState.getShipsDestroyed(),
 							gameState.getBoomtimes(),
 							gameState.getSkillCool(),
-							gameState.getLargeBoomTimes());
+							gameState.getUltimateTimes());
 
 				} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);
-
+				effectSound.roundEndSound.start();
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " score screen at " + FPS + " fps, with a score of "
 						+ gameState.getScore() + ", "

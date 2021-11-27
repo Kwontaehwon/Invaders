@@ -5,12 +5,14 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.logging.Logger;
 
 import entity.*;
@@ -47,6 +49,10 @@ public final class DrawManager {
 	private static Font fontBig;
 	/** Big sized font properties. */
 	private static FontMetrics fontBigMetrics;
+	/** Image for game screen. */
+	private static Image backgroundImage;
+	/** Template Image of background*/
+	private static Image templateImage;
 
 	private static Font fontSmall;
 
@@ -92,7 +98,7 @@ public final class DrawManager {
 		Skill2,
 		Skill3,
 		Skill4,
-		LargeBoom
+		Ultimate
 	};
 
 	/**
@@ -129,11 +135,14 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.Skill2, new int[8][8]);
 			spriteMap.put(SpriteType.Skill3, new int[8][8]);
 			spriteMap.put(SpriteType.Skill4, new int[8][8]);
-			spriteMap.put(SpriteType.LargeBoom, new int[100][100]);
+			spriteMap.put(SpriteType.Ultimate, new int[100][100]);
 
 
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");
+
+			templateImage = fileManager.loadBackgroundTemplate();
+			logger.info("Finished loading the template image.");
 
 			// Font loading.
 			fontRegular = fileManager.loadFont(14f);
@@ -190,6 +199,10 @@ public final class DrawManager {
 		fontRegularMetrics = backBufferGraphics.getFontMetrics(fontRegular);
 		fontBigMetrics = backBufferGraphics.getFontMetrics(fontBig);
 
+		if(backgroundImage == null){
+			backgroundImage = makeBackgroundImage();
+		}
+
 	}
 
 	/**
@@ -230,6 +243,19 @@ public final class DrawManager {
 				}
 	}
 
+	public void drawShadowedEntity(final Entity entity, final int positionX,
+								   final int positionY) {
+		int[][] image = spriteMap.get(entity.getSpriteType());
+
+		backBufferGraphics.setColor(Color.GRAY);
+		for (int i = 0; i < image.length; i++)
+			for (int j = 0; j < image[i].length; j++)
+				if (image[i][j] != 0)
+					backBufferGraphics.drawRect(positionX + i * 2, positionY
+							+ j * 2, 1, 1);
+
+	}
+
 	/**
 	 * For debugging purpouses, draws the canvas borders.
 	 * 
@@ -260,6 +286,58 @@ public final class DrawManager {
 			backBufferGraphics.drawLine(0, i, screen.getWidth() - 1, i);
 		for (int j = 0; j < screen.getWidth() - 1; j += 2)
 			backBufferGraphics.drawLine(j, 0, j, screen.getHeight() - 1);
+	}
+
+	/**
+	 * make background image fit to frame size.
+	 *
+	 * @return adjusted Image
+	 */
+	private Image makeBackgroundImage(){
+		// 원래 이미지에서 높이를 늘린 이미지 생성
+		BufferedImage bufferedImage = new BufferedImage(templateImage.getWidth(null),
+				templateImage.getHeight(null) + frame.getHeight(), BufferedImage.TYPE_INT_RGB);
+		Graphics graphics = bufferedImage.getGraphics();
+
+		int stretched = bufferedImage.getHeight() - templateImage.getHeight(null);
+
+		// 원래 이미지를 밑에서부터 그리기
+		graphics.drawImage(templateImage, 0, stretched,
+				bufferedImage.getWidth(), templateImage.getHeight(null), null);
+		// 중복될 이미지를 잘라서 그리기
+		graphics.drawImage(templateImage, 0, 0, bufferedImage.getWidth(), stretched,
+				0, templateImage.getHeight(null) - stretched,
+				bufferedImage.getWidth(), templateImage.getHeight(null), null);
+
+		graphics.dispose();
+
+		// 파일로 저장
+		fileManager.saveImage(bufferedImage);
+		return bufferedImage;
+	}
+
+	/**
+	 * @param screen
+	 * 			Screen to draw in.
+	 * @param imgPos
+	 * 			position of background image.
+	 * @return true if image position meets limit, false otherwise.
+	 */
+	public boolean drawFlowBackground(final Screen screen, int imgPos) {
+		int imageHeight = backgroundImage.getHeight(null);
+		boolean isExceeded = false;
+
+		// 범위 초과 여부
+		if(imageHeight - screen.getHeight()  - imgPos<=0) {
+			imgPos = 0;
+			isExceeded = true;
+		}
+
+		// 그림 아래부터 그려서 올라가는 방향으로 동작.
+		backBufferGraphics.drawImage(backgroundImage, 0, 0, screen.getWidth(), screen.getHeight(),
+				0, imageHeight - screen.getHeight() - imgPos,
+				screen.getWidth(), imageHeight - imgPos, null);
+		return isExceeded;
 	}
 
 	/**
@@ -389,11 +467,11 @@ public final class DrawManager {
 	}
 
 	//필살기 인터페이스
-	public void drawLargeBoom(final int largeBoomtimes){
-		if(largeBoomtimes == 1) backBufferGraphics.setColor(Color.green);
+	public void drawUltimate(final int UltimateTimes){
+		if(UltimateTimes == 1) backBufferGraphics.setColor(Color.green);
 		else backBufferGraphics.setColor(Color.gray);
-		drawSmallString("Large", 230,20);
-		drawSmallString(" Boom!", 230,31);
+		backBufferGraphics.setFont(fontSmall);
+		backBufferGraphics.drawString("Ultimate", 215,25);
 	}
 
 	/**
@@ -828,40 +906,48 @@ public final class DrawManager {
 	 */
 	public void drawShipCustomMenu(final Screen screen) {
 		String customString = "Customize";
-		String instructionsString = "Press Space to return";
+		String instructionsString1 = "Press Space to apply";
+		String instructionsString2 = "Press Escape to return";
 		String currentString = "Current";
 
 		backBufferGraphics.setColor(Color.GREEN);
 		drawCenteredBigString(screen, customString, screen.getHeight() / 8);
 
 		backBufferGraphics.setColor(Color.GRAY);
-		drawCenteredRegularString(screen, instructionsString,
+		drawCenteredRegularString(screen, instructionsString1,
 				screen.getHeight() / 5);
+		backBufferGraphics.setColor(Color.GRAY);
+		drawCenteredRegularString(screen, instructionsString2,
+				screen.getHeight() / 5 + 20);
 		backBufferGraphics.setColor(Color.GREEN);
 		drawCenteredRegularString(screen, currentString,
 				screen.getHeight() / 3);
 
 	}
 	/**
-	 * Draws sprites given as list and cursor.
+	 * Draws cursor and sprites given in List of Entries.
 	 *
 	 * @param screen
 	 * 				Screen to draw on.
-	 * @param list
-	 * 				List of sprites to draw.
 	 * @param option
 	 * 				Cursor index.
+	 * @param designSetting
+	 * 				DesignSetting has current design and design list.
 	 */
-	public void drawDesigns(final Screen screen, final ArrayList<SpriteType> list, int option, DesignSetting designSetting){
+	public void drawDesigns(final Screen screen, int option, DesignSetting designSetting){
 		int count = 0;
 		int positionX = 40;
 		int j = 0, positionY = screen.getWidth()-60;
 		int cursorX = 0;
 		int cursorY = 0;
 		int margin = 10;
+		ArrayList<SimpleEntry<SpriteType, Boolean>> designList = designSetting.getDesignList();
 
 		// 두 줄에 다 안들어오는 경우는 고려하지 못함.
-		for(SpriteType sprite: list){
+		for(SimpleEntry<SpriteType, Boolean> entry: designList){
+			SpriteType sprite = entry.getKey();
+			boolean isAchieved = entry.getValue();
+
 			if( positionX + spriteMap.get(sprite).length*2 + margin >= frame.getWidth() ){
 				j++;
 				positionX = 40;
@@ -872,7 +958,12 @@ public final class DrawManager {
 				cursorY = positionY;
 			}
 			Ship dummyShip = new Ship(0, 0, sprite);
-			drawEntity(dummyShip, positionX, positionY);
+
+			if(isAchieved)
+				drawEntity(dummyShip, positionX, positionY);
+			else
+				drawShadowedEntity(dummyShip, positionX, positionY);
+
 			if(designSetting.getShipType() == sprite){
 				drawEntity(dummyShip, 200, screen.getHeight() / 3 + 20);
 			}
