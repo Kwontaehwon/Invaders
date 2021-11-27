@@ -15,15 +15,18 @@ class BulletTest {
 
     @BeforeEach
     void setUp() {
-        int xPos = (int) (Math.random() * 400);
+        int xPos = (int) (Math.random() * 500);
         int yPos = (int) (Math.random() * 200) + 300;
-        int xPos1 = (int) (Math.random() * 400);
+        int xPos1 = (int) (Math.random() * 500);
         int yPos1 = (int) (Math.random() * 300);
         ship = new Ship(xPos, yPos, DrawManager.SpriteType.Ship);
         int difX = xPos-xPos1;
         int difY = yPos-yPos1;
-        speedX = difX*BULLET_SPEED/200;
-        speedY = difY*BULLET_SPEED/200;
+        int divideNum = 200;
+        if(difX>200) divideNum = (int) (difX*0.95);
+        else if(difX<-200) divideNum = (int) (difX* -0.95);
+        speedX = difX*BULLET_SPEED/divideNum;
+        speedY = difY*BULLET_SPEED/divideNum;
         bullet = new Bullet(xPos1, yPos1, speedX, speedY);
     }
 
@@ -69,7 +72,7 @@ class BulletTest {
     void targetManyTimes() {
         int c=0;
         int result = 0;
-        int TIMES = 30;
+        int TIMES = 50;
         while(c<TIMES){
             setUp();
             if(target())

@@ -354,8 +354,12 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 			int difX = target.getPositionX() + target.width / 2 - shooter.getPositionX() - shooter.width / 2;
 			int difY = target.getPositionY()-shooter.getPositionY();
+			int divideNum = 200;
+			if(difX>200) divideNum = (int) (difX*0.95);
+			else if(difX<-200) divideNum = (int) (difX* -0.95);
+			logger.info("difX: " + difX);
 			bullets.add(BulletPool.getBullet(shooter.getPositionX() + shooter.width / 2,
-					shooter.getPositionY(), difX*BULLET_SPEED/200, difY*BULLET_SPEED/200));
+					shooter.getPositionY(), difX*BULLET_SPEED/divideNum, difY*BULLET_SPEED/divideNum));
 		}
 	}
 
