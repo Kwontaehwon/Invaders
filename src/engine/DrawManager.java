@@ -766,6 +766,16 @@ public final class DrawManager {
 						screen.getHeight() / 2
 								+ fontBigMetrics.getHeight() / 3);
 			}
+			else if(level == 7){
+				drawCenteredBigString(screen, "Level " + level +"Boss Stage!",
+						screen.getHeight() / 2
+								+ fontBigMetrics.getHeight() / 3);
+			}
+			else if(level == 8){
+				drawCenteredBigString(screen, "Level " + level +"You get Ultimate!",
+						screen.getHeight() / 2
+								+ fontBigMetrics.getHeight() / 3);
+			}
 			else if (!bonusLife) {
 					drawCenteredBigString(screen, "Level " + level,
 							screen.getHeight() / 2

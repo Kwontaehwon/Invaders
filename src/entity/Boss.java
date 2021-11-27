@@ -203,8 +203,11 @@ public class Boss extends Entity {
 
             int difX = target.getPositionX() + target.width / 2 - this.getPositionX() - this.width / 2;
             int difY = target.getPositionY()-this.getPositionY();
-            bullets.add(BulletPool.getBullet(this.getPositionX() + this.getWidth() / 2,
-                    this.getPositionY() + this.getHeight()/2, difX*BULLET_SPEED/200, difY*BULLET_SPEED/200));
+            int divideNum = 200;
+            if(difX>200) divideNum = (int) (difX*0.95);
+            else if(difX<-200) divideNum = (int) (difX* -0.95);
+            bullets.add(BulletPool.getBullet(this.getPositionX() +this.width / 2,
+                    this.getPositionY(), difX*BULLET_SPEED/divideNum, difY*BULLET_SPEED/divideNum));
         }
     }
     /**
@@ -237,7 +240,7 @@ public class Boss extends Entity {
 
         if (this.shootingCooldown.checkFinished()) {
             this.shootingCooldown.reset();
-            for (int i = 0; i<=3; i++) {
+            for (int i = 0; i<=6; i++) {
                 speedX.add(xlist[new Random().nextInt(8)]);
                 while(speedX.size()!=i+1) speedX.add(xlist[new Random().nextInt(8)]);
             }

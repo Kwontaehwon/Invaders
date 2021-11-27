@@ -61,8 +61,8 @@ public class Bullet extends Entity {
 	 */
 	public final void update(boolean skill3) {
 		if(skill3 && this.speedY > 0){
-			this.positionX += speedX/speedY;
-			this.positionY += 1;
+			this.positionY += 1 ;
+			this.positionX += this.speedX;
 		}
 		else {
 			this.positionY += this.speedY;

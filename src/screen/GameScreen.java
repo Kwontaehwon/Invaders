@@ -47,7 +47,7 @@ public class GameScreen extends Screen {
 
 	private static final int SKILL_CURSOR_DELAY = 200;
 
-	private static final int BOSS_STAGE_LEVEL = 8;
+	private static final int BOSS_STAGE_LEVEL = 7;
 
 
 	/** Current game difficulty settings. */
@@ -153,10 +153,10 @@ public class GameScreen extends Screen {
 		// 스킬 선언
 		this.skillCool = gameState.getSkillCool();
 
-		this.skill1 = new Skill1(20,this.skillCool[0]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
-		this.skill2 = new Skill2(20,this.skillCool[1]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
-		this.skill3 = new Skill3(20,this.skillCool[2]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
-		this.skill4 = new Skill4(20,this.skillCool[3]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
+		this.skill1 = new Skill1(this.level,this.skillCool[0]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
+		this.skill2 = new Skill2(this.level,this.skillCool[1]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
+		this.skill3 = new Skill3(this.level,this.skillCool[2]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
+		this.skill4 = new Skill4(this.level,this.skillCool[3]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
 		// 필살기 횟수 적용
 		this.ultimateTimes = gameState.getUltimateTimes();
 
@@ -411,13 +411,13 @@ public class GameScreen extends Screen {
 			if(this.level == BOSS_STAGE_LEVEL ){
 				this.boss.update();
 				int r = random.nextInt(6);
-				if(r == 0) this.boss.pinwheelShoot(this.bullets);
+				if(r == 0) this.boss.randomShoot(this.bullets);
 				else if( r == 1 || r== 2)
 					this.boss.targetingShoot(this.bullets,this.ship);
-				else this.boss.randomShoot(this.bullets);
+				else this.boss.pinwheelShoot(this.bullets);
 			}
 			else {
-				this.enemyShipFormation.update(this.skill2.checkActivate());
+				this.enemyShipFormation.update(this.skill2.checkActivate(),this.level);
 				this.enemyShipFormation.targetingShoot(this.bullets, this.ship);
 			}
 
@@ -701,10 +701,11 @@ public class GameScreen extends Screen {
 			} else { // 내가 발사한 경우.
 				if(this.level == BOSS_STAGE_LEVEL){
 					if(checkCollision(bullet,this.boss)){
-						effectSound.destroyedEnemySound.start();
+						effectSound.hitEnemySound.start();
 						this.boss.destroy();
 						if(this.boss.isDestroyed()){
 							this.score += boss.getPointValue();
+							effectSound.destroyedEnemySound.start();
 						}
 						recyclable.add(bullet); //충돌에 사용된 총알제거.
 					}
@@ -810,13 +811,13 @@ public class GameScreen extends Screen {
 			if(random.nextInt(2) == 1 ){ // 폭탄과 아이템중
 				if(this.item == null) { //아이템이 존재하지않으면
 					effectSound.dropItemSound.start();		// 아이템 드랍 소리
-					this.item = new Item(enemyShip.getPositionX(), enemyShip.getPositionX());
+					this.item = new Item(enemyShip.getPositionX(), enemyShip.getPositionY());
 				}
 			}
 			else { //폭탄이드랍.
 				if(this.boomItem == null){
 					effectSound.dropItemSound.start();		// 폭탄 아이템 드랍 소리
-					this.boomItem = new Boom(enemyShip.getPositionX(), enemyShip.getPositionX(),0,2);
+					this.boomItem = new Boom(enemyShip.getPositionX(), enemyShip.getPositionY(),0,2);
 				}
 			}
 

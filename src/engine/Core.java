@@ -36,7 +36,7 @@ public final class Core {
 	/** Levels between extra life. */
 	private static final int EXTRA_LIFE_FRECUENCY = 3;
 	/** Total number of levels. */
-	private static final int NUM_LEVELS = 7;
+	private static final int NUM_LEVELS = 8;
 	
 	/** Difficulty settings for level 1. */
 	private static final GameSettings SETTINGS_LEVEL_1 =
@@ -56,10 +56,10 @@ public final class Core {
 	/** Difficulty settings for level 6. */
 	private static final GameSettings SETTINGS_LEVEL_6 =
 			new GameSettings(7, 7, 10, 1000);
-	/** Difficulty settings for level 7. */
+	/** boss statge */
 	private static final GameSettings SETTINGS_LEVEL_7 =
 			new GameSettings(8, 7, 2, 500);
-	/** boss statge */
+	/** Difficulty settings for level 8. */
 	private static final GameSettings SETTINGS_LEVEL_8 =
 			new GameSettings(8, 7, 2, 500);
 
@@ -135,7 +135,7 @@ public final class Core {
 		do {
 			flag_main = false;
 			// 맨처음 폭탄발사횟수,스킬쿨타임, 필살기횟수지정(나중에 0으로수정.)
-			gameState = new GameState(8, 0, MAX_LIVES, 0, 0,3, new int[]{15, 15, 15, 15},0);
+			gameState = new GameState(7, 0, MAX_LIVES, 0, 0,3, new int[]{15, 15, 15, 15},0);
 
 			switch (returnCode) {
 			case 1:
