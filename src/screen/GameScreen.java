@@ -429,7 +429,7 @@ public class GameScreen extends Screen {
 
 			this.ship.update();
 			this.enemyShipFormation.update(this.skill2.checkActivate());
-			this.enemyShipFormation.shoot(this.bullets);
+			this.enemyShipFormation.targetingShoot(this.bullets, this.ship);
 		}
 		else{ //5초 스테이지전 인풋딜레이가 안끝낫다면 , pause한 시간을잼.
 			//스킬쿨타임에 적용시키기위해, 시간을잼.
@@ -659,7 +659,7 @@ public class GameScreen extends Screen {
 			}
 		}
 		for (Bullet bullet : this.bullets)
-			if (bullet.getSpeed() > 0) { //적이 발사한 경우
+			if (bullet.getSpeedY() > 0) { //적이 발사한 경우
 				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
 					recyclable.add(bullet);
 					if (!this.ship.isDestroyed()) {
