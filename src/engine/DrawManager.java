@@ -146,11 +146,11 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.Skill2, new int[8][8]);
 			spriteMap.put(SpriteType.Skill3, new int[8][8]);
 			spriteMap.put(SpriteType.Skill4, new int[8][8]);
+			spriteMap.put(SpriteType.Ultimate, new int[100][100]);
 			spriteMap.put(SpriteType.BonusLifeItem, new int[8][8]);
 			spriteMap.put(SpriteType.BonusScoreItem1, new int[5][5]);
 			spriteMap.put(SpriteType.BonusScoreItem2, new int[5][5]);
 			spriteMap.put(SpriteType.BonusScoreItem3, new int[5][5]);
-			spriteMap.put(SpriteType.Ultimate, new int[100][100]);
 
 
 			fileManager.loadSprite(spriteMap);

@@ -33,7 +33,6 @@ public class Bullet extends Entity {
 
 	public Bullet(final int positionX, final int positionY, final int speedX, final int speedY) {
 		super(positionX, positionY, 3*2, 5*2, Color.WHITE);
-
 		this.speedX = speedX;
 		this.speedY = speedY;
 		setSprite();
