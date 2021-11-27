@@ -20,6 +20,7 @@ import entity.Entity;
 import entity.Ship;
 import skill.*;
 
+import static engine.Core.backgroundMusic;
 import static engine.Core.effectSound;
 
 /**
@@ -106,7 +107,8 @@ public class GameScreen extends Screen {
 
 	/** Set position of background image */
 	private int backgroundPos = 0;
-
+	/** 카운트 다운 중인 숫자 */
+	private int countdown=INPUT_DELAY/1000;
 
 	private DesignSetting designSetting;
 
@@ -221,6 +223,26 @@ public class GameScreen extends Screen {
 	 */
 	protected final void update() {
 		super.update();
+
+		// Countdown to game start. 스테이지 시작 전 5초
+		if (!this.inputDelay.checkFinished() && countdown >= 0) {
+
+			int countDowned = (int) ((INPUT_DELAY
+					- (System.currentTimeMillis()
+					- this.gameStartTime)) / 1000);
+
+			if(countDowned >= -1 && countDowned<countdown){
+				countdown = countDowned;
+				if( 4 > countdown && countdown > 0) {
+					effectSound.countDownSound.start();
+				}
+				else if(countdown == 0) {
+					effectSound.roundStartSound.start();
+				}
+				else if(countdown == -1 && !backgroundMusic.isRunning())
+					backgroundMusic.start();
+			}
+		}
 
 		if (this.inputDelay.checkFinished() && !this.levelFinished) { //5초 스테이지전 인풋딜레이
 			if(pauseTime != 0 ){ //pause한 시간이 있다면 pause한 만큼 더해줌.
@@ -453,6 +475,10 @@ public class GameScreen extends Screen {
 			this.skillCool[3] = this.skill4.returnSkillCoolTime();
 			this.levelFinished = true;
 			this.screenFinishedCooldown.reset();
+			if(this.lives == 0) {
+				backgroundMusic.stop();
+				effectSound.shipDeathSound.start();
+			}
 		}
 
 		if (this.levelFinished && this.screenFinishedCooldown.checkFinished())
@@ -539,9 +565,6 @@ public class GameScreen extends Screen {
 		// Countdown to game start. 스테이지 시작전 5초
 		if (!this.inputDelay.checkFinished()) {
 
-			int countdown = (int) ((INPUT_DELAY
-					- (System.currentTimeMillis()
-							- this.gameStartTime)) / 1000);
 			drawManager.drawCountDown(this, this.level, countdown,
 					this.bonusLife);
 			drawManager.drawHorizontalLine(this, this.height / 2 - this.height

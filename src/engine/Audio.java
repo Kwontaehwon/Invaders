@@ -37,19 +37,27 @@ public class Audio {
     }
 
     public void increase() {
+        if(!clip.isOpen()) // javaDocs - "Some Controls may only be available when the line(clip) is open."
+            return;
         FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
         float value = gainControl.getValue()+5;
         if(gainControl.getMaximum()>value)
             gainControl.setValue(value);
     }
 
-    public void decrease(){
+    public void decrease() {
+        if(!clip.isOpen())
+            return;
         FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
         float value = gainControl.getValue()-5;
         if(gainControl.getMinimum()<value)
             gainControl.setValue(value);
     }
 
+    public boolean isRunning() {
+        // return true from when call start() until invoke stop() or playback completes;
+        return clip.isRunning();
+    }
 
 
 }
