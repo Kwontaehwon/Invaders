@@ -200,7 +200,7 @@ public class GameScreen extends Screen {
 		this.gameStartTime = System.currentTimeMillis();
 		this.inputDelay = Core.getCooldown(INPUT_DELAY);
 		this.inputDelay.reset();
-		effectSound.roundStartSouond.start();
+
 
 	}
 
@@ -236,9 +236,12 @@ public class GameScreen extends Screen {
 				if( 4 > countdown && countdown > 0) {
 					effectSound.countDownSound.start();
 				}
+				else if(countdown == 0) {
+					effectSound.roundStartSound.start();
+				}
+				else if(countdown == -1 && !backgroundMusic.isRunning())
+					backgroundMusic.start();
 			}
-			else if(countdown == 0 && !backgroundMusic.isRunning())
-				backgroundMusic.start();
 		}
 
 		if (this.inputDelay.checkFinished() && !this.levelFinished) { //5초 스테이지전 인풋딜레이
