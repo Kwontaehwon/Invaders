@@ -5,8 +5,9 @@ import engine.Core;
 import engine.DrawManager;
 
 import java.awt.*;
+import java.io.Serializable;
 
-public class Item extends Entity{
+public class Item extends Entity implements Serializable {
 
 
     // 아이템떨어지는 속도.

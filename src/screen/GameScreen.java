@@ -1,6 +1,8 @@
 package screen;
 
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -21,6 +23,7 @@ import entity.Ship;
 import skill.*;
 
 import static engine.Core.effectSound;
+import static engine.Core.getLogger;
 
 /**
  * Implements the game screen, where the action happens.
@@ -28,7 +31,8 @@ import static engine.Core.effectSound;
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  * 
  */
-public class GameScreen extends Screen {
+public class GameScreen extends Screen implements Serializable {
+
 
 	/** Milliseconds until the screen accepts user input. */
 	private static final int INPUT_DELAY = 6000;
@@ -48,7 +52,6 @@ public class GameScreen extends Screen {
 	private static final int SKILL_CURSOR_DELAY = 200;
 
 	private static final int BOSS_STAGE_LEVEL = 8;
-
 
 	/** Current game difficulty settings. */
 	private GameSettings gameSettings;
@@ -88,7 +91,7 @@ public class GameScreen extends Screen {
 	// 추가한 부분
 	private Item item;
 	private Cooldown itemCooldown;
-	private Random random = new Random();
+	private transient Random random = new Random();
 	private int boomTimes ; //폭탄발사횟수.
 	private Set<Boom> booms; //화면상 발사된 폭탄
 	private Boom boomItem; // 폭탄아이템(떨어지는)
@@ -113,7 +116,7 @@ public class GameScreen extends Screen {
 	private int backgroundPos = 0;
 
 
-	private DesignSetting designSetting;
+	private transient DesignSetting designSetting;
 
 	/**
 	 * Constructor, establishes the properties of the screen.
@@ -220,7 +223,7 @@ public class GameScreen extends Screen {
 	 * 
 	 * @return Next screen code.
 	 */
-	public final int run() {
+	public final int run() throws IOException, ClassNotFoundException {
 		super.run();
 
 		this.score += LIFE_SCORE * (this.lives - 1);
@@ -232,7 +235,7 @@ public class GameScreen extends Screen {
 	/**
 	 * Updates the elements on screen and checks for events.
 	 */
-	protected final void update() {
+	protected final void update() throws IOException, ClassNotFoundException {
 		super.update();
 
 		if (this.inputDelay.checkFinished() && !this.levelFinished) { //5초 스테이지전 인풋딜레이
@@ -364,10 +367,8 @@ public class GameScreen extends Screen {
 					this.skillCool[2] = this.skill3.returnSkillCoolTime();
 					this.skillCool[3] = this.skill4.returnSkillCoolTime();
 					GameStatus gameStatus = new GameStatus(gameState, gameSettings, bonusLife);
-					Screen currentScreen = new PauseScreen(width, height, fps, gameStatus);
-					Logger LOGGER = Logger.getLogger(Core.class
-							.getSimpleName());
-					LOGGER.info("escKey.");
+					Screen currentScreen = new PauseScreen(width, height, fps, gameStatus,getGameScreen());
+					this.logger.info("escKey.");
 					returnCode = frame.setScreen(currentScreen);
 				}
 				if(Core.flag_main || Core.flag_restart)
@@ -833,4 +834,14 @@ public class GameScreen extends Screen {
 		return new GameState(this.level, this.score, this.lives,
 				this.bulletsShot, this.shipsDestroyed,this.boomTimes,this.skillCool,this.ultimateTimes);
 	}
+
+	public EnemyShipFormation getEnemyShipFormation(){
+		return enemyShipFormation;
+	}
+
+	public final GameScreen getGameScreen(){
+		return this;
+	}
+
+	public Set<Bullet> getBullets() { return this.bullets;}
 }

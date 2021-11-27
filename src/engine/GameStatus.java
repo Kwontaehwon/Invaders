@@ -1,10 +1,13 @@
 package engine;
 
 //추가 클래스
+
+import java.io.Serializable;
+
 /**
  * Implements a game status record.
  */
-public class GameStatus {
+public class GameStatus implements Serializable {
 
 	/** Game States. */
 	private GameState gameStates;

@@ -1,6 +1,7 @@
 package engine;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.ConsoleHandler;
@@ -22,7 +23,7 @@ import screen.ShipScreen;
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  * 
  */
-public final class Core {
+public final class Core implements Serializable {
 
 	/** Width of current screen. */
 	private static final int WIDTH = 520;
@@ -72,7 +73,7 @@ public final class Core {
 	/** Difficulty settings list. */
 	private static List<GameSettings> gameSettings;
 	/** Application logger. */
-	private static final Logger LOGGER = Logger.getLogger(Core.class
+	private static final transient Logger LOGGER = Logger.getLogger(Core.class
 			.getSimpleName());
 	/** Logger handler for printing to disk. */
 	private static Handler fileHandler;
@@ -93,7 +94,7 @@ public final class Core {
 	 * @param args
 	 *            Program args, ignored.
 	 */
-	public static void main(final String[] args) {
+	public static void main(final String[] args) throws IOException, ClassNotFoundException {
 		try {
 			LOGGER.setUseParentHandlers(false);
 
@@ -260,18 +261,11 @@ public final class Core {
 				break;
 			case 8:
 				//load game & score
-				GameStatus gameStatus = null;
+
 				boolean isFirst = false;
 
-				try {
-					gameStatus = FileManager.getInstance().loadSaves();
-				} catch (NumberFormatException | IOException e) {
-					LOGGER.warning("Couldn't load high scores!"+e);
-				}
-
-				currentScreen = new GameScreen(gameStatus.getStates(),
-						gameStatus.getSettings(),
-						gameStatus.getBonus(), designSetting, width, height, FPS, frame);
+				currentScreen = FileManager.getInstance().loadScreen();
+				System.out.print(currentScreen);
 				do {
 					// One extra live every few levels.
 					if(isFirst){
@@ -318,6 +312,8 @@ public final class Core {
 				currentScreen = new ScoreScreen(width, height, FPS, gameState);
 				returnCode = frame.setScreen(currentScreen);
 				LOGGER.info("Closing score screen.");
+
+
 				break;
 			case 9:
 				//Custom

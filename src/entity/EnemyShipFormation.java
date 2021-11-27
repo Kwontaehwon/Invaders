@@ -1,5 +1,6 @@
 package entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,7 +21,7 @@ import engine.GameSettings;
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  * 
  */
-public class EnemyShipFormation implements Iterable<EnemyShip> {
+public class EnemyShipFormation implements Iterable<EnemyShip> , Serializable {
 
 	/** Initial position in the x-axis. */
 	private static final int INIT_POS_X = 20;

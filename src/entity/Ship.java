@@ -1,6 +1,7 @@
 package entity;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.Set;
 
 import engine.Cooldown;
@@ -13,7 +14,7 @@ import engine.DrawManager.SpriteType;
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  * 
  */
-public class Ship extends Entity {
+public class Ship extends Entity implements Serializable {
 	/** Time between shots. */
 	private static final int SHOOTING_INTERVAL = 750;
 	/** Speed of the bullets shot by the ship. */

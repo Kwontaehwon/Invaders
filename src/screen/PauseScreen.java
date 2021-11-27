@@ -2,6 +2,7 @@ package screen;
 
 import engine.Cooldown;
 import engine.Core;
+import engine.FileManager;
 import engine.GameStatus;
 
 import java.awt.event.KeyEvent;
@@ -21,6 +22,10 @@ public class PauseScreen extends Screen{
 
     /** Time between changes in user selection. */
     private Cooldown selectionCooldown;
+    /** FileManager instance. */
+    private static FileManager fileManager;
+    private GameScreen gameScreen;
+
 
 
     /**
@@ -29,23 +34,26 @@ public class PauseScreen extends Screen{
      * @param height Screen height.
      * @param fps
      * @param gameStatus
+     * @pram gameScreen
      */
-    public PauseScreen(int width, int height, int fps, GameStatus gameStatus) {
+    public PauseScreen(int width, int height, int fps, GameStatus gameStatus,GameScreen gamescreen) {
         super(width, height, fps);
 
         this.returnCode = 2;
         this.selectionCooldown = Core.getCooldown(SELECTION_TIME);
         this.selectionCooldown.reset();
         this.gameStatus = gameStatus;
+        this.gameScreen = gamescreen;
+        fileManager = Core.getFileManager();
     }
 
-    public final int run(){
+    public final int run() throws IOException, ClassNotFoundException {
         super.run();
 
         return this.returnCode;
     }
 
-    protected final void update() {
+    protected final void update() throws IOException, ClassNotFoundException {
         super.update();
 
         draw();
@@ -74,6 +82,7 @@ public class PauseScreen extends Screen{
             }
             if (this.returnCode == 5 && inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
                 this.saveSave();
+                fileManager.saveScreen(gameScreen.getGameScreen());
                 this.selectionCooldown.reset();
             }
             if (this.returnCode == 11 && (inputManager.isKeyDown(KeyEvent.VK_SPACE) ||

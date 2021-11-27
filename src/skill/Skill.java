@@ -4,11 +4,13 @@ import engine.Cooldown;
 import engine.Core;
 import engine.DrawManager;
 import entity.Entity;
+
+import java.io.Serializable;
 import java.util.logging.Logger;
 
 import java.awt.*;
 
-abstract class Skill extends Entity {
+abstract class Skill extends Entity implements Serializable {
 
     private Cooldown skillCooldown;
 

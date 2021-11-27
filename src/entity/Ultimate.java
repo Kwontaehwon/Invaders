@@ -3,8 +3,9 @@ package entity;
 import engine.DrawManager;
 
 import java.awt.*;
+import java.io.Serializable;
 
-public class Ultimate extends Entity{
+public class Ultimate extends Entity implements Serializable {
 
     private int speed = -6;
 

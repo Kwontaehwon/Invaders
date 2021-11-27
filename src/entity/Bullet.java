@@ -1,6 +1,7 @@
 package entity;
 
 import java.awt.Color;
+import java.io.Serializable;
 
 import engine.DrawManager.SpriteType;
 
@@ -10,7 +11,7 @@ import engine.DrawManager.SpriteType;
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  * 
  */
-public class Bullet extends Entity {
+public class Bullet extends Entity implements Serializable {
 
 	/**
 	 * Speed of the bullet, positive or negative depending on direction -

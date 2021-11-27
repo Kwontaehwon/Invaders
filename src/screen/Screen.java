@@ -1,6 +1,8 @@
 package screen;
 
 import java.awt.Insets;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -15,17 +17,17 @@ import engine.InputManager;
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  * 
  */
-public class Screen {
+public class Screen implements Serializable {
 	
 	/** Milliseconds until the screen accepts user input. */
 	private static final int INPUT_DELAY = 1000;
 
 	/** Draw Manager instance. */
-	protected DrawManager drawManager;
+	protected transient DrawManager drawManager;
 	/** Input Manager instance. */
-	protected InputManager inputManager;
+	protected transient InputManager inputManager;
 	/** Application logger. */
-	protected Logger logger;
+	protected transient Logger logger;
 
 	/** Screen width. */
 	protected int width;
@@ -78,7 +80,7 @@ public class Screen {
 	 * 
 	 * @return Next screen code.
 	 */
-	public int run() {
+	public int run() throws IOException, ClassNotFoundException {
 		this.isRunning = true;
 
 		while (this.isRunning) {
@@ -102,7 +104,7 @@ public class Screen {
 	/**
 	 * Updates the elements on screen and checks for events.
 	 */
-	protected void update() {
+	protected void update() throws IOException, ClassNotFoundException {
 	}
 
 	/**

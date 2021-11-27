@@ -1,5 +1,6 @@
 package entity;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,7 +10,7 @@ import java.util.Set;
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  * 
  */
-public final class BulletPool {
+public final class BulletPool implements Serializable {
 
 	/** Set of already created bullets. */
 	private static Set<Bullet> pool = new HashSet<Bullet>();

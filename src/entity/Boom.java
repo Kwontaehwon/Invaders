@@ -3,8 +3,9 @@ package entity;
 import engine.DrawManager;
 
 import java.awt.*;
+import java.io.Serializable;
 
-public class Boom extends Entity {
+public class Boom extends Entity implements Serializable {
 
     private int speedX ;
     private int speedY ;

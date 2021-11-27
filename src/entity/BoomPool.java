@@ -1,10 +1,11 @@
 package entity;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 //BulletPool.java와 똑같음.
-public class BoomPool {
+public class BoomPool implements Serializable {
 
     private static Set<Boom> pool = new HashSet<Boom>();
 

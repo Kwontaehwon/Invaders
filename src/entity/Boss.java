@@ -6,11 +6,12 @@ import engine.DrawManager;
 import screen.Screen;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.*;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class Boss extends Entity {
+public class Boss extends Entity implements Serializable {
 
     protected Logger logger;
 
