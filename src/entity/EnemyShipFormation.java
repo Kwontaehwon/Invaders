@@ -274,11 +274,17 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 			}
 
 			if (!skill2) { //스킬 2가 활성화중이 아니면 적개체가 움직임.
-				for (List<EnemyShip> column : this.enemyShips)
+				for (List<EnemyShip> column : this.enemyShips){
 					for (EnemyShip enemyShip : column) {
-						enemyShip.move(movementX, movementY);
+						if(shootingInterval != 2100000){
+							enemyShip.move(movementX, movementY);
+						}
+						else{
+							enemyShip.move(0,0);
+						}
 						enemyShip.update();
 					}
+				}
 			}
 		}
 	}

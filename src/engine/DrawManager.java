@@ -98,7 +98,7 @@ public final class DrawManager {
 		Skill2,
 		Skill3,
 		Skill4,
-		LargeBoom
+		Ultimate
 	};
 
 	/**
@@ -135,7 +135,7 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.Skill2, new int[8][8]);
 			spriteMap.put(SpriteType.Skill3, new int[8][8]);
 			spriteMap.put(SpriteType.Skill4, new int[8][8]);
-			spriteMap.put(SpriteType.LargeBoom, new int[100][100]);
+			spriteMap.put(SpriteType.Ultimate, new int[100][100]);
 
 
 			fileManager.loadSprite(spriteMap);
@@ -393,6 +393,22 @@ public final class DrawManager {
 			drawEntity(dummyBoom,150+ 20 * i,10);
 	}
 
+
+	//보너스 스테이지 남은 시간 표시
+	public void drawBonusTime(final Screen screen , final Cooldown cooldown, long pauseTime){
+		backBufferGraphics.setFont(fontBig);
+		backBufferGraphics.setColor(Color.green);
+		int cool = cooldown.getDuration() - cooldown.passedCooldown();
+		if (pauseTime == 0){
+			if (cool > 0 && cool < 10) {
+				backBufferGraphics.drawString(Integer.toString(cool), screen.getWidth()/2-10 , 80);
+			} else if (cool > 9) {
+				backBufferGraphics.drawString(Integer.toString(cool), screen.getWidth()/2-20 , 80);
+			}
+		}
+	}
+
+
 	//stageLevel에 따른 스킬해제. cursor의 위치에 따른 효과
 	public void drawSkills(final int cursor, Skill1 skill1, Skill2 skill2, Skill3 skill3 , Skill4 skill4,long pauseTime){
 		int y = 36;
@@ -449,12 +465,13 @@ public final class DrawManager {
 			backBufferGraphics.drawRect(267 + 22 * i + sizePlus, 10, skill1.getWidth(), skill1.getHeight());
 		}
 	}
+
 	//필살기 인터페이스
-	public void drawLargeBoom(final int largeBoomtimes){
-		if(largeBoomtimes == 1) backBufferGraphics.setColor(Color.green);
+	public void drawUltimate(final int UltimateTimes){
+		if(UltimateTimes == 1) backBufferGraphics.setColor(Color.green);
 		else backBufferGraphics.setColor(Color.gray);
-		drawSmallString("Large", 230,20);
-		drawSmallString(" Boom!", 230,31);
+		backBufferGraphics.setFont(fontSmall);
+		backBufferGraphics.drawString("Ultimate", 215,25);
 	}
 
 	/**
@@ -751,7 +768,13 @@ public final class DrawManager {
 				rectWidth, rectHeight);
 		backBufferGraphics.setColor(Color.GREEN);
 		if (number >= 4)
-			if(level == 2 || level == 3 ||level == 4 || level ==5) {
+			// 일단 임시로 2단계를 보너스 스테이지로 정함.
+			if(level == 2) {
+				drawCenteredBigString(screen, "Level " + level + " BONUS STAGE!",
+						screen.getHeight() / 2
+								+ fontBigMetrics.getHeight() / 3);
+			}
+			else if(level == 2 || level == 3 ||level == 4 || level ==5) {
 				drawCenteredBigString(screen, "Level " + level + " NEW SKILL!",
 						screen.getHeight() / 2
 								+ fontBigMetrics.getHeight() / 3);
