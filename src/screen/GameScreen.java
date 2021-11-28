@@ -45,7 +45,7 @@ public class GameScreen extends Screen {
 	/** Time from finishing the level to screen change. */
 	private static final int SCREEN_CHANGE_INTERVAL = 1500;
 	/** Height of the interface separation line. */
-	private static final int SEPARATION_LINE_HEIGHT = 40;
+	private static final int SEPARATION_LINE_HEIGHT = 60;
 
 	private static final int SKILL_CURSOR_DELAY = 200;
 
@@ -184,7 +184,7 @@ public class GameScreen extends Screen {
 		enemyShipFormation = new EnemyShipFormation(this.gameSettings);
 		enemyShipFormation.attach(this);
 
-		this.ship = new Ship(this.width / 2, this.height - 30, designSetting.getShipType());
+		this.ship = new Ship(this.width / 2, this.height - 50, designSetting.getShipType());
 		// Appears each 10-30 seconds.
 		this.enemyShipSpecialCooldown = Core.getVariableCooldown(
 				BONUS_SHIP_INTERVAL, BONUS_SHIP_VARIANCE);
@@ -413,6 +413,7 @@ public class GameScreen extends Screen {
 				this.enemyShipSpecialCooldown.reset();
 				this.logger.info("A special ship appears");
 			}
+			if (this.enemyShipSpecial != null) this.enemyShipSpecial.update();
 			if (this.enemyShipSpecial != null
 					&& this.enemyShipSpecial.getPositionX() > this.width) {
 				this.enemyShipSpecial = null;
@@ -443,7 +444,6 @@ public class GameScreen extends Screen {
 			if(this.boomItem != null){
 				this.boomItem.update();
 			}
-
 			this.ship.update();
 			this.enemyShipFormation.update(this.skill2.checkActivate());
 			this.enemyShipFormation.targetingShoot(this.bullets, this.ship);

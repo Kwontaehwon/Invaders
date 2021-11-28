@@ -36,7 +36,7 @@ public class Ship extends Entity {
 	 *            Initial position of the ship in the Y axis.
 	 */
 	public Ship(final int positionX, final int positionY, SpriteType spriteType) {
-		super(positionX, positionY, 13 * 2, 8 * 2, Color.GREEN);
+		super(positionX, positionY, 18 * 2, 16 * 2, Color.GREEN);
 
 		//슈팅 쿨타임을 설정.
 		this.spriteType = spriteType;
@@ -99,7 +99,7 @@ public class Ship extends Entity {
 	 */
 	public final void update() {
 		if (!this.destructionCooldown.checkFinished())
-			this.spriteType = SpriteType.ShipDestroyed;
+			this.spriteType = SpriteType.Explosion3;
 		else
 			this.spriteType = shipType;
 	}
