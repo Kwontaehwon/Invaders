@@ -1,18 +1,32 @@
 package engine;
 
 public class Sound {
+    /** shooting sound */
     public Audio shootingSound;
+    /** destroyed enemy sound */
     public Audio destroyedEnemySound;
+    /** hit enemy sound */
     public Audio hitEnemySound;
+    /** get item sound */
     public Audio getItemSound;
+    /** drop item sound */
     public Audio dropItemSound;
+    /** boom sound */
     public Audio boomingSound;
+    /** death sound */
     public Audio deathSound;
+    /** round start sound */
     public Audio roundStartSound;
+    /** countdown sound */
     public Audio countDownSound;
+    /** ship death sound */
     public Audio shipDeathSound;
+    /** round end sound */
     public Audio roundEndSound;
 
+    /**
+     * Constructor, adds Audio.
+     */
     public Sound(){
         shootingSound = new Audio("res/shootingSound.wav", false);
         destroyedEnemySound = new Audio("res/destroyedEnemySound.wav", false);
@@ -27,6 +41,9 @@ public class Sound {
         roundEndSound = new Audio("res/roundEndSound.wav", false);  // 2.757s
     }
 
+    /**
+     * Increase the music volume
+     */
     public void increase(){
         this.shootingSound.increase();
         this.destroyedEnemySound.increase();
@@ -41,6 +58,9 @@ public class Sound {
         this.roundEndSound.increase();
     }
 
+    /**
+     * Increase the music volume
+     */
     public void decrease(){
         this.shootingSound.decrease();
         this.destroyedEnemySound.decrease();

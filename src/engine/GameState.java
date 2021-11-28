@@ -18,11 +18,11 @@ public class GameState {
 	private int bulletsShot;
 	/** Ships destroyed until now. */
 	private int shipsDestroyed;
-	// 폭탄 times 저장
-	private int boomtimes;
-	// 스킬쿨저장
+	/** Save bomb time */
+	private int boomTimes;
+	/** Save skill cool time */
 	private int[] skillCool ;
-	// 필살기횟수저장.
+	/** Save ultimate skill time */
 	private int UltimateTimes ;
 	/**
 	 * Constructor.
@@ -40,13 +40,13 @@ public class GameState {
 	 */
 	public GameState(final int level, final int score,
 			final int livesRemaining, final int bulletsShot,
-			final int shipsDestroyed,final int boomtimes,final int[] skillCool,final int UltimateTimes) {
+			final int shipsDestroyed,final int boomTimes,final int[] skillCool,final int UltimateTimes) {
 		this.level = level;
 		this.score = score;
 		this.livesRemaining = livesRemaining;
 		this.bulletsShot = bulletsShot;
 		this.shipsDestroyed = shipsDestroyed;
-		this.boomtimes = boomtimes;
+		this.boomTimes = boomTimes;
 		this.skillCool = skillCool;
 		this.UltimateTimes = UltimateTimes;
 	}
@@ -86,12 +86,28 @@ public class GameState {
 		return shipsDestroyed;
 	}
 
-	public final int getBoomtimes() { return boomtimes;}
+	/**
+	 * @return the boomTimes
+	 */
+	public final int getBoomTimes() { return boomTimes;}
 
+	/**
+	 * @return the skillCool
+	 */
 	public final int[] getSkillCool() { return skillCool;}
 
+	/**
+	 * @return UltimateTimes
+	 */
 	public final int getUltimateTimes() { return UltimateTimes;}
-	//setter 추가
+
+	/**
+	 * Setter the score, livesRemaining, bulletsShot, shipsDestroyed
+	 * @param score
+	 * @param livesRemaining
+	 * @param bulletsShot
+	 * @param shipsDestroyed
+	 */
 	public void setState(int score, int livesRemaining, int bulletsShot, int shipsDestroyed){
 		this.score = score;
 		this.livesRemaining = livesRemaining;

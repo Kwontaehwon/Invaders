@@ -61,7 +61,10 @@ public class Cooldown {
 		return (int)(System.currentTimeMillis() - this.time)/1000;
 	}
 
-	//pause한 시간만큼 시간을 시작시간에 더해줌.
+	/**
+	 * Add time to the start time as much as the time goes by.
+	 * @param pauseTime value of time that paused
+	 */
 	public void pause(long pauseTime){
 		this.time += pauseTime;
 	}
