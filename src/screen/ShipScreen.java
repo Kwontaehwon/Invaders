@@ -59,8 +59,10 @@ public class ShipScreen extends Screen{
                 nextItem();
                 this.selectionCooldown.reset();
             }
-            if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
+            if (inputManager.isKeyDown(KeyEvent.VK_SPACE)){
                 designSetting.setShipType(designSetting.getDesignList().get(cursor).getKey());
+                designSetting.setShipSize(designSetting.getSizeList().get(cursor).getKey(), designSetting.getSizeList().get(cursor).getValue());
+            }
             if (inputManager.isKeyDown(KeyEvent.VK_ESCAPE))
                 this.isRunning = false;
         }

@@ -184,7 +184,7 @@ public class GameScreen extends Screen {
 		enemyShipFormation = new EnemyShipFormation(this.gameSettings);
 		enemyShipFormation.attach(this);
 
-		this.ship = new Ship(this.width / 2, this.height - 50, designSetting.getShipType());
+		this.ship = new Ship(this.width / 2, this.height - 70, designSetting.getSizeX(), designSetting.getSizeY(), designSetting.getShipType());
 		// Appears each 10-30 seconds.
 		this.enemyShipSpecialCooldown = Core.getVariableCooldown(
 				BONUS_SHIP_INTERVAL, BONUS_SHIP_VARIANCE);
@@ -472,31 +472,6 @@ public class GameScreen extends Screen {
 			this.bulletSpeedItem = null;
 			effectSound.getItemSound.start();	// 드랍된 아이템 얻는 소리
 		}
-
-//
-//		if(this.item != null && checkCollision(this.item,this.ship)){
-//			if(random.nextInt(2) == 1) {
-//				this.ship.setShootingCooldown(100);
-//				this.logger.info("Get Item : Bullet ShootingCooldown Up ! ");
-//			}
-//			else {
-//				this.ship.setBulletSpeed(-9);
-//				this.logger.info("Get Item : Bullet Speed Up ! ");
-//			}
-//			//아이템쿨타임 시작.item 쿨타임 5초
-//			this.itemCooldown = Core.getCooldown(5000);
-//			this.itemCooldown.reset();
-//			this.item = null;
-//			effectSound.getItemSound.start();		// 드랍된 아이템 얻는 소리
-//		}
-//		// 아이템 지속시간이끝나면 원래대로 돌아옴.
-//		if(this.itemCooldown != null && this.itemCooldown.checkFinished()){
-//			this.ship.setShootingCooldown(750);
-//			this.ship.setBulletSpeed(-6);
-//			this.itemCooldown = null;
-//			this.logger.info("Bullet Item Cooldown is over. ");
-//		}
-
 		// ship과 보너스 라이프 아이템의 충돌
 		if(this.bonusLifeItem != null && checkCollision(this.bonusLifeItem,this.ship)){
 			if(this.lives < 3) this.lives++;
@@ -539,9 +514,11 @@ public class GameScreen extends Screen {
 				effectSound.shipDeathSound.start();
 			}
 		}
-
-		if (this.levelFinished && this.screenFinishedCooldown.checkFinished())
+		if (this.levelFinished && this.screenFinishedCooldown.checkFinished()){
+			if(this.level ==  1) designSetting.setDesignAchieved(DrawManager.SpriteType.NewShipDesign1_1, true);
 			this.isRunning = false;
+		}
+
 	}
 
 	/**
@@ -721,7 +698,6 @@ public class GameScreen extends Screen {
 								// item 떨어짐.
 								dropItem(enemyShip);
 								this.logger.info("The item is falling !");
-
 							}
 						}
 					}

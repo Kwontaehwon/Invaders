@@ -8,21 +8,43 @@ public class DesignSetting {
 
     private SpriteType shipType;
 
+    private int sizeX;
+    private int sizeY;
+
     private static ArrayList<SimpleEntry<SpriteType, Boolean>> designList = new ArrayList<>();
+    private static ArrayList<SimpleEntry<Integer, Integer>> sizeList = new ArrayList<>();
 
     public DesignSetting(SpriteType shipType){
         this.shipType = shipType;
-
+        sizeX = 18;
+        sizeY = 16;
         designList.add(new SimpleEntry<>(SpriteType.Ship, true));
-        designList.add(new SimpleEntry<>(SpriteType.NewShipDesign, false));
+        sizeList.add(new SimpleEntry<>(18,16));
+        designList.add(new SimpleEntry<>(SpriteType.NewShipDesign1_1, true));
+        sizeList.add(new SimpleEntry<>(16,24));
+        designList.add(new SimpleEntry<>(SpriteType.NewShipDesign2, true));
+        sizeList.add(new SimpleEntry<>(16,16));
+        designList.add(new SimpleEntry<>(SpriteType.NewShipDesign3_1, true));
+        sizeList.add(new SimpleEntry<>(36,28));
     }
 
     public SpriteType getShipType(){ return shipType; }
+
+    public int getSizeX(){return sizeX;}
+    public int getSizeY(){return sizeY;}
 
     public void setShipType(SpriteType type){
         this.shipType = type;
     }
 
+    public void setShipSize(int sizeX, int sizeY){
+        this.sizeX = sizeX;
+        this.sizeY = sizeY;
+    }
+
+    public ArrayList<SimpleEntry<Integer, Integer>> getSizeList() {
+        return sizeList;
+    }
     public ArrayList<SimpleEntry<SpriteType, Boolean>> getDesignList() {
         return designList;
     }

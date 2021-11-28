@@ -63,6 +63,14 @@ public final class DrawManager {
 	public static enum SpriteType {
 		/** Player ship. */
 		Ship,
+		/** New Ship Designs for Customizing.*/
+		NewShipDesign1_1,
+		NewShipDesign1_2,
+		NewShipDesign1_3,
+		NewShipDesign2,
+		NewShipDesign3_1,
+		NewShipDesign3_2,
+		NewShipDesign3_3,
 		/** Destroyed player ship. */
 		ShipDestroyed,
 		/** Player bullet. */
@@ -95,8 +103,6 @@ public final class DrawManager {
 		ShootingCoolItem,
 		BulletSpeedItem,
 		Boom,
-		/** test.*/
-		NewShipDesign,
 		// 두번피격적 추가.
 		EnemyShipD1,
 		EnemyShipD2,
@@ -125,7 +131,13 @@ public final class DrawManager {
 			spriteMap = new LinkedHashMap<SpriteType, Color[][]>();
 			// 각각의 이름그대로, 배, 배파괴되어을때, 총알등등이있음.
 			spriteMap.put(SpriteType.Ship, new Color[18][16]);
-			spriteMap.put(SpriteType.ShipDestroyed, new Color[12][12]);
+			spriteMap.put(SpriteType.NewShipDesign1_1, new Color[16][24]);
+			spriteMap.put(SpriteType.NewShipDesign1_2, new Color[16][24]);
+			spriteMap.put(SpriteType.NewShipDesign1_3, new Color[16][24]);
+			spriteMap.put(SpriteType.NewShipDesign2, new Color[16][16]);
+			spriteMap.put(SpriteType.NewShipDesign3_1, new Color[36][28]);
+			spriteMap.put(SpriteType.NewShipDesign3_2, new Color[36][28]);
+			spriteMap.put(SpriteType.NewShipDesign3_3, new Color[36][28]);
 			spriteMap.put(SpriteType.Bullet1, new Color[5][5]);
 			spriteMap.put(SpriteType.Bullet2, new Color[5][5]);
 			spriteMap.put(SpriteType.Bullet3, new Color[5][5]);
@@ -145,7 +157,6 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.ShootingCoolItem, new Color[16][16]);
 			spriteMap.put(SpriteType.BulletSpeedItem, new Color[16][16]);
 			spriteMap.put(SpriteType.Boom, new Color[15][13]);
-			spriteMap.put(SpriteType.NewShipDesign, new Color[12][12]);
 			spriteMap.put(SpriteType.EnemyShipD1, new Color[16][16]);
 			spriteMap.put(SpriteType.EnemyShipD2, new Color[16][16]);
 			spriteMap.put(SpriteType.EnemyShipD3, new Color[16][16]);
@@ -391,7 +402,7 @@ public final class DrawManager {
 		backBufferGraphics.drawString(Integer.toString(lives), 20, 25);
 		Ship dummyShip = new Ship(0, 0, lifeShape);
 		for (int i = 0; i < lives; i++)
-			drawEntity(dummyShip, 40 + 35 * i, 10);
+			drawEntity(dummyShip, 40 + 50 * i, 10);
 	}
 
 	/**
