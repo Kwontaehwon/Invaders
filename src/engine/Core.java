@@ -23,7 +23,7 @@ import screen.ShipScreen;
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  * 
  */
-public final class Core implements Serializable {
+public final class Core {
 
 	/** Width of current screen. */
 	private static final int WIDTH = 520;
@@ -144,7 +144,7 @@ public final class Core implements Serializable {
 				currentScreen = new TitleScreen(width, height, FPS);
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " title screen at " + FPS + " fps.");
-				returnCode = frame.setScreen(currentScreen);
+				returnCode = frame.setScreen(currentScreen,0);
 				LOGGER.info("Closing title screen.");
 				break;
 			case 2:
@@ -160,7 +160,7 @@ public final class Core implements Serializable {
 							bonusLife, designSetting, width, height, FPS, frame);
 					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 							+ " game screen at " + FPS + " fps.");
-					frame.setScreen(currentScreen);
+					frame.setScreen(currentScreen,0);
 					LOGGER.info("Closing game screen.");
 					//추가한 부분 : flag
 					if(flag_main)
@@ -191,7 +191,7 @@ public final class Core implements Serializable {
 						+ gameState.getBulletsShot() + " bullets shot and "
 						+ gameState.getShipsDestroyed() + " ships destroyed.");
 				currentScreen = new ScoreScreen(width, height, FPS, gameState);
-				returnCode = frame.setScreen(currentScreen);
+				returnCode = frame.setScreen(currentScreen,0);
 				LOGGER.info("Closing score screen.");
 				break;
 			case 3:
@@ -199,7 +199,7 @@ public final class Core implements Serializable {
 				currentScreen = new HighScoreScreen(width, height, FPS);
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " high score screen at " + FPS + " fps.");
-				returnCode = frame.setScreen(currentScreen);
+				returnCode = frame.setScreen(currentScreen,0);
 				LOGGER.info("Closing high score screen.");
 				break;
 			// 화면 가짓수 추가. (returnCode : 4 - Restart시 Game, 8 - Load시 Game)
@@ -226,7 +226,7 @@ public final class Core implements Serializable {
 
 					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 							+ " game screen at " + FPS + " fps.");
-					frame.setScreen(currentScreen);
+					frame.setScreen(currentScreen,0);
 					LOGGER.info("Closing game screen.");
 					if(flag_main)
 						break;
@@ -256,16 +256,16 @@ public final class Core implements Serializable {
 						+ gameState.getBulletsShot() + " bullets shot and "
 						+ gameState.getShipsDestroyed() + " ships destroyed.");
 				currentScreen = new ScoreScreen(width, height, FPS, gameState);
-				returnCode = frame.setScreen(currentScreen);
+				returnCode = frame.setScreen(currentScreen,0);
 				LOGGER.info("Closing score screen.");
 				break;
 			case 8:
 				//load game & score
 
 				boolean isFirst = false;
+				boolean load = false;
 
-				currentScreen = FileManager.getInstance().loadScreen();
-				System.out.print(currentScreen);
+				currentScreen = FileManager.getInstance().loadGame();
 				do {
 					// One extra live every few levels.
 					if(isFirst){
@@ -276,11 +276,18 @@ public final class Core implements Serializable {
 						currentScreen = new GameScreen(gameState,
 								gameSettings.get(gameState.getLevel() - 1),
 								bonusLife, designSetting, width, height, FPS, frame);}
+
 					isFirst = true;
 
 					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 							+ " game screen at " + FPS + " fps.");
-					frame.setScreen(currentScreen);
+					if(load == false) {
+						frame.setScreen(currentScreen,1);
+						load = true;
+					}
+					else {
+						frame.setScreen(currentScreen,0);
+					}
 					LOGGER.info("Closing game screen.");
 					if(flag_main)
 						break;
@@ -310,7 +317,7 @@ public final class Core implements Serializable {
 						+ gameState.getBulletsShot() + " bullets shot and "
 						+ gameState.getShipsDestroyed() + " ships destroyed.");
 				currentScreen = new ScoreScreen(width, height, FPS, gameState);
-				returnCode = frame.setScreen(currentScreen);
+				returnCode = frame.setScreen(currentScreen,0);
 				LOGGER.info("Closing score screen.");
 
 
@@ -320,7 +327,7 @@ public final class Core implements Serializable {
 				currentScreen = new ShipScreen(width, height, FPS, designSetting);
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " Ship screen at " + FPS + " fps.");
-				returnCode = frame.setScreen(currentScreen);
+				returnCode = frame.setScreen(currentScreen,0);
 				LOGGER.info("Closing high score screen.");
 				break;
 

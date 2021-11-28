@@ -6,7 +6,6 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import engine.Cooldown;
 import engine.Core;
@@ -23,7 +22,7 @@ import entity.Ship;
 import skill.*;
 
 import static engine.Core.effectSound;
-import static engine.Core.getLogger;
+
 
 /**
  * Implements the game screen, where the action happens.
@@ -91,7 +90,7 @@ public class GameScreen extends Screen implements Serializable {
 	// 추가한 부분
 	private Item item;
 	private Cooldown itemCooldown;
-	private transient Random random = new Random();
+	private Random random = new Random();
 	private int boomTimes ; //폭탄발사횟수.
 	private Set<Boom> booms; //화면상 발사된 폭탄
 	private Boom boomItem; // 폭탄아이템(떨어지는)
@@ -217,6 +216,19 @@ public class GameScreen extends Screen implements Serializable {
 
 
 	}
+	/**
+	 * load a game, connect object
+	 */
+	public final void load(){
+		logger = Core.getLogger();
+		designSetting = new DesignSetting(DrawManager.SpriteType.Ship);
+		if(this.level != BOSS_STAGE_LEVEL) {
+			enemyShipFormation.setLogger(this.logger);
+			enemyShipFormation.attach(this);
+		}
+		else {boss.setLogger(this.logger);}
+		skill1.setLogger(logger);
+	}
 
 	/**
 	 * Starts the action.
@@ -237,7 +249,6 @@ public class GameScreen extends Screen implements Serializable {
 	 */
 	protected final void update() throws IOException, ClassNotFoundException {
 		super.update();
-
 		if (this.inputDelay.checkFinished() && !this.levelFinished) { //5초 스테이지전 인풋딜레이
 			if(pauseTime != 0 ){ //pause한 시간이 있다면 pause한 만큼 더해줌.
 				this.skill1.pause(System.currentTimeMillis() - this.pauseTime); //현재시간-멈췃을떄 시간
@@ -249,6 +260,7 @@ public class GameScreen extends Screen implements Serializable {
 			}
 
 			if (!this.ship.isDestroyed()) {
+				if(inputManager == null) inputManager = Core.getInputManager();
 				boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT);
 				boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT);
 				boolean SkillCursorRight = inputManager.isKeyDown(KeyEvent.VK_D);
@@ -369,7 +381,7 @@ public class GameScreen extends Screen implements Serializable {
 					GameStatus gameStatus = new GameStatus(gameState, gameSettings, bonusLife);
 					Screen currentScreen = new PauseScreen(width, height, fps, gameStatus,getGameScreen());
 					this.logger.info("escKey.");
-					returnCode = frame.setScreen(currentScreen);
+					returnCode = frame.setScreen(currentScreen,0);
 				}
 				if(Core.flag_main || Core.flag_restart)
 					this.isRunning = false;
@@ -839,9 +851,12 @@ public class GameScreen extends Screen implements Serializable {
 		return enemyShipFormation;
 	}
 
+	public void setEnemyShipFormation(EnemyShipFormation enemyShipFormation) { this.enemyShipFormation = enemyShipFormation;}
+
 	public final GameScreen getGameScreen(){
 		return this;
 	}
 
 	public Set<Bullet> getBullets() { return this.bullets;}
+
 }

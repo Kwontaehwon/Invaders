@@ -5,7 +5,7 @@ import engine.DrawManager;
 import java.awt.*;
 import java.io.Serializable;
 
-public class Ultimate extends Entity implements Serializable {
+public class Ultimate extends Entity {
 
     private int speed = -6;
 

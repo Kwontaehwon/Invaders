@@ -54,9 +54,10 @@ public class Frame extends JFrame {
 	 *            Screen to show.
 	 * @return Return code of the finished screen.
 	 */
-	public final int setScreen(final Screen screen) throws IOException, ClassNotFoundException {
+	public final int setScreen(final Screen screen,int save) throws IOException, ClassNotFoundException {
 		currentScreen = screen;
-		currentScreen.initialize();
+		if(save != 1) currentScreen.initialize();
+		else currentScreen.load();
 		return currentScreen.run();
 	}
 

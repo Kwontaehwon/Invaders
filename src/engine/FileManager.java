@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import engine.DrawManager.SpriteType;
 import entity.Bullet;
 import entity.BulletPool;
+import entity.EnemyShipFormation;
 import screen.GameScreen;
 import screen.Screen;
 
@@ -462,19 +463,15 @@ public final class FileManager {
 		Collections.sort(highScores);
 		return gameStatus;
 	}
-	/**
-	 * save GameScreen data
-	*/
-	public void saveScreen(GameScreen gameScreen) throws IOException, ClassNotFoundException {
+
+	public void saveGame(GameScreen gameScreen) throws IOException, ClassNotFoundException {
 		FileOutputStream fos = new FileOutputStream("res/gameScreen.bin");
 		ObjectOutputStream oos = new ObjectOutputStream(fos);
 		oos.writeObject(gameScreen);
 		oos.close();
 	}
-	/**
-	 * load GameScreen data
-	 */
-	public GameScreen loadScreen() throws IOException, ClassNotFoundException {
+
+	public GameScreen loadGame() throws IOException, ClassNotFoundException {
 		FileInputStream fis = new FileInputStream("res/gameScreen.bin");
 		ObjectInputStream ois = new ObjectInputStream(fis);
 		GameScreen gameScreen = (GameScreen)ois.readObject();

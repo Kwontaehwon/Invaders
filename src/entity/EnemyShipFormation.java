@@ -51,11 +51,11 @@ public class EnemyShipFormation implements Iterable<EnemyShip> , Serializable {
 	private static final int MINIMUM_SPEED = 10;
 
 	/** DrawManager instance. */
-	private DrawManager drawManager;
+	private transient DrawManager drawManager;
 	/** Application logger. */
-	private Logger logger;
+	private transient Logger logger;
 	/** Screen to draw ships on. */
-	private Screen screen;
+	private transient Screen screen;
 
 	/** List of enemy ships forming the formation. */
 	private List<List<EnemyShip>> enemyShips;
@@ -181,6 +181,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> , Serializable {
 	 * Draws every individual component of the formation.
 	 */
 	public final void draw() {
+		if (drawManager == null) drawManager = Core.getDrawManager();
 		for (List<EnemyShip> column : this.enemyShips)
 			for (EnemyShip enemyShip : column)
 				drawManager.drawEntity(enemyShip, enemyShip.getPositionX(),
@@ -444,4 +445,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> , Serializable {
 	public final boolean isEmpty() {
 		return this.shipCount <= 0;
 	}
+
+	public Logger getLogger() {return this.logger;}
+
+	public void setLogger(Logger logger) {this.logger = logger;}
 }

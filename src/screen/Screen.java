@@ -23,9 +23,9 @@ public class Screen implements Serializable {
 	private static final int INPUT_DELAY = 1000;
 
 	/** Draw Manager instance. */
-	protected transient DrawManager drawManager;
+	protected DrawManager drawManager;
 	/** Input Manager instance. */
-	protected transient InputManager inputManager;
+	protected InputManager inputManager;
 	/** Application logger. */
 	protected transient Logger logger;
 
@@ -100,6 +100,8 @@ public class Screen implements Serializable {
 
 		return 0;
 	}
+
+	public void load(){}
 
 	/**
 	 * Updates the elements on screen and checks for events.

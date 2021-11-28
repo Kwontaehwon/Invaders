@@ -11,7 +11,7 @@ import engine.DrawManager.SpriteType;
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  * 
  */
-public class Bullet extends Entity implements Serializable {
+public class Bullet extends Entity {
 
 	/**
 	 * Speed of the bullet, positive or negative depending on direction -

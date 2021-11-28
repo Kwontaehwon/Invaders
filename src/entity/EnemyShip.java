@@ -13,7 +13,7 @@ import engine.DrawManager.SpriteType;
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  * 
  */
-public class EnemyShip extends Entity implements Serializable {
+public class EnemyShip extends Entity {
 	
 	/** Point value of a type A enemy. */
 	private static final int A_TYPE_POINTS = 10;

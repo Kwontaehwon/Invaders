@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 public class Boss extends Entity implements Serializable {
 
-    protected Logger logger;
+    protected transient Logger logger;
 
     private int live = 10;
 
@@ -285,5 +285,9 @@ public class Boss extends Entity implements Serializable {
     public final boolean isDestroyed() {
         return this.isDestroyed;
     }
+
+    public Logger getLogger() {return this.logger;}
+
+    public void setLogger(Logger logger) {this.logger = logger;}
 
 }
