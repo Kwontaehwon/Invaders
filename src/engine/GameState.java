@@ -23,7 +23,7 @@ public class GameState {
 	/** Save skill cool time */
 	private int[] skillCool ;
 	/** Save ultimate skill time */
-	private int UltimateTimes ;
+	private int ultimateTimes ;
 	/**
 	 * Constructor.
 	 * 
@@ -40,7 +40,7 @@ public class GameState {
 	 */
 	public GameState(final int level, final int score,
 			final int livesRemaining, final int bulletsShot,
-			final int shipsDestroyed,final int boomTimes,final int[] skillCool,final int UltimateTimes) {
+			final int shipsDestroyed,final int boomTimes,final int[] skillCool,final int ultimateTimes) {
 		this.level = level;
 		this.score = score;
 		this.livesRemaining = livesRemaining;
@@ -48,7 +48,7 @@ public class GameState {
 		this.shipsDestroyed = shipsDestroyed;
 		this.boomTimes = boomTimes;
 		this.skillCool = skillCool;
-		this.UltimateTimes = UltimateTimes;
+		this.ultimateTimes = ultimateTimes;
 	}
 
 	/**
@@ -99,7 +99,7 @@ public class GameState {
 	/**
 	 * @return UltimateTimes
 	 */
-	public final int getUltimateTimes() { return UltimateTimes;}
+	public final int getUltimateTimes() { return ultimateTimes;}
 
 	/**
 	 * Setter the score, livesRemaining, bulletsShot, shipsDestroyed
