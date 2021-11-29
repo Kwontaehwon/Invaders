@@ -1,6 +1,5 @@
 package engine;
 
-//추가 클래스
 /**
  * Implements a game status record.
  */

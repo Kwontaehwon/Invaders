@@ -60,10 +60,11 @@ public final class Core {
 	/** Difficulty settings for level 7. */
 	private static final GameSettings SETTINGS_LEVEL_7 =
 			new GameSettings(8, 7, 2, 500);
+	/** Difficulty settings for bonus level*/
 	private static final GameSettings SETTINGS_LEVEL_BONUS =
 			new GameSettings(12, 7, 50, 2100000);
 	
-	/** Frame to draw the screen on. */
+	/** Frame to draw the screen on.*/
 	private static Frame frame;
 	/** Screen currently shown. */
 	private static Screen currentScreen;
@@ -76,13 +77,21 @@ public final class Core {
 	private static Handler fileHandler;
 	/** Logger handler for printing to console. */
 	private static ConsoleHandler consoleHandler;
-	// 추가한 부분 flag.
+	/** Flag to check if it's the main or restart. */
 	public static boolean flag_main = false;
 	public static boolean flag_restart = false;
-	// 추가한 부분 Audio
+	/** Audio background music*/
 	public static Audio backgroundMusic = new Audio("res/bgm.wav", true);
-	// 추가한 부분 Audio - effect sound
+	/** Audio effect sound*/
 	public static Sound effectSound = new Sound();
+
+	public static final int MAIN_MENU = 5;
+	public static final int PLAY = 4;
+	public static final int LOAD = 3;
+	public static final int HIGH_SCORES = 2;
+	public static final int CUSTOM = 1;
+	public static final int EXIT = 0;
+	public static final int RESTART = 8;
 
 
 	/**
@@ -106,7 +115,6 @@ public final class Core {
 			LOGGER.setLevel(Level.ALL);
 
 		} catch (Exception e) {
-			// TODO handle exception
 			e.printStackTrace();
 		}
 		backgroundMusic.decrease();
@@ -129,14 +137,14 @@ public final class Core {
 		DesignSetting designSetting = new DesignSetting(DrawManager.SpriteType.Ship);
 		GameState gameState;
 
-		int returnCode = 1;
+		int returnCode = MAIN_MENU;
 		do {
 			flag_main = false;
 			// 맨처음 폭탄발사횟수,스킬쿨타임, 필살기횟수지정(나중에 0으로수정.)
 			gameState = new GameState(1, 0, MAX_LIVES, 0, 0,3, new int[]{15, 15, 15, 15},1);
 
 			switch (returnCode) {
-			case 1:
+			case MAIN_MENU:
 				// Main menu.
 				currentScreen = new TitleScreen(width, height, FPS);
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
@@ -145,7 +153,7 @@ public final class Core {
 				returnCode = frame.setScreen(currentScreen);
 				LOGGER.info("Closing title screen.");
 				break;
-			case 2:
+			case PLAY:
 				backgroundMusic.stop();
 				// Game & score.
 				do {
@@ -161,7 +169,7 @@ public final class Core {
 							+ " game screen at " + FPS + " fps.");
 					frame.setScreen(currentScreen);
 					LOGGER.info("Closing game screen.");
-					//추가한 부분 : flag
+
 					if(flag_main)
 						break;
 					if(flag_restart) {
@@ -176,7 +184,7 @@ public final class Core {
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
 							gameState.getShipsDestroyed(),
-							gameState.getBoomtimes(),
+							gameState.getBoomTimes(),
 							gameState.getSkillCool(),
 							gameState.getUltimateTimes());
 
@@ -194,7 +202,7 @@ public final class Core {
 				returnCode = frame.setScreen(currentScreen);
 				LOGGER.info("Closing score screen.");
 				break;
-			case 3:
+			case HIGH_SCORES:
 				// High scores.
 				currentScreen = new HighScoreScreen(width, height, FPS);
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
@@ -202,8 +210,7 @@ public final class Core {
 				returnCode = frame.setScreen(currentScreen);
 				LOGGER.info("Closing high score screen.");
 				break;
-			// 화면 가짓수 추가. (returnCode : 4 - Restart시 Game, 8 - Load시 Game)
-			case 4:
+			case RESTART:
 				// Game & score. (Restart)
 				do {
 					gameState = new GameState(gameState.getLevel(),
@@ -211,7 +218,7 @@ public final class Core {
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
 							gameState.getShipsDestroyed(),
-							gameState.getBoomtimes(),
+							gameState.getBoomTimes(),
 							gameState.getSkillCool(),
 							gameState.getUltimateTimes());
 
@@ -242,7 +249,7 @@ public final class Core {
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
 							gameState.getShipsDestroyed(),
-							gameState.getBoomtimes(),
+							gameState.getBoomTimes(),
 							gameState.getSkillCool(),
 							gameState.getUltimateTimes());
 
@@ -260,7 +267,7 @@ public final class Core {
 				returnCode = frame.setScreen(currentScreen);
 				LOGGER.info("Closing score screen.");
 				break;
-			case 8:
+			case LOAD:
 				//load game & score
 				GameStatus gameStatus = null;
 				boolean isFirst = false;
@@ -305,7 +312,7 @@ public final class Core {
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
 							gameState.getShipsDestroyed(),
-							gameState.getBoomtimes(),
+							gameState.getBoomTimes(),
 							gameState.getSkillCool(),
 							gameState.getUltimateTimes());
 
@@ -322,7 +329,7 @@ public final class Core {
 				returnCode = frame.setScreen(currentScreen);
 				LOGGER.info("Closing score screen.");
 				break;
-			case 9:
+			case CUSTOM:
 				//Custom
 				currentScreen = new ShipScreen(width, height, FPS, designSetting);
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
@@ -335,12 +342,12 @@ public final class Core {
 				break;
 			}
 
-		} while (returnCode != 0);
+		} while (returnCode != EXIT);
 
 		fileHandler.flush();
 		fileHandler.close();
 		backgroundMusic.stop();
-		System.exit(0);
+		System.exit(EXIT);
 	}
 
 	/**

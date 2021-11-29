@@ -297,7 +297,6 @@ public final class FileManager {
 		}
 	}
 
-	// 추가한 부분 (Save 기능)
 	/**
 	 * Saves game to disk.
 	 *
@@ -343,7 +342,6 @@ public final class FileManager {
 		}
 	}
 
-	// 추가한 부분 (생성된 saves 파일 없을시,, 기본 Saves 파일 불러오기)
 	/**
 	 * Returns the application default saves if there is no user saves file.
 	 *
@@ -400,7 +398,6 @@ public final class FileManager {
 		return gameStatus;
 	}
 
-	// 추가한 부분 (Saves 파일 불러오기)
 	/**
 	 * Loads saves from file, and returns a game status.
 	 *

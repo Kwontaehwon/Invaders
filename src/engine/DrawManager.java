@@ -16,8 +16,12 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.logging.Logger;
 
 import entity.*;
+import screen.PauseScreen;
 import screen.Screen;
 import skill.*;
+
+import static engine.Core.*;
+import static screen.PauseScreen.*;
 
 /**
  * Manages screen drawing.
@@ -53,7 +57,7 @@ public final class DrawManager {
 	private static Image backgroundImage;
 	/** Template Image of background*/
 	private static Image templateImage;
-
+	/** Small sized font properties */
 	private static Font fontSmall;
 
 	/** Sprite types mapped to their images. */
@@ -87,25 +91,39 @@ public final class DrawManager {
 		EnemyShipSpecial,
 		/** Destroyed enemy ship. */
 		Explosion,
-		//추가한것.
+		/** cooltime reduction */
 		ShootingCoolItem,
+		/** increase bullet speed*/
 		BulletSpeedItem,
+		/** extra skill - bomb */
 		Boom,
-		/** test.*/
+		/** test ship design */
 		NewShipDesign,
-		// 두번피격적 추가.
+		/** Fourth enemy ship (not attacked) - first form */
 		EnemyShipD1,
+		/** Fourth enemy ship (not attacked) - second form */
 		EnemyShipD2,
+		/** Fourth enemy ship (attacked) - first form */
 		EnemyShipD3,
+		/** Fourth enemy ship (attacked) - second form*/
 		EnemyShipD4,
+		/** shield skill */
 		Skill1,
+		/** stun skill */
 		Skill2,
+		/** slowing bullet skill */
 		Skill3,
+		/** 3 bomb firing skill */
 		Skill4,
+		/** Bonus life item */
 		BonusLifeItem,
+		/** Bonus score item - first */
 		BonusScoreItem1,
+		/** Bonus score item - second */
 		BonusScoreItem2,
+		/** Bonus score item - third */
 		BonusScoreItem3,
+		/** Ultimate */
 		Ultimate
 	};
 
@@ -119,7 +137,6 @@ public final class DrawManager {
 
 		try {
 			spriteMap = new LinkedHashMap<SpriteType, int[][]>();
-			// 각각의 이름그대로, 배, 배파괴되어을때, 총알등등이있음.
 			spriteMap.put(SpriteType.Ship, new int[13][8]);
 			spriteMap.put(SpriteType.ShipDestroyed, new int[13][8]);
 			spriteMap.put(SpriteType.Bullet1, new int[5][5]);
@@ -232,7 +249,7 @@ public final class DrawManager {
 	}
 
 	/**
-	 * Draws an entity, using the apropiate image.
+	 * Draws an entity, using the appropriate image.
 	 *
 	 * @param entity
 	 *            Entity to be drawn.
@@ -258,6 +275,12 @@ public final class DrawManager {
 				}
 	}
 
+	/**
+	 * Draws a shadowed entity, using the appropriate image.
+	 * @param entity Entity to be drawn.
+	 * @param positionX Coordinates for the left side of the image.
+	 * @param positionY Coordinates for the upper side of the image.
+	 */
 	public void drawShadowedEntity(final Entity entity, final int positionX,
 								   final int positionY) {
 		int[][] image = spriteMap.get(entity.getSpriteType());
@@ -272,7 +295,7 @@ public final class DrawManager {
 	}
 
 	/**
-	 * For debugging purpouses, draws the canvas borders.
+	 * For debugging purposes, draws the canvas borders.
 	 *
 	 * @param screen
 	 *            Screen to draw in.
@@ -289,7 +312,7 @@ public final class DrawManager {
 	}
 
 	/**
-	 * For debugging purpouses, draws a grid over the canvas.
+	 * For debugging purposes, draws a grid over the canvas.
 	 *
 	 * @param screen
 	 *            Screen to draw in.
@@ -325,8 +348,6 @@ public final class DrawManager {
 				bufferedImage.getWidth(), templateImage.getHeight(null), null);
 
 		graphics.dispose();
-
-		// 파일로 저장
 		fileManager.saveImage(bufferedImage);
 		return bufferedImage;
 	}
@@ -341,8 +362,6 @@ public final class DrawManager {
 	public boolean drawFlowBackground(final Screen screen, int imgPos) {
 		int imageHeight = backgroundImage.getHeight(null);
 		boolean isExceeded = false;
-
-		// 범위 초과 여부
 		if(imageHeight - screen.getHeight()  - imgPos<=0) {
 			imgPos = 0;
 			isExceeded = true;
@@ -402,6 +421,11 @@ public final class DrawManager {
 				positionY + 1);
 	}
 
+	/**
+	 * Draw about the player's bomb
+	 * @param screen Screen to draw on.
+	 * @param boomtimes value of current boom
+	 */
 	public void drawBooms(final Screen screen , final int boomtimes){
 		Boom dummyBoom = new Boom(0,0,0,0);
 		for (int i = 0; i < boomtimes; i++)
@@ -409,7 +433,12 @@ public final class DrawManager {
 	}
 
 
-	//보너스 스테이지 남은 시간 표시
+	/**
+	 * Draws a remaining time of bonus stage
+	 * @param screen Screen to draw on.
+	 * @param cooldown current cooldown
+	 * @param pauseTime value of pause time
+	 */
 	public void drawBonusTime(final Screen screen , final Cooldown cooldown, long pauseTime){
 		backBufferGraphics.setFont(fontBig);
 		backBufferGraphics.setColor(Color.green);
@@ -424,7 +453,15 @@ public final class DrawManager {
 	}
 
 
-	//stageLevel에 따른 스킬해제. cursor의 위치에 따른 효과
+	/**
+	 * Draw a skill bar
+	 * @param cursor current cursor
+	 * @param skill1 shield skill
+	 * @param skill2 stun skill
+	 * @param skill3 slow enemy bullet skill
+	 * @param skill4 3 bomb fire skill
+	 * @param pauseTime value of pause time
+	 */
 	public void drawSkills(final int cursor, Skill1 skill1, Skill2 skill2, Skill3 skill3 , Skill4 skill4,long pauseTime){
 		int y = 36;
 		int sizePlus = 72; //화면이 늘어남에 따라
@@ -481,7 +518,10 @@ public final class DrawManager {
 		}
 	}
 
-	//필살기 인터페이스
+	/**
+	 * Ultimate skill interface
+	 * @param UltimateTimes value of ultimate time
+	 */
 	public void drawUltimate(final int UltimateTimes){
 		if(UltimateTimes == 1) backBufferGraphics.setColor(Color.green);
 		else backBufferGraphics.setColor(Color.gray);
@@ -523,32 +563,32 @@ public final class DrawManager {
 		String loadString = "Load";
 		String customizeString = "Custom";
 
-		if (option == 2)
+		if (option == PLAY)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, playString, screen.getHeight()
 				/ 3 * 2 - fontRegularMetrics.getHeight() * 2);
 		// load 메뉴 추가.
-		if (option == 8)
+		if (option == LOAD)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, loadString, screen.getHeight()
 				/ 3 * 2 );
-		if (option == 3)
+		if (option == HIGH_SCORES)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, highScoresString, screen.getHeight()
 				/ 3 * 2 + fontRegularMetrics.getHeight() * 2);
-		if (option == 9)
+		if (option == CUSTOM)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, customizeString, screen.getHeight()
 				/ 3 * 2 + fontRegularMetrics.getHeight() * 4);
-		if (option == 0)
+		if (option == EXIT)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
@@ -814,7 +854,10 @@ public final class DrawManager {
 	}
 
 
-	// 추가한 부분 : 일시정지 화면 타이틀 구성.
+	/**
+	 * Draws Pause Screen title
+	 * @param screen screen to draw on
+	 */
 	public void drawPauseTitle(final Screen screen) {
 		String pauseString = "Pause";
 		String instructionsString = "Press Space to return";
@@ -826,7 +869,12 @@ public final class DrawManager {
 		drawCenteredRegularString(screen, instructionsString,
 				screen.getHeight() / 5);
 	}
-	// 추가한 부분 : 일시정지 화면 메뉴 구성.
+
+	/**
+	 * Draws Pause menu
+	 * @param screen Screen to draw on.
+	 * @param option value of current option
+	 */
 	public void drawPauseMenu(final Screen screen, final int option) {
 		String restartString = "Restart";
 		String saveString = "Save";
@@ -835,39 +883,39 @@ public final class DrawManager {
 		String continueString = "Continue";
 		String soundString = "Sound";
 
-		if (option == 2)
+		if (option == CONTINUE)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, continueString,
 				screen.getHeight() / 3 * 1);
-		if (option == 1)
+		if (option == PauseScreen.MAIN_MENU)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, mainString,
 				screen.getHeight() / 3 * 1 + fontRegularMetrics.getHeight() * 2);
 
-		if (option == 4)
+		if (option == PauseScreen.RESTART)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, restartString,
 				screen.getHeight() / 3 * 1 + fontRegularMetrics.getHeight() * 4);
-		if (option == 5)
+		if (option == SAVE)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, saveString, screen.getHeight()
 				/ 3 * 1 + fontRegularMetrics.getHeight() * 6);
-		if (option == 6)
+		if (option == MUSIC)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, musicString, screen.getHeight() / 3
 				* 1 + fontRegularMetrics.getHeight() * 8);
 
-		if (option == 11)
+		if (option == MUSIC_DOWN)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
@@ -876,7 +924,7 @@ public final class DrawManager {
 						- fontBigMetrics.stringWidth(musicString) / 2 - 5,
 				screen.getHeight() / 3
 						* 1 + fontRegularMetrics.getHeight() * 8);
-		if (option == 12)
+		if (option == MUSIC_UP)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
@@ -886,14 +934,14 @@ public final class DrawManager {
 				screen.getHeight() / 3
 						* 1 + fontRegularMetrics.getHeight() * 8);
 
-		if (option == 15)
+		if (option == SOUND)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, soundString, screen.getHeight() / 3
 				* 1 + fontRegularMetrics.getHeight() * 10);
 
-		if (option == 13)
+		if (option == SOUND_DOWN)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
@@ -902,7 +950,7 @@ public final class DrawManager {
 						- fontBigMetrics.stringWidth(soundString) / 2 - 5,
 				screen.getHeight() / 3
 						* 1 + fontRegularMetrics.getHeight() * 10);
-		if (option == 14)
+		if (option == SOUND_UP)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);

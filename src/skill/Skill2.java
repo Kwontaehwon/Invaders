@@ -6,14 +6,14 @@ import engine.DrawManager;
 
 import java.awt.*;
 
-//적움직임 멈춤.
+
 public class Skill2 extends Skill{
 
-    private final int SKILL_COOLDOWN = 15 * 1000      ;  //쿨타임
+    private final int SKILL_COOLDOWN = 15 * 1000;
 
-    private final int DURATION_COOLDOWN = 5 * 1000; //지속시간
+    private final int DURATION_COOLDOWN = 5 * 1000;
 
-    private int currentSkillCooldown ;
+    private int currentSkillCooldown;
 
     private Cooldown skillCooldown;
 
@@ -21,13 +21,17 @@ public class Skill2 extends Skill{
 
     private boolean activation;
 
-    private boolean open; //열려있는지 체크
+    private boolean open;
 
+    /**
+     * Constructor, established the skill's properties for stun.
+     * @param level current level
+     * @param currentSkillCooldown value of current skill cooldown
+     */
     public Skill2(int level,int currentSkillCooldown) {
         super(0, 0, 8*2, 8*2, Color.white);
 
         this.activation = false;
-        //load된 쿨타임을 적용하기위해
         this.currentSkillCooldown = currentSkillCooldown;
         this.skillCooldown = Core.getCooldown(currentSkillCooldown * 1000);
         this.duration = Core.getCooldown(DURATION_COOLDOWN);
@@ -37,18 +41,26 @@ public class Skill2 extends Skill{
 
     }
 
-    //활성화
+    /**
+     * for checking skill, activate skill's cooldown
+     */
     public void startActivate(){
         activation = true;
         duration.reset();
-        //활성화하면 다시 쿨타임이 15초부터 돌기때문에
         this.skillCooldown = Core.getCooldown(SKILL_COOLDOWN);
     }
-    //활성화 중, true면 활성화중.
+
+    /**
+     * Check the skill is active
+     * @return True if the skill is active
+     */
     public boolean checkActivate(){ return activation; }
 
 
-    //지속시간 체크
+    /**
+     * check the duration
+     * @return True if the skill not finished
+     */
     public boolean checkDuration() {
         if(duration.checkFinished()) {
             this.activation = false;
@@ -59,7 +71,11 @@ public class Skill2 extends Skill{
             return activation;
         }
     }
-    // 스킬쿨타임 체크 끝났나?
+
+    /**
+     * check the skill cooltime
+     * @return True if the skill can active
+     */
     public boolean checkCoolTime(){
         if(this.skillCooldown.checkFinished()) {
             this.logger.info("Skill2 was used. ");
@@ -71,22 +87,35 @@ public class Skill2 extends Skill{
         }
     }
 
+    /**
+     * start skill cooltime
+     */
     public void startCoolTime(){
         this.skillCooldown.reset();
     }
 
-    //스킬 남은시간을 돌려줌
+    /**
+     * return the left time
+     * @return true if skill cooltime is minus, false
+     */
     public int returnSkillCoolTime(){
-        // -인 경우를 처리해주기위해.
         if(this.skillCooldown.getDuration() - this.skillCooldown.passedCooldown() < 0) return 0;
         else return this.skillCooldown.getDuration() - this.skillCooldown.passedCooldown();
     }
 
-    //pause한 시간만큼 시간을 시작시간에 더해줌.
+    /**
+     * Added added pause time
+     * @param time Value of pause time
+     */
     public void pause(long time){
         this.skillCooldown.pause(time);
         this.duration.pause(time);
     }
+
+    /**
+     * Check skill is open or not
+     * @return True if skill is open
+     */
     public boolean checkOpen() { return this.open; }
 
 }
