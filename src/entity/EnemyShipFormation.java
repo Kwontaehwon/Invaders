@@ -27,7 +27,9 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/** Proportion of C-type ships. */
 	private static final double PROPORTION_C = 0.2;
 	/** Proportion of B-type ships. */
-	private static final double PROPORTION_B = 0.4;
+	private static final double PROPORTION_B = 0.3;
+	/** Proportion of B-type ships. */
+	private static final double PROPORTION_A = 0.3;
 	/** Lateral speed of the formation. */
 	private static final int X_SPEED = 8;
 	/** Downwards speed of the formation. */
@@ -141,11 +143,14 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 		for (List<EnemyShip> column : this.enemyShips) {
 			for (int i = 0; i < this.nShipsHigh; i++) {
-				if (i / (float) this.nShipsHigh < PROPORTION_C)
-					spriteType = SpriteType.EnemyShipC1;
-				else if (i / (float) this.nShipsHigh < PROPORTION_B
-						+ PROPORTION_C)
+				if (i / (float) this.nShipsHigh < PROPORTION_A)
+					spriteType = SpriteType.EnemyShipA1;
+				else if (i / (float) this.nShipsHigh < PROPORTION_A
+						+ PROPORTION_B)
 					spriteType = SpriteType.EnemyShipB1;
+				else if (i / (float) this.nShipsHigh < PROPORTION_A
+						+ PROPORTION_B + PROPORTION_C)
+					spriteType = SpriteType.EnemyShipC1;
 				else
 					spriteType = SpriteType.EnemyShipD1;
 
@@ -341,11 +346,17 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				column.removeAll(destroyed);
 			}
 			if (!skill2) { //스킬 2가 활성화중이 아니면 적개체가 움직임.
-				for (List<EnemyShip> column : this.enemyShips)
+				for (List<EnemyShip> column : this.enemyShips){
 					for (EnemyShip enemyShip : column) {
-						enemyShip.move(movementX, movementY);
+						if(shootingInterval != 2100000){
+							enemyShip.move(movementX, movementY);
+						}
+						else{
+							enemyShip.move(0,0);
+						}
 						enemyShip.update();
 					}
+				}
 			}
 
 		}
@@ -409,7 +420,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		if (this.shootingCooldown.checkFinished()) {
 			this.shootingCooldown.reset();
 			bullets.add(BulletPool.getBullet(shooter.getPositionX()
-					+ shooter.width / 2, shooter.getPositionY(), BULLET_SPEED));
+					+ shooter.width / 2, shooter.getPositionY(), 0, BULLET_SPEED));
 		}
 	}
 

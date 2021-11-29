@@ -29,9 +29,9 @@ public class Boss extends Entity {
     /** Margin on the sides of the screen. */
     private static final int SIDE_MARGIN = 20;
     /** Margin on the bottom of the screen. */
-    private static final int BOTTOM_MARGIN = 250;
+    private static final int BOTTOM_MARGIN = 350;
     /** Margin on the top of the screen. */
-    private static final int TOP_MARGIN = 60;
+    private static final int TOP_MARGIN = 100;
     /** Lateral speed of the formation. */
     private static final int X_SPEED = 2;
     /** Downwards speed of the formation. */
@@ -78,10 +78,11 @@ public class Boss extends Entity {
 
      */
     public Boss() {
-        super(INIT_POS_X,INIT_POS_Y, 50 *2 , 40 * 2, Color.white);
+        super(INIT_POS_X,INIT_POS_Y, 50 *2 , 50 * 2, Color.white);
         this.drawManager = Core.getDrawManager();
         this.movementInterval = 0;
-        this.spriteType = DrawManager.SpriteType.BossShip1;
+        this.spriteType = DrawManager.SpriteType.Boss1;
+        this.animationCooldown = Core.getCooldown(500);
         this.isDestroyed = false;
         this.currentDirection = Direction.UP;
         this.logger = Core.getLogger();
@@ -103,13 +104,32 @@ public class Boss extends Entity {
      * Updates the position of the ships.
      */
     public final void update(){
+        if(this.animationCooldown.checkFinished()){
+            this.animationCooldown.reset();
+            switch (this.spriteType) {
+                case Boss1:
+                    this.spriteType = DrawManager.SpriteType.Boss2;
+                    break;
+                case Boss2:
+                    this.spriteType = DrawManager.SpriteType.Boss3;
+                    break;
+                case Boss3:
+                    this.spriteType = DrawManager.SpriteType.Boss4;
+                    break;
+                case Boss4:
+                    this.spriteType = DrawManager.SpriteType.Boss1;
+                    break;
+                default:
+                    break;
+            }
+        }
         if(this.shootingCooldown == null) {
             this.shootingCooldown = Core.getCooldown(shootingInterval);
             this.shootingCooldown.reset();
         }
 
         movementInterval++;
-        if(movementInterval >= 30) {
+        if(movementInterval >= 50) {
             movementInterval = 0;
 
             switch (new Random().nextInt(8)) {
@@ -259,14 +279,14 @@ public class Boss extends Entity {
     public final void destroy() {
         this.live--;
         if( this.live == 5){
-            this.spriteType = DrawManager.SpriteType.BossShip2;
+            this.spriteType = DrawManager.SpriteType.BossHpLow1;
         }
         else if(this.live == 2){
-            this.spriteType = DrawManager.SpriteType.BossShip3;
+            this.spriteType = DrawManager.SpriteType.BossHpLow2;
         }
         else if (this.live == 0){
             this.isDestroyed = true;
-            this.spriteType = DrawManager.SpriteType.Explosion; //나중에 보스파괴모션.
+            this.spriteType = DrawManager.SpriteType.BossDestroyed;
             this.logger.info("The Boss is destroyed." );
         }
     }

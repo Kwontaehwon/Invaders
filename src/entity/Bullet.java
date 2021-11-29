@@ -1,14 +1,14 @@
 package entity;
 
-import java.awt.Color;
-
 import engine.DrawManager.SpriteType;
 
+import java.awt.*;
+
 /**
- * Implements a bullet that moves vertically up or down.
+ * Implements a bullet that moves with fixed speed.
  * 
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
- * 
+ *
  */
 public class Bullet extends Entity {
 
@@ -21,39 +21,34 @@ public class Bullet extends Entity {
 
 	/**
 	 * Constructor, establishes the bullet's properties.
-	 * 
+	 *
 	 * @param positionX
 	 *            Initial position of the bullet in the X axis.
 	 * @param positionY
 	 *            Initial position of the bullet in the Y axis.
-	 * @param speed
+	 * @param speedY
 	 *            Speed of the bullet, positive or negative depending on
 	 *            direction - positive is down.
 	 */
-	public Bullet(final int positionX, final int positionY, final int speed) {
-		super(positionX, positionY, 3 * 2, 5 * 2, Color.WHITE);
 
-		this.speedX = 0;
-		this.speedY = speed;
-		setSprite();
-	}
 
 	public Bullet(final int positionX, final int positionY, final int speedX, final int speedY) {
 		super(positionX, positionY, 3*2, 5*2, Color.WHITE);
-
 		this.speedX = speedX;
 		this.speedY = speedY;
 		setSprite();
 	}
 
 	/**
-	 * Sets correct sprite for the bullet, based on speed.
+	 * Sets correct sprite for the bullet, based on speedY.
 	 */
 	public final void setSprite() {
-		if (speedY < 0)
-			this.spriteType = SpriteType.Bullet;
-		else
-			this.spriteType = SpriteType.EnemyBullet;
+
+		if (speedY > 0)	this.spriteType = SpriteType.EnemyBullet;
+		else if(speedY == -6 || speedY == -7) this.spriteType = SpriteType.Bullet1;
+		else if(speedY == -8) this.spriteType = SpriteType.Bullet2;
+		else this.spriteType = SpriteType.Bullet3;
+
 	}
 
 	/**
@@ -63,12 +58,14 @@ public class Bullet extends Entity {
 		if(skill3 && this.speedY > 0){
 			this.positionY += 1 ;
 			this.positionX += this.speedX;
+			//this.positionX += speedX/speedY;
+			//this.positionY += 1;
+			// speedY/speedY 같은 비율로 나누기
 		}
 		else {
 			this.positionY += this.speedY;
 			this.positionX += this.speedX;
 		}
-
 	}
 
 	/**
@@ -92,10 +89,11 @@ public class Bullet extends Entity {
 	public final void setSpeed(final int speedX, final int speedY) {
 		this.speedX = speedX;
 		this.speedY = speedY;
+
 	}
 
 	/**
-	 * Getter for the speed of the bullet.
+	 * Getter for the speedY of the bullet.
 	 * 
 	 * @return SpeedY of the bullet.
 	 */

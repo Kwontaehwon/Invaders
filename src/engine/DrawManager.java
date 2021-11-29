@@ -21,9 +21,9 @@ import skill.*;
 
 /**
  * Manages screen drawing.
- * 
+ *
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
- * 
+ *
  */
 public final class DrawManager {
 
@@ -57,7 +57,7 @@ public final class DrawManager {
 	private static Font fontSmall;
 
 	/** Sprite types mapped to their images. */
-	private static Map<SpriteType, int[][]> spriteMap;
+	private static Map<SpriteType, Color[][]> spriteMap;
 
 	/** Sprite types. */
 	public static enum SpriteType {
@@ -66,7 +66,9 @@ public final class DrawManager {
 		/** Destroyed player ship. */
 		ShipDestroyed,
 		/** Player bullet. */
-		Bullet,
+		Bullet1,
+		Bullet2,
+		Bullet3,
 		/** Enemy bullet. */
 		EnemyBullet,
 		/** First enemy ship - first form. */
@@ -82,14 +84,17 @@ public final class DrawManager {
 		/** Third enemy ship - second form. */
 		EnemyShipC2,
 		/** Bonus ship. */
-		EnemyShipSpecial,
+		EnemyShipSpecial1,
+		EnemyShipSpecial2,
+		EnemyShipSpecial3,
+		EnemyShipSpecial4,
 		/** Destroyed enemy ship. */
-		Explosion,
-		//추가한것.
-		Box, Boom,
-		/** test.*/
+		Explosion1,
+		Explosion3,
+		ShootingCoolItem,
+		BulletSpeedItem,
+		Boom,
 		NewShipDesign,
-		// 두번피격적 추가.
 		EnemyShipD1,
 		EnemyShipD2,
 		EnemyShipD3,
@@ -98,13 +103,21 @@ public final class DrawManager {
 		Skill2,
 		Skill3,
 		Skill4,
+		BonusLifeItem,
+		BonusScoreItem1,
+		BonusScoreItem2,
+		BonusScoreItem3,
 		Ultimate,
-		/** BossShip1 */
-		BossShip1,
-		/** BossShip2 */
-		BossShip2,
-		/** BossShip3 */
-		BossShip3
+		/** boss */
+		Boss1,
+		Boss2,
+		Boss3,
+		Boss4,
+		/** boss hp low */
+		BossHpLow1,
+		BossHpLow2,
+		/** boss destroyed */
+		BossDestroyed,
 	};
 
 	/**
@@ -116,36 +129,50 @@ public final class DrawManager {
 		logger.info("Started loading resources.");
 
 		try {
-			spriteMap = new LinkedHashMap<SpriteType, int[][]>();
+			spriteMap = new LinkedHashMap<SpriteType, Color[][]>();
 			// 각각의 이름그대로, 배, 배파괴되어을때, 총알등등이있음.
-			spriteMap.put(SpriteType.Ship, new int[13][8]);
-			spriteMap.put(SpriteType.ShipDestroyed, new int[13][8]);
-			spriteMap.put(SpriteType.Bullet, new int[5][5]);
-			spriteMap.put(SpriteType.EnemyBullet, new int[3][5]);
-			spriteMap.put(SpriteType.EnemyShipA1, new int[12][8]);
-			spriteMap.put(SpriteType.EnemyShipA2, new int[12][8]);
-			spriteMap.put(SpriteType.EnemyShipB1, new int[12][8]);
-			spriteMap.put(SpriteType.EnemyShipB2, new int[12][8]);
-			spriteMap.put(SpriteType.EnemyShipC1, new int[12][8]);
-			spriteMap.put(SpriteType.EnemyShipC2, new int[12][8]);
-			spriteMap.put(SpriteType.EnemyShipSpecial, new int[16][7]);
-			spriteMap.put(SpriteType.Explosion, new int[13][7]);
-			spriteMap.put(SpriteType.Box, new int[13][8]);
-			spriteMap.put(SpriteType.Boom, new int[8][8]);
-			spriteMap.put(SpriteType.NewShipDesign, new int[13][8]);
-			spriteMap.put(SpriteType.EnemyShipD1, new int[12][8]);
-			spriteMap.put(SpriteType.EnemyShipD2, new int[12][8]);
-			spriteMap.put(SpriteType.EnemyShipD3, new int[12][8]);
-			spriteMap.put(SpriteType.EnemyShipD4, new int[12][8]);
-			spriteMap.put(SpriteType.Skill1, new int[8][8]);
-			spriteMap.put(SpriteType.Skill2, new int[8][8]);
-			spriteMap.put(SpriteType.Skill3, new int[8][8]);
-			spriteMap.put(SpriteType.Skill4, new int[8][8]);
-			spriteMap.put(SpriteType.Ultimate, new int[100][100]);
-			spriteMap.put(SpriteType.BossShip1, new int[50][40]);
-			spriteMap.put(SpriteType.BossShip2, new int[50][40]);
-			spriteMap.put(SpriteType.BossShip3, new int[50][40]);
-
+			spriteMap.put(SpriteType.Ship, new Color[18][16]);
+			spriteMap.put(SpriteType.ShipDestroyed, new Color[12][12]);
+			spriteMap.put(SpriteType.Bullet1, new Color[5][5]);
+			spriteMap.put(SpriteType.Bullet2, new Color[5][5]);
+			spriteMap.put(SpriteType.Bullet3, new Color[5][5]);
+			spriteMap.put(SpriteType.EnemyBullet, new Color[5][5]);
+			spriteMap.put(SpriteType.EnemyShipA1, new Color[16][16]);
+			spriteMap.put(SpriteType.EnemyShipA2, new Color[16][16]);
+			spriteMap.put(SpriteType.EnemyShipB1, new Color[16][16]);
+			spriteMap.put(SpriteType.EnemyShipB2, new Color[16][16]);
+			spriteMap.put(SpriteType.EnemyShipC1, new Color[16][16]);
+			spriteMap.put(SpriteType.EnemyShipC2, new Color[16][16]);
+			spriteMap.put(SpriteType.EnemyShipSpecial1, new Color[32][32]);
+			spriteMap.put(SpriteType.EnemyShipSpecial2, new Color[32][32]);
+			spriteMap.put(SpriteType.EnemyShipSpecial3, new Color[32][32]);
+			spriteMap.put(SpriteType.EnemyShipSpecial4, new Color[32][32]);
+			spriteMap.put(SpriteType.Explosion1, new Color[16][16]);
+			spriteMap.put(SpriteType.Explosion3, new Color[16][16]);
+			spriteMap.put(SpriteType.ShootingCoolItem, new Color[16][16]);
+			spriteMap.put(SpriteType.BulletSpeedItem, new Color[16][16]);
+			spriteMap.put(SpriteType.Boom, new Color[15][13]);
+			spriteMap.put(SpriteType.NewShipDesign, new Color[12][12]);
+			spriteMap.put(SpriteType.EnemyShipD1, new Color[16][16]);
+			spriteMap.put(SpriteType.EnemyShipD2, new Color[16][16]);
+			spriteMap.put(SpriteType.EnemyShipD3, new Color[16][16]);
+			spriteMap.put(SpriteType.EnemyShipD4, new Color[16][16]);
+			spriteMap.put(SpriteType.Skill1, new Color[16][16]);
+			spriteMap.put(SpriteType.Skill2, new Color[16][16]);
+			spriteMap.put(SpriteType.Skill3, new Color[16][16]);
+			spriteMap.put(SpriteType.Skill4, new Color[16][16]);
+			spriteMap.put(SpriteType.Ultimate, new Color[100][100]);
+			spriteMap.put(SpriteType.BonusLifeItem, new Color[16][16]);
+			spriteMap.put(SpriteType.BonusScoreItem1, new Color[16][16]);
+			spriteMap.put(SpriteType.BonusScoreItem2, new Color[16][16]);
+			spriteMap.put(SpriteType.BonusScoreItem3, new Color[16][16]);
+			spriteMap.put(SpriteType.Boss1, new Color[50][50]);
+			spriteMap.put(SpriteType.Boss2, new Color[50][50]);
+			spriteMap.put(SpriteType.Boss3, new Color[50][50]);
+			spriteMap.put(SpriteType.Boss4, new Color[50][50]);
+			spriteMap.put(SpriteType.BossHpLow1, new Color[50][50]);
+			spriteMap.put(SpriteType.BossHpLow2, new Color[50][50]);
+			spriteMap.put(SpriteType.BossDestroyed, new Color[50][50]);
 
 
 			fileManager.loadSprite(spriteMap);
@@ -169,7 +196,7 @@ public final class DrawManager {
 
 	/**
 	 * Returns shared instance of DrawManager.
-	 * 
+	 *
 	 * @return Shared instance of DrawManager.
 	 */
 	protected static DrawManager getInstance() {
@@ -180,7 +207,7 @@ public final class DrawManager {
 
 	/**
 	 * Sets the frame to draw the image on.
-	 * 
+	 *
 	 * @param currentFrame
 	 *            Frame to draw on.
 	 */
@@ -191,7 +218,7 @@ public final class DrawManager {
 	/**
 	 * First part of the drawing process. Initialices buffers, draws the
 	 * background and prepares the images.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw in.
 	 */
@@ -217,7 +244,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws the completed drawing on screen.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 */
@@ -228,7 +255,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws an entity, using the apropiate image.
-	 * 
+	 *
 	 * @param entity
 	 *            Entity to be drawn.
 	 * @param positionX
@@ -238,37 +265,36 @@ public final class DrawManager {
 	 */
 	public void drawEntity(final Entity entity, final int positionX,
 						   final int positionY) {
-		int[][] image = spriteMap.get(entity.getSpriteType());
-
-		for (int i = 0; i < image.length; i++)
-			for (int j = 0; j < image[i].length; j++)
-				if (image[i][j] != 0){
-					if(image[i][j] == 1) backBufferGraphics.setColor(Color.white);
-					else if(image[i][j] == 2) backBufferGraphics.setColor(Color.red);
-					else if(image[i][j] == 3) backBufferGraphics.setColor(Color.blue);
-					else if(image[i][j] == 4) backBufferGraphics.setColor(Color.green);
-					else if(image[i][j] == 5) backBufferGraphics.setColor(Color.yellow);
+		Color[][] image = spriteMap.get(entity.getSpriteType());
+		for (int i = 0; i < image.length; i++){
+			for (int j = 0; j < image[i].length; j++){
+				if (image[i][j] != Color.BLACK){
+					backBufferGraphics.setColor(image[i][j]);
 					backBufferGraphics.drawRect(positionX + i * 2, positionY
 							+ j * 2, 1, 1);
 				}
+			}
+		}
+
+
 	}
 
 	public void drawShadowedEntity(final Entity entity, final int positionX,
 								   final int positionY) {
-		int[][] image = spriteMap.get(entity.getSpriteType());
-
+		Color[][] image = spriteMap.get(entity.getSpriteType());
 		backBufferGraphics.setColor(Color.GRAY);
 		for (int i = 0; i < image.length; i++)
 			for (int j = 0; j < image[i].length; j++)
-				if (image[i][j] != 0)
+				if (image[i][j] != Color.black){
 					backBufferGraphics.drawRect(positionX + i * 2, positionY
 							+ j * 2, 1, 1);
+				}
 
 	}
 
 	/**
 	 * For debugging purpouses, draws the canvas borders.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw in.
 	 */
@@ -285,7 +311,7 @@ public final class DrawManager {
 
 	/**
 	 * For debugging purpouses, draws a grid over the canvas.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw in.
 	 */
@@ -352,7 +378,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws current score on screen.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param score
@@ -367,7 +393,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws number of remaining lives on screen.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param lives
@@ -384,7 +410,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws a thick line from side to side of the screen.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param positionY
@@ -403,49 +429,70 @@ public final class DrawManager {
 			drawEntity(dummyBoom,150+ 20 * i,10);
 	}
 
+
+	//보너스 스테이지 남은 시간 표시
+	public void drawBonusTime(final Screen screen , final Cooldown cooldown, long pauseTime){
+		backBufferGraphics.setFont(fontBig);
+		backBufferGraphics.setColor(Color.green);
+		int cool = cooldown.getDuration() - cooldown.passedCooldown();
+		if (pauseTime == 0){
+			if (cool > 0 && cool < 10) {
+				backBufferGraphics.drawString(Integer.toString(cool), screen.getWidth()/2-10 , 83);
+			} else if (cool > 9) {
+				backBufferGraphics.drawString(Integer.toString(cool), screen.getWidth()/2-20 , 83);
+			}
+		}
+	}
+
+
 	//stageLevel에 따른 스킬해제. cursor의 위치에 따른 효과
 	public void drawSkills(final int cursor, Skill1 skill1, Skill2 skill2, Skill3 skill3 , Skill4 skill4,long pauseTime){
-		int y = 36;
-		int sizePlus = 72; //화면이 늘어남에 따라
-		drawString("SKILL",213 +sizePlus ,25);
+		int y = 55;
+		int sizePlus = 115; //화면이 늘어남에 따라
+		int mNumber = 40;
+		drawString("SKILL",213 +sizePlus ,33);
 		backBufferGraphics.setFont(fontSmall);
 		if (skill1.checkOpen()) { //열려있으면 그려줌.
-			drawEntity(skill1,267 + 22 * 0 +sizePlus, 10);
+			drawEntity(skill1,267 + mNumber * 0 +sizePlus, 10);
+			backBufferGraphics.setColor(Color.green);
 			if(pauseTime == 0) {
 				if (skill1.returnSkillCoolTime() > 0 && skill1.returnSkillCoolTime() < 10) {
-					backBufferGraphics.drawString(Integer.toString(skill1.returnSkillCoolTime()), 267 + 22 * 0 + 4 + sizePlus, y);
+					backBufferGraphics.drawString(Integer.toString(skill1.returnSkillCoolTime()), 278 + mNumber * 0 + 4 + sizePlus, y);
 				} else if (skill1.returnSkillCoolTime() > 9) {
-					backBufferGraphics.drawString(Integer.toString(skill1.returnSkillCoolTime()), 267 + 22 * 0 + 3 + sizePlus, y);
+					backBufferGraphics.drawString(Integer.toString(skill1.returnSkillCoolTime()), 275 + mNumber * 0 + 3 + sizePlus, y);
 				}
 			}
 		}
 		if (skill2.checkOpen()) {
-			drawEntity(skill2, 267 + 22 * 1 + sizePlus, 10);
+			drawEntity(skill2, 267 + mNumber * 1 + sizePlus, 10);
+			backBufferGraphics.setColor(Color.green);
 			if(pauseTime == 0) {
 				if (skill2.returnSkillCoolTime() > 0 && skill2.returnSkillCoolTime() < 10)
-					backBufferGraphics.drawString(Integer.toString(skill2.returnSkillCoolTime()), 270 + 22 * 1 + 3 + sizePlus, y);
+					backBufferGraphics.drawString(Integer.toString(skill2.returnSkillCoolTime()), 278 + mNumber * 1 + 3 + sizePlus, y);
 				else if (skill2.returnSkillCoolTime() > 9) {
-					backBufferGraphics.drawString(Integer.toString(skill2.returnSkillCoolTime()), 267 + 22 * 1 + 3 + sizePlus, y);
+					backBufferGraphics.drawString(Integer.toString(skill2.returnSkillCoolTime()), 275 + mNumber * 1 + 3 + sizePlus, y);
 				}
 			}
 		}
 		if (skill3.checkOpen()) {
-			drawEntity(skill3, 267 + 22 * 2 + sizePlus, 10);
+			drawEntity(skill3, 267 + mNumber * 2 + sizePlus, 10);
+			backBufferGraphics.setColor(Color.green);
 			if(pauseTime == 0) {
 				if (skill3.returnSkillCoolTime() > 0 && skill3.returnSkillCoolTime() < 10)
-					backBufferGraphics.drawString(Integer.toString(skill3.returnSkillCoolTime()), 270 + 22 * 2 + 3 + sizePlus, y);
+					backBufferGraphics.drawString(Integer.toString(skill3.returnSkillCoolTime()), 278 + mNumber * 2 + 3 + sizePlus, y);
 				else if (skill3.returnSkillCoolTime() > 9) {
-					backBufferGraphics.drawString(Integer.toString(skill3.returnSkillCoolTime()), 267 + 22 * 2 + 3 + sizePlus, y);
+					backBufferGraphics.drawString(Integer.toString(skill3.returnSkillCoolTime()), 275 + mNumber * 2 + 3 + sizePlus, y);
 				}
 			}
 		}
 		if (skill4.checkOpen()) {
-			drawEntity(skill4, 267 + 22 * 3 + sizePlus, 10);
+			drawEntity(skill4, 267 + mNumber * 3 + sizePlus, 10);
+			backBufferGraphics.setColor(Color.green);
 			if(pauseTime == 0) {
 				if (skill4.returnSkillCoolTime() > 0 && skill4.returnSkillCoolTime() < 10)
-					backBufferGraphics.drawString(Integer.toString(skill4.returnSkillCoolTime()), 270 + 22 * 3 + 3 + sizePlus, y);
+					backBufferGraphics.drawString(Integer.toString(skill4.returnSkillCoolTime()), 278 + mNumber * 3 + 3 + sizePlus, y);
 				else if (skill4.returnSkillCoolTime() > 9) {
-					backBufferGraphics.drawString(Integer.toString(skill4.returnSkillCoolTime()), 267 + 22 * 3 + 3 + sizePlus, y);
+					backBufferGraphics.drawString(Integer.toString(skill4.returnSkillCoolTime()), 275 + mNumber * 3 + 3 + sizePlus, y);
 				}
 			}
 		}
@@ -456,20 +503,21 @@ public final class DrawManager {
 			else {
 				backBufferGraphics.setColor(Color.gray);
 			}
-			backBufferGraphics.drawRect(267 + 22 * i + sizePlus, 10, skill1.getWidth(), skill1.getHeight());
+			backBufferGraphics.drawRect(267 + mNumber * i + sizePlus, 10, skill1.getWidth(), skill1.getHeight());
 		}
 	}
+
 	//필살기 인터페이스
 	public void drawUltimate(final int UltimateTimes){
 		if(UltimateTimes == 1) backBufferGraphics.setColor(Color.green);
 		else backBufferGraphics.setColor(Color.gray);
-		backBufferGraphics.setFont(fontSmall);
-		backBufferGraphics.drawString("Ultimate", 215,25);
+		backBufferGraphics.setFont(fontRegular);
+		backBufferGraphics.drawString("Ultimate", 235,33);
 	}
 
 	/**
 	 * Draws game title.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 */
@@ -488,7 +536,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws main menu.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param option
@@ -532,11 +580,11 @@ public final class DrawManager {
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, exitString, screen.getHeight() / 3
 				* 2 + fontRegularMetrics.getHeight() * 6);
-		}
+	}
 
 	/**
 	 * Draws game results.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param score
@@ -551,8 +599,8 @@ public final class DrawManager {
 	 *            If the score is a new high score.
 	 */
 	public void drawResults(final Screen screen, final int score,
-			final int livesRemaining, final int shipsDestroyed,
-			final float accuracy, final boolean isNewRecord) {
+							final int livesRemaining, final int shipsDestroyed,
+							final float accuracy, final boolean isNewRecord) {
 		String scoreString = String.format("score %04d", score);
 		String livesRemainingString = "lives remaining " + livesRemaining;
 		String shipsDestroyedString = "enemies destroyed " + shipsDestroyed;
@@ -576,7 +624,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws interactive characters for name input.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param name
@@ -585,7 +633,7 @@ public final class DrawManager {
 	 *            Current character selected for modification.
 	 */
 	public void drawNameInput(final Screen screen, final char[] name,
-			final int nameCharSelected) {
+							  final int nameCharSelected) {
 		String newRecordString = "New Record!";
 		String introduceNameString = "Introduce name:";
 
@@ -600,9 +648,9 @@ public final class DrawManager {
 		int positionX = screen.getWidth()
 				/ 2
 				- (fontRegularMetrics.getWidths()[name[0]]
-						+ fontRegularMetrics.getWidths()[name[1]]
-						+ fontRegularMetrics.getWidths()[name[2]]
-								+ fontRegularMetrics.getWidths()[' ']) / 2;
+				+ fontRegularMetrics.getWidths()[name[1]]
+				+ fontRegularMetrics.getWidths()[name[2]]
+				+ fontRegularMetrics.getWidths()[' ']) / 2;
 
 		for (int i = 0; i < 3; i++) {
 			if (i == nameCharSelected)
@@ -613,8 +661,8 @@ public final class DrawManager {
 			positionX += fontRegularMetrics.getWidths()[name[i]] / 2;
 			positionX = i == 0 ? positionX
 					: positionX
-							+ (fontRegularMetrics.getWidths()[name[i - 1]]
-									+ fontRegularMetrics.getWidths()[' ']) / 2;
+					+ (fontRegularMetrics.getWidths()[name[i - 1]]
+					+ fontRegularMetrics.getWidths()[' ']) / 2;
 
 			backBufferGraphics.drawString(Character.toString(name[i]),
 					positionX,
@@ -625,7 +673,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws basic content of game over screen.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param acceptsInput
@@ -634,7 +682,7 @@ public final class DrawManager {
 	 *            If the score is a new high score.
 	 */
 	public void drawGameOver(final Screen screen, final boolean acceptsInput,
-			final boolean isNewRecord) {
+							 final boolean isNewRecord) {
 		String gameOverString = "Game Over";
 		String continueOrExitString =
 				"Press Space to play again, Escape to exit";
@@ -655,7 +703,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws high score screen title and instructions.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 */
@@ -673,14 +721,14 @@ public final class DrawManager {
 
 	/**
 	 * Draws high scores.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param highScores
 	 *            List of high scores.
 	 */
 	public void drawHighScores(final Screen screen,
-			final List<Score> highScores) {
+							   final List<Score> highScores) {
 		backBufferGraphics.setColor(Color.WHITE);
 		int i = 0;
 		String scoreString = "";
@@ -696,7 +744,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws a centered string on regular font.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param string
@@ -705,7 +753,7 @@ public final class DrawManager {
 	 *            Height of the drawing.
 	 */
 	public void drawCenteredRegularString(final Screen screen,
-			final String string, final int height) {
+										  final String string, final int height) {
 		backBufferGraphics.setFont(fontRegular);
 		backBufferGraphics.drawString(string, screen.getWidth() / 2
 				- fontRegularMetrics.stringWidth(string) / 2, height);
@@ -713,7 +761,7 @@ public final class DrawManager {
 
 	/**
 	 * Draws a centered string on big font.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param string
@@ -722,7 +770,7 @@ public final class DrawManager {
 	 *            Height of the drawing.
 	 */
 	public void drawCenteredBigString(final Screen screen, final String string,
-			final int height) {
+									  final int height) {
 		backBufferGraphics.setFont(fontBig);
 		backBufferGraphics.drawString(string, screen.getWidth() / 2
 				- fontBigMetrics.stringWidth(string) / 2, height);
@@ -742,7 +790,7 @@ public final class DrawManager {
 
 	/**
 	 * Countdown to game start.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw on.
 	 * @param level
@@ -753,7 +801,7 @@ public final class DrawManager {
 	 *            Checks if a bonus life is received.
 	 */
 	public void drawCountDown(final Screen screen, final int level,
-			final int number, final boolean bonusLife) {
+							  final int number, final boolean bonusLife) {
 		int rectWidth = screen.getWidth();
 		int rectHeight = screen.getHeight() / 6;
 		backBufferGraphics.setColor(Color.BLACK);
@@ -761,31 +809,37 @@ public final class DrawManager {
 				rectWidth, rectHeight);
 		backBufferGraphics.setColor(Color.GREEN);
 		if (number >= 4)
-			if(level == 2 || level == 3 ||level == 4 || level ==5) {
+			// 일단 임시로 2단계를 보너스 스테이지로 정함.
+			if(level == 2) {
+				drawCenteredBigString(screen, "Level " + level + " BONUS STAGE!",
+						screen.getHeight() / 2
+								+ fontBigMetrics.getHeight() / 3);
+			}
+			else if(level == 2 || level == 3 ||level == 4 || level ==5) {
 				drawCenteredBigString(screen, "Level " + level + " NEW SKILL!",
 						screen.getHeight() / 2
 								+ fontBigMetrics.getHeight() / 3);
 			}
-			else if(level == 7){
-				drawCenteredBigString(screen, "Level " + level +"Boss Stage!",
+			else if(level == 8){
+				drawCenteredBigString(screen, "Level " + level +" Boss Stage!",
 						screen.getHeight() / 2
 								+ fontBigMetrics.getHeight() / 3);
 			}
-			else if(level == 8){
-				drawCenteredBigString(screen, "Level " + level +"You get Ultimate!",
+			else if(level == 9){
+				drawCenteredBigString(screen, "Level " + level +" You get Ultimate!",
 						screen.getHeight() / 2
 								+ fontBigMetrics.getHeight() / 3);
 			}
 			else if (!bonusLife) {
-					drawCenteredBigString(screen, "Level " + level,
-							screen.getHeight() / 2
-									+ fontBigMetrics.getHeight() / 3);
-				}
+				drawCenteredBigString(screen, "Level " + level,
+						screen.getHeight() / 2
+								+ fontBigMetrics.getHeight() / 3);
+			}
 			else {
-					drawCenteredBigString(screen, "Level " + level
-									+ " - Bonus life!",
-							screen.getHeight() / 2
-									+ fontBigMetrics.getHeight() / 3);
+				drawCenteredBigString(screen, "Level " + level
+								+ " - Bonus life!",
+						screen.getHeight() / 2
+								+ fontBigMetrics.getHeight() / 3);
 			}
 		else if (number != 0)
 			drawCenteredBigString(screen, Integer.toString(number),
