@@ -275,8 +275,6 @@ public class GameScreen extends Screen {
 			if (!this.ship.isDestroyed()) {
 				boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT);
 				boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT);
-				boolean moveUp = inputManager.isKeyDown(KeyEvent.VK_UP);
-				boolean moveDown = inputManager.isKeyDown(KeyEvent.VK_DOWN);
 				boolean SkillCursorRight = inputManager.isKeyDown(KeyEvent.VK_D);
 				boolean SkillCursorLeft = inputManager.isKeyDown(KeyEvent.VK_A);
 				boolean isPauseScreen = false;
@@ -296,12 +294,6 @@ public class GameScreen extends Screen {
 				}
 				if (moveLeft && !isLeftBorder) {
 					this.ship.moveLeft();
-				}
-				if (moveUp && !isUpBorder) {
-					this.ship.moveUp();
-				}
-				if (moveDown && !isDownBorder) {
-					this.ship.moveDown();
 				}
 				//스킬커서
 				if ( this.SkillInputDelay.checkFinished() &&this.inputDelay.checkFinished()) {
