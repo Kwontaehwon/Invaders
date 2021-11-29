@@ -48,6 +48,12 @@ public class Entity {
 		this.color = color;
 	}
 
+	public Entity(final int width, final int height, SpriteType spriteType) {
+		this.width = width;
+		this.height = height;
+		this.spriteType = spriteType;
+	}
+
 	/**
 	 * Getter for the color of the entity.
 	 * 

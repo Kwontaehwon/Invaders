@@ -24,8 +24,12 @@ public class DesignSetting {
         sizeList.add(new SimpleEntry<>(16,24));
         designList.add(new SimpleEntry<>(SpriteType.NewShipDesign2, true));
         sizeList.add(new SimpleEntry<>(16,16));
-        designList.add(new SimpleEntry<>(SpriteType.NewShipDesign3_1, true));
-        sizeList.add(new SimpleEntry<>(36,28));
+        designList.add(new SimpleEntry<>(SpriteType.NewShipDesign3, true));
+        sizeList.add(new SimpleEntry<>(17,32));
+        designList.add(new SimpleEntry<>(SpriteType.NewShipDesign4_1, true));
+        sizeList.add(new SimpleEntry<>(8,8));
+        designList.add(new SimpleEntry<>(SpriteType.NewShipDesign5, true));
+        sizeList.add(new SimpleEntry<>(23,32));
     }
 
     public SpriteType getShipType(){ return shipType; }

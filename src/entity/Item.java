@@ -25,8 +25,8 @@ public class Item extends Entity{
      * @param positionY Initial position of the entity in the Y axis.
      *
      */
-    public Item(int positionX, int positionY, DrawManager.SpriteType spriteType) {
-        super(positionX, positionY, 16 * 2, 16 * 2, Color.BLUE);
+    public Item(int positionX, int positionY, int sizeX, int sizeY, DrawManager.SpriteType spriteType) {
+        super(positionX, positionY, sizeX * 2, sizeY * 2, Color.BLUE);
         this.spriteType = spriteType;
         this.speed = 2;
         switch (this.spriteType) {
@@ -47,6 +47,7 @@ public class Item extends Entity{
                 break;
         }
     }
+
 
     public final void update() {
         this.positionY += this.speed;

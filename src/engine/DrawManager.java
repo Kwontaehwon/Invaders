@@ -61,6 +61,10 @@ public final class DrawManager {
 
 	/** Sprite types. */
 	public static enum SpriteType {
+		LifeBox,
+		EnergyBox,
+		LifeBar,
+		EnergyBar,
 		/** Player ship. */
 		Ship,
 		/** New Ship Designs for Customizing.*/
@@ -68,9 +72,11 @@ public final class DrawManager {
 		NewShipDesign1_2,
 		NewShipDesign1_3,
 		NewShipDesign2,
-		NewShipDesign3_1,
-		NewShipDesign3_2,
-		NewShipDesign3_3,
+		NewShipDesign3,
+		NewShipDesign4_1,
+		NewShipDesign4_2,
+		NewShipDesign4_3,
+		NewShipDesign5,
 		/** Destroyed player ship. */
 		ShipDestroyed,
 		/** Player bullet. */
@@ -130,14 +136,20 @@ public final class DrawManager {
 		try {
 			spriteMap = new LinkedHashMap<SpriteType, Color[][]>();
 			// 각각의 이름그대로, 배, 배파괴되어을때, 총알등등이있음.
+			spriteMap.put(SpriteType.LifeBox, new Color[65][16]);
+			spriteMap.put(SpriteType.EnergyBox, new Color[66][16]);
+			spriteMap.put(SpriteType.LifeBar, new Color[13][7]);
+			spriteMap.put(SpriteType.EnergyBar, new Color[10][10]);
 			spriteMap.put(SpriteType.Ship, new Color[18][16]);
 			spriteMap.put(SpriteType.NewShipDesign1_1, new Color[16][24]);
 			spriteMap.put(SpriteType.NewShipDesign1_2, new Color[16][24]);
 			spriteMap.put(SpriteType.NewShipDesign1_3, new Color[16][24]);
 			spriteMap.put(SpriteType.NewShipDesign2, new Color[16][16]);
-			spriteMap.put(SpriteType.NewShipDesign3_1, new Color[36][28]);
-			spriteMap.put(SpriteType.NewShipDesign3_2, new Color[36][28]);
-			spriteMap.put(SpriteType.NewShipDesign3_3, new Color[36][28]);
+			spriteMap.put(SpriteType.NewShipDesign3, new Color[17][32]);
+			spriteMap.put(SpriteType.NewShipDesign4_1, new Color[8][8]);
+			spriteMap.put(SpriteType.NewShipDesign4_2, new Color[8][8]);
+			spriteMap.put(SpriteType.NewShipDesign4_3, new Color[8][8]);
+			spriteMap.put(SpriteType.NewShipDesign5, new Color[23][32]);
 			spriteMap.put(SpriteType.Bullet1, new Color[5][5]);
 			spriteMap.put(SpriteType.Bullet2, new Color[5][5]);
 			spriteMap.put(SpriteType.Bullet3, new Color[5][5]);
@@ -154,8 +166,8 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.EnemyShipSpecial4, new Color[32][32]);
 			spriteMap.put(SpriteType.Explosion1, new Color[16][16]);
 			spriteMap.put(SpriteType.Explosion3, new Color[16][16]);
-			spriteMap.put(SpriteType.ShootingCoolItem, new Color[16][16]);
-			spriteMap.put(SpriteType.BulletSpeedItem, new Color[16][16]);
+			spriteMap.put(SpriteType.ShootingCoolItem, new Color[24][19]);
+			spriteMap.put(SpriteType.BulletSpeedItem, new Color[24][19]);
 			spriteMap.put(SpriteType.Boom, new Color[15][13]);
 			spriteMap.put(SpriteType.EnemyShipD1, new Color[16][16]);
 			spriteMap.put(SpriteType.EnemyShipD2, new Color[16][16]);
@@ -272,8 +284,30 @@ public final class DrawManager {
 				}
 			}
 		}
+	}
 
-
+	/**
+	 * Draws an entity, using the apropiate image.
+	 *
+	 * @param entity
+	 *            Entity to be drawn.
+	 * @param positionX
+	 *            Coordinates for the left side of the image.
+	 * @param positionY
+	 *            Coordinates for the upper side of the image.
+	 * @param drawBlack
+	 *            Boolean of draw Black.
+	 */
+	public void drawEntity(final Entity entity, final int positionX,
+						   final int positionY, boolean drawBlack) {
+		Color[][] image = spriteMap.get(entity.getSpriteType());
+		for (int i = 0; i < image.length; i++){
+			for (int j = 0; j < image[i].length; j++){
+				backBufferGraphics.setColor(image[i][j]);
+				backBufferGraphics.drawRect(positionX + i * 2, positionY
+						+ j * 2, 1, 1);
+			}
+		}
 	}
 
 	public void drawShadowedEntity(final Entity entity, final int positionX,
@@ -397,13 +431,23 @@ public final class DrawManager {
 	 *            Current lives.
 	 */
 	public void drawLives(final Screen screen, final int lives, SpriteType lifeShape) {
-		backBufferGraphics.setFont(fontRegular);
-		backBufferGraphics.setColor(Color.WHITE);
-		backBufferGraphics.drawString(Integer.toString(lives), 20, 25);
-		Ship dummyShip = new Ship(0, 0, lifeShape);
+		Entity lifeBar = new Entity(6, 14, SpriteType.LifeBar);
+		Entity lifeBox = new Entity(79, 26, SpriteType.LifeBox);
+		drawEntity(lifeBox, 5, 14, true);
 		for (int i = 0; i < lives; i++)
-			drawEntity(dummyShip, 40 + 50 * i, 10);
+			drawEntity(lifeBar,  43 + 30 * i, 22);
 	}
+
+	public void drawBulletSpeed(final Screen screen) {
+		Entity EnergyBox = new Entity(6, 14, SpriteType.EnergyBox);
+		Entity EnergyBar = new Entity(6, 14, SpriteType.EnergyBar);
+		drawEntity(EnergyBox, 150, 14, true);
+		drawEntity(EnergyBar, 191, 20, true);
+		drawEntity(EnergyBar, 191 + 22, 20, true);
+		drawEntity(EnergyBar, 191 + 22*2, 20, true);
+		drawEntity(EnergyBar, 191 + 22*3, 20, true);
+	}
+
 
 	/**
 	 * Draws a thick line from side to side of the screen.
@@ -423,7 +467,7 @@ public final class DrawManager {
 	public void drawBooms(final Screen screen , final int boomtimes){
 		Boom dummyBoom = new Boom(0,0,0,0);
 		for (int i = 0; i < boomtimes; i++)
-			drawEntity(dummyBoom,150+ 20 * i,10);
+			drawEntity(dummyBoom,160+ 20 * i,40);
 	}
 
 
@@ -1003,7 +1047,7 @@ public final class DrawManager {
 				drawShadowedEntity(dummyShip, positionX, positionY);
 
 			if(designSetting.getShipType() == sprite){
-				drawEntity(dummyShip, 200, screen.getHeight() / 3 + 20);
+				drawEntity(dummyShip, screen.getWidth()/2 -15 , screen.getHeight() / 3 + 20);
 			}
 			count++;
 			positionX += spriteMap.get(sprite).length*2 + margin;

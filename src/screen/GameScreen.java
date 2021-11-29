@@ -45,7 +45,7 @@ public class GameScreen extends Screen {
 	/** Time from finishing the level to screen change. */
 	private static final int SCREEN_CHANGE_INTERVAL = 1500;
 	/** Height of the interface separation line. */
-	private static final int SEPARATION_LINE_HEIGHT = 60;
+	private static final int SEPARATION_LINE_HEIGHT = 70;
 
 	private static final int SKILL_CURSOR_DELAY = 200;
 
@@ -274,6 +274,8 @@ public class GameScreen extends Screen {
 			if (!this.ship.isDestroyed()) {
 				boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT);
 				boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT);
+				boolean moveUp = inputManager.isKeyDown(KeyEvent.VK_UP);
+				boolean moveDown = inputManager.isKeyDown(KeyEvent.VK_DOWN);
 				boolean SkillCursorRight = inputManager.isKeyDown(KeyEvent.VK_D);
 				boolean SkillCursorLeft = inputManager.isKeyDown(KeyEvent.VK_A);
 				boolean isPauseScreen = false;
@@ -282,12 +284,23 @@ public class GameScreen extends Screen {
 						+ this.ship.getWidth() + this.ship.getSpeed() > this.width - 1;
 				boolean isLeftBorder = this.ship.getPositionX()
 						- this.ship.getSpeed() < 1;
+				boolean isUpBorder = this.ship.getPositionY()
+						- this.ship.getSpeed() < 1;
+				boolean isDownBorder = this.ship.getPositionY()
+						+ this.ship.getHeight() + this.ship.getSpeed() > this.height - 1;
+
 
 				if (moveRight && !isRightBorder) {
 					this.ship.moveRight();
 				}
 				if (moveLeft && !isLeftBorder) {
 					this.ship.moveLeft();
+				}
+				if (moveUp && !isUpBorder) {
+					this.ship.moveUp();
+				}
+				if (moveDown && !isDownBorder) {
+					this.ship.moveDown();
 				}
 				//스킬커서
 				if ( this.SkillInputDelay.checkFinished() &&this.inputDelay.checkFinished()) {
@@ -619,6 +632,7 @@ public class GameScreen extends Screen {
 		// Interface.
 		drawManager.drawScore(this, this.score);
 		drawManager.drawLives(this, this.lives,designSetting.getShipType());
+		drawManager.drawBulletSpeed(this);
 		drawManager.drawHorizontalLine(this, SEPARATION_LINE_HEIGHT - 1);
 		// 폭탄 인터페이스 추가
 		drawManager.drawBooms(this, this.boomTimes);
@@ -833,29 +847,29 @@ public class GameScreen extends Screen {
 	private void dropItem(EnemyShip enemyShip){
 		int r = random.nextInt(5);
 		if(r == 1) { // 5분의 1의확률, 중복으로 아이템 생성x
-			int c = random.nextInt(5);
+			int c = random.nextInt(3);
 			if(c == 0){
 				if(this.shootingCoolItem == null){ // 연사속도
 					effectSound.dropItemSound.start();
-					this.shootingCoolItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(),DrawManager.SpriteType.ShootingCoolItem);
+					this.shootingCoolItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), 16, 16, DrawManager.SpriteType.ShootingCoolItem);
 				}
 			}
 			else if(c == 1) {
 				if(this.bulletSpeedItem== null){ // 총알속도
 					effectSound.dropItemSound.start();
-					this.bulletSpeedItem= new Item(enemyShip.getPositionX(), enemyShip.getPositionY(),DrawManager.SpriteType.BulletSpeedItem);
+					this.bulletSpeedItem= new Item(enemyShip.getPositionX(),  enemyShip.getPositionY(), 16, 16, DrawManager.SpriteType.BulletSpeedItem);
 				}
 			}
 			else if(c == 2) { //폭탄이드랍.
 				if(this.boomItem == null){
 					effectSound.dropItemSound.start();		// 폭탄 아이템 드랍 소리
-					this.boomItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(),DrawManager.SpriteType.Boom);
+					this.boomItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), 16, 16,DrawManager.SpriteType.Boom);
 				}
 			}
 			else if(c == 3){
 				if(this.bonusLifeItem == null){
 					effectSound.dropItemSound.start();		// 보너스 라이프 아이템 드랍 소리
-					this.bonusLifeItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), DrawManager.SpriteType.BonusLifeItem);
+					this.bonusLifeItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), 16, 16, DrawManager.SpriteType.BonusLifeItem);
 				}
 			}
 			else {
@@ -864,19 +878,19 @@ public class GameScreen extends Screen {
 				if(r == 0){
 					if(this.bonusScoreItem == null){
 						effectSound.dropItemSound.start();		// 보너스 라이프 아이템 드랍 소리
-						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), DrawManager.SpriteType.BonusScoreItem3);
+						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), 16, 16, DrawManager.SpriteType.BonusScoreItem3);
 					}
 				}
 				else if(r == 1 || r == 2){
 					if(this.bonusScoreItem == null){
 						effectSound.dropItemSound.start();		// 보너스 라이프 아이템 드랍 소리
-						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), DrawManager.SpriteType.BonusScoreItem2);
+						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), 16, 16, DrawManager.SpriteType.BonusScoreItem2);
 					}
 				}
 				else{
 					if(this.bonusScoreItem == null){
 						effectSound.dropItemSound.start();		// 보너스 스코어 아이템 드랍 소리
-						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), DrawManager.SpriteType.BonusScoreItem1);
+						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(),16, 16, DrawManager.SpriteType.BonusScoreItem1);
 					}
 				}
 			}

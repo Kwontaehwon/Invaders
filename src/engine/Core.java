@@ -25,9 +25,9 @@ import screen.ShipScreen;
 public final class Core {
 
 	/** Width of current screen. */
-	private static final int WIDTH = 620;
+	private static final int WIDTH = 670;
 	/** Height of current screen. */
-	private static final int HEIGHT = 620;
+	private static final int HEIGHT = 820;
 	/** Max fps of current screen. */
 	private static final int FPS = 60;
 
