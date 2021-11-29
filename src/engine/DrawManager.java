@@ -61,10 +61,15 @@ public final class DrawManager {
 
 	/** Sprite types. */
 	public static enum SpriteType {
-		LifeBox,
-		EnergyBox,
 		LifeBar,
 		EnergyBar,
+		SpeedBar,
+		BoomBar,
+		LifeBox,
+		EnergyBox,
+		SpeedBox,
+		BoomBox,
+		UltimateHud,
 		/** Player ship. */
 		Ship,
 		/** New Ship Designs for Customizing.*/
@@ -73,16 +78,14 @@ public final class DrawManager {
 		NewShipDesign1_3,
 		NewShipDesign2,
 		NewShipDesign3,
-		NewShipDesign4_1,
-		NewShipDesign4_2,
-		NewShipDesign4_3,
-		NewShipDesign5,
+		NewShipDesign4,
 		/** Destroyed player ship. */
 		ShipDestroyed,
 		/** Player bullet. */
 		Bullet1,
 		Bullet2,
 		Bullet3,
+		Bullet4,
 		/** Enemy bullet. */
 		EnemyBullet,
 		/** First enemy ship - first form. */
@@ -136,23 +139,26 @@ public final class DrawManager {
 		try {
 			spriteMap = new LinkedHashMap<SpriteType, Color[][]>();
 			// 각각의 이름그대로, 배, 배파괴되어을때, 총알등등이있음.
-			spriteMap.put(SpriteType.LifeBox, new Color[65][16]);
-			spriteMap.put(SpriteType.EnergyBox, new Color[66][16]);
-			spriteMap.put(SpriteType.LifeBar, new Color[13][7]);
-			spriteMap.put(SpriteType.EnergyBar, new Color[10][10]);
+			spriteMap.put(SpriteType.LifeBar, new Color[65][16]);
+			spriteMap.put(SpriteType.EnergyBar, new Color[66][16]);
+			spriteMap.put(SpriteType.SpeedBar, new Color[66][16]);
+			spriteMap.put(SpriteType.BoomBar, new Color[65][16]);
+			spriteMap.put(SpriteType.LifeBox, new Color[13][7]);
+			spriteMap.put(SpriteType.EnergyBox, new Color[10][10]);
+			spriteMap.put(SpriteType.SpeedBox, new Color[10][10]);
+			spriteMap.put(SpriteType.BoomBox, new Color[13][7]);
+			spriteMap.put(SpriteType.UltimateHud, new Color[25][25]);
 			spriteMap.put(SpriteType.Ship, new Color[18][16]);
 			spriteMap.put(SpriteType.NewShipDesign1_1, new Color[16][24]);
 			spriteMap.put(SpriteType.NewShipDesign1_2, new Color[16][24]);
 			spriteMap.put(SpriteType.NewShipDesign1_3, new Color[16][24]);
 			spriteMap.put(SpriteType.NewShipDesign2, new Color[16][16]);
 			spriteMap.put(SpriteType.NewShipDesign3, new Color[17][32]);
-			spriteMap.put(SpriteType.NewShipDesign4_1, new Color[8][8]);
-			spriteMap.put(SpriteType.NewShipDesign4_2, new Color[8][8]);
-			spriteMap.put(SpriteType.NewShipDesign4_3, new Color[8][8]);
-			spriteMap.put(SpriteType.NewShipDesign5, new Color[23][32]);
+			spriteMap.put(SpriteType.NewShipDesign4, new Color[23][32]);
 			spriteMap.put(SpriteType.Bullet1, new Color[5][5]);
-			spriteMap.put(SpriteType.Bullet2, new Color[5][5]);
-			spriteMap.put(SpriteType.Bullet3, new Color[5][5]);
+			spriteMap.put(SpriteType.Bullet2, new Color[12][14]);
+			spriteMap.put(SpriteType.Bullet3, new Color[13][25]);
+			spriteMap.put(SpriteType.Bullet4, new Color[18][21]);
 			spriteMap.put(SpriteType.EnemyBullet, new Color[5][5]);
 			spriteMap.put(SpriteType.EnemyShipA1, new Color[16][16]);
 			spriteMap.put(SpriteType.EnemyShipA2, new Color[16][16]);
@@ -430,22 +436,47 @@ public final class DrawManager {
 	 * @param lives
 	 *            Current lives.
 	 */
-	public void drawLives(final Screen screen, final int lives, SpriteType lifeShape) {
-		Entity lifeBar = new Entity(6, 14, SpriteType.LifeBar);
-		Entity lifeBox = new Entity(79, 26, SpriteType.LifeBox);
-		drawEntity(lifeBox, 5, 14, true);
+	public void drawLives(final Screen screen, final int lives) {
+		Entity lifeBar = new Entity(65, 16, SpriteType.LifeBar);
+		Entity lifeBox = new Entity(13, 7, SpriteType.LifeBox);
+		drawEntity(lifeBar, 10, 14, true);
 		for (int i = 0; i < lives; i++)
-			drawEntity(lifeBar,  43 + 30 * i, 22);
+			drawEntity(lifeBox,  48 + 30 * i, 22);
 	}
 
-	public void drawBulletSpeed(final Screen screen) {
+
+	/**
+	 * Draws number of Bullet Speed on screen.
+	 *
+	 * @param screen
+	 *            Screen to draw on.
+	 * @param status
+	 *            upgrade status of Bullet Speed
+	 */
+	public void drawBulletSpeed(final Screen screen, final int status) {
+		Entity EnergyBar = new Entity(66, 16, SpriteType.EnergyBar);
 		Entity EnergyBox = new Entity(6, 14, SpriteType.EnergyBox);
-		Entity EnergyBar = new Entity(6, 14, SpriteType.EnergyBar);
-		drawEntity(EnergyBox, 150, 14, true);
-		drawEntity(EnergyBar, 191, 20, true);
-		drawEntity(EnergyBar, 191 + 22, 20, true);
-		drawEntity(EnergyBar, 191 + 22*2, 20, true);
-		drawEntity(EnergyBar, 191 + 22*3, 20, true);
+		drawEntity(EnergyBar, 150, 14, true);
+		for(int i = 0 ; i< status ; i++){
+			drawEntity(EnergyBox, 191 + 22 * i, 20, true);
+		}
+	}
+
+	/**
+	 * Draws number of Brust Bullet Speed on screen.
+	 *
+	 * @param screen
+	 *            Screen to draw on.
+	 * @param status
+	 *            upgrade status of Brust Speed
+	 */
+	public void drawShootingCool(final Screen screen, final int status) {
+		Entity SpeedBar = new Entity(66, 16, SpriteType.SpeedBar);
+		Entity SpeedBox = new Entity(6, 14, SpriteType.SpeedBox);
+		drawEntity(SpeedBar, 150, 54, true);
+		for(int i = 0 ; i< status ; i++){
+			drawEntity(SpeedBox, 191 + 22 * i, 60, true);
+		}
 	}
 
 
@@ -464,10 +495,12 @@ public final class DrawManager {
 				positionY + 1);
 	}
 
-	public void drawBooms(final Screen screen , final int boomtimes){
-		Boom dummyBoom = new Boom(0,0,0,0);
-		for (int i = 0; i < boomtimes; i++)
-			drawEntity(dummyBoom,160+ 20 * i,40);
+	public void drawBooms(final Screen screen , final int boomTimes){
+		Entity boomBar = new Entity(65, 16, SpriteType.BoomBar);
+		Entity boomBox = new Entity(13, 7, SpriteType.BoomBox);
+		drawEntity(boomBar, 10, 54, true);
+		for (int i = 0; i < boomTimes; i++)
+			drawEntity(boomBox,  48 + 30 * i, 62);
 	}
 
 
@@ -478,9 +511,9 @@ public final class DrawManager {
 		int cool = cooldown.getDuration() - cooldown.passedCooldown();
 		if (pauseTime == 0){
 			if (cool > 0 && cool < 10) {
-				backBufferGraphics.drawString(Integer.toString(cool), screen.getWidth()/2-10 , 80);
+				backBufferGraphics.drawString(Integer.toString(cool), screen.getWidth()/2-10 , 140);
 			} else if (cool > 9) {
-				backBufferGraphics.drawString(Integer.toString(cool), screen.getWidth()/2-20 , 80);
+				backBufferGraphics.drawString(Integer.toString(cool), screen.getWidth()/2-20 , 140);
 			}
 		}
 	}
@@ -488,52 +521,56 @@ public final class DrawManager {
 
 	//stageLevel에 따른 스킬해제. cursor의 위치에 따른 효과
 	public void drawSkills(final int cursor, Skill1 skill1, Skill2 skill2, Skill3 skill3 , Skill4 skill4,long pauseTime){
-		int y = 55;
+		int y = 90;
 		int sizePlus = 75; //화면이 늘어남에 따라
 		int mNumber = 40;
-		drawString("SKILL",213 +sizePlus ,33);
+		final int SKILL_PIC_X = 347;
+		final int SKILL_PIC_Y = 44;
+		final int DIGIT_TEN = 358;
+		final int DIGIT_ONE = 355;
+		drawString("SKILL",348 +sizePlus ,y-60);
 		backBufferGraphics.setFont(fontSmall);
 		if (skill1.checkOpen()) { //열려있으면 그려줌.
-			drawEntity(skill1,267 + mNumber * 0 +sizePlus, 10);
+			drawEntity(skill1,SKILL_PIC_X + mNumber * 0 +sizePlus, SKILL_PIC_Y);
 			backBufferGraphics.setColor(Color.green);
 			if(pauseTime == 0) {
 				if (skill1.returnSkillCoolTime() > 0 && skill1.returnSkillCoolTime() < 10) {
-					backBufferGraphics.drawString(Integer.toString(skill1.returnSkillCoolTime()), 278 + mNumber * 0 + 4 + sizePlus, y);
+					backBufferGraphics.drawString(Integer.toString(skill1.returnSkillCoolTime()), DIGIT_TEN + mNumber * 0 + 4 + sizePlus, y);
 				} else if (skill1.returnSkillCoolTime() > 9) {
-					backBufferGraphics.drawString(Integer.toString(skill1.returnSkillCoolTime()), 275 + mNumber * 0 + 3 + sizePlus, y);
+					backBufferGraphics.drawString(Integer.toString(skill1.returnSkillCoolTime()), DIGIT_ONE + mNumber * 0 + 3 + sizePlus, y);
 				}
 			}
 		}
 		if (skill2.checkOpen()) {
-			drawEntity(skill2, 267 + mNumber * 1 + sizePlus, 10);
+			drawEntity(skill2, SKILL_PIC_X + mNumber * 1 + sizePlus, SKILL_PIC_Y);
 			backBufferGraphics.setColor(Color.green);
 			if(pauseTime == 0) {
 				if (skill2.returnSkillCoolTime() > 0 && skill2.returnSkillCoolTime() < 10)
-					backBufferGraphics.drawString(Integer.toString(skill2.returnSkillCoolTime()), 278 + mNumber * 1 + 3 + sizePlus, y);
+					backBufferGraphics.drawString(Integer.toString(skill2.returnSkillCoolTime()), DIGIT_TEN + mNumber * 1 + 3 + sizePlus, y);
 				else if (skill2.returnSkillCoolTime() > 9) {
-					backBufferGraphics.drawString(Integer.toString(skill2.returnSkillCoolTime()), 275 + mNumber * 1 + 3 + sizePlus, y);
+					backBufferGraphics.drawString(Integer.toString(skill2.returnSkillCoolTime()), DIGIT_ONE + mNumber * 1 + 3 + sizePlus, y);
 				}
 			}
 		}
 		if (skill3.checkOpen()) {
-			drawEntity(skill3, 267 + mNumber * 2 + sizePlus, 10);
+			drawEntity(skill3, SKILL_PIC_X + mNumber * 2 + sizePlus, SKILL_PIC_Y);
 			backBufferGraphics.setColor(Color.green);
 			if(pauseTime == 0) {
 				if (skill3.returnSkillCoolTime() > 0 && skill3.returnSkillCoolTime() < 10)
-					backBufferGraphics.drawString(Integer.toString(skill3.returnSkillCoolTime()), 278 + mNumber * 2 + 3 + sizePlus, y);
+					backBufferGraphics.drawString(Integer.toString(skill3.returnSkillCoolTime()), DIGIT_TEN + mNumber * 2 + 3 + sizePlus, y);
 				else if (skill3.returnSkillCoolTime() > 9) {
-					backBufferGraphics.drawString(Integer.toString(skill3.returnSkillCoolTime()), 275 + mNumber * 2 + 3 + sizePlus, y);
+					backBufferGraphics.drawString(Integer.toString(skill3.returnSkillCoolTime()), DIGIT_ONE + mNumber * 2 + 3 + sizePlus, y);
 				}
 			}
 		}
 		if (skill4.checkOpen()) {
-			drawEntity(skill4, 267 + mNumber * 3 + sizePlus, 10);
+			drawEntity(skill4, SKILL_PIC_X + mNumber * 3 + sizePlus, SKILL_PIC_Y);
 			backBufferGraphics.setColor(Color.green);
 			if(pauseTime == 0) {
 				if (skill4.returnSkillCoolTime() > 0 && skill4.returnSkillCoolTime() < 10)
-					backBufferGraphics.drawString(Integer.toString(skill4.returnSkillCoolTime()), 278 + mNumber * 3 + 3 + sizePlus, y);
+					backBufferGraphics.drawString(Integer.toString(skill4.returnSkillCoolTime()), DIGIT_TEN + mNumber * 3 + 3 + sizePlus, y);
 				else if (skill4.returnSkillCoolTime() > 9) {
-					backBufferGraphics.drawString(Integer.toString(skill4.returnSkillCoolTime()), 275 + mNumber * 3 + 3 + sizePlus, y);
+					backBufferGraphics.drawString(Integer.toString(skill4.returnSkillCoolTime()), DIGIT_ONE + mNumber * 3 + 3 + sizePlus, y);
 				}
 			}
 		}
@@ -544,16 +581,20 @@ public final class DrawManager {
 			else {
 				backBufferGraphics.setColor(Color.gray);
 			}
-			backBufferGraphics.drawRect(267 + mNumber * i + sizePlus, 10, skill1.getWidth(), skill1.getHeight());
+			backBufferGraphics.drawRect(SKILL_PIC_X + mNumber * i + sizePlus, SKILL_PIC_Y, skill1.getWidth(), skill1.getHeight());
 		}
 	}
 
 	//필살기 인터페이스
 	public void drawUltimate(final int UltimateTimes){
-		if(UltimateTimes == 1) backBufferGraphics.setColor(Color.green);
-		else backBufferGraphics.setColor(Color.gray);
-		backBufferGraphics.setFont(fontSmall);
-		backBufferGraphics.drawString("Ultimate", 225,30);
+		backBufferGraphics.setFont(fontRegular);
+		Entity ultimateHud = new Entity(25,25, SpriteType.UltimateHud);
+		if(UltimateTimes == 0) backBufferGraphics.setColor(Color.gray);
+		else{
+			drawEntity(ultimateHud, 327, 10, true);
+			backBufferGraphics.setColor(Color.decode("0xbb1e0e"));
+		}
+		backBufferGraphics.drawString("Ultimate", 310,80);
 	}
 
 	/**

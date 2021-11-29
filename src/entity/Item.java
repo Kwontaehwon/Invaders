@@ -23,24 +23,23 @@ public class Item extends Entity{
      *
      * @param positionX Initial position of the entity in the X axis.
      * @param positionY Initial position of the entity in the Y axis.
-     *
+     * @param sizeX Item X size
+     * @param sizeY Item Y size
+     * @param speed Speed of item
      */
-    public Item(int positionX, int positionY, int sizeX, int sizeY, DrawManager.SpriteType spriteType) {
+    public Item(int positionX, int positionY, int sizeX, int sizeY, DrawManager.SpriteType spriteType, int speed) {
         super(positionX, positionY, sizeX * 2, sizeY * 2, Color.BLUE);
         this.spriteType = spriteType;
-        this.speed = 2;
+        this.speed = speed;
         switch (this.spriteType) {
             case BonusScoreItem1:
                 this.pointValue = 50;
-                this.speed = 2;
                 break;
             case BonusScoreItem2:
                 this.pointValue = 100;
-                this.speed = 4;
                 break;
             case BonusScoreItem3:
                 this.pointValue = 300;
-                this.speed = 6;
                 break;
             default:
                 this.pointValue = 0;

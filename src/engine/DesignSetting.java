@@ -26,9 +26,7 @@ public class DesignSetting {
         sizeList.add(new SimpleEntry<>(16,16));
         designList.add(new SimpleEntry<>(SpriteType.NewShipDesign3, true));
         sizeList.add(new SimpleEntry<>(17,32));
-        designList.add(new SimpleEntry<>(SpriteType.NewShipDesign4_1, true));
-        sizeList.add(new SimpleEntry<>(8,8));
-        designList.add(new SimpleEntry<>(SpriteType.NewShipDesign5, true));
+        designList.add(new SimpleEntry<>(SpriteType.NewShipDesign4, true));
         sizeList.add(new SimpleEntry<>(23,32));
     }
 
