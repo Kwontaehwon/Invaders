@@ -16,6 +16,7 @@ public class Cooldown {
 	private int duration;
 	/** Beginning time. */
 	private long time;
+
 	/**
 	 * Constructor, established the time until the action can be performed
 	 * again.
@@ -68,6 +69,7 @@ public class Cooldown {
 	public void pause(long pauseTime){
 		this.time += pauseTime;
 	}
+
 	/**
 	 * Restarts the cooldown.
 	 */

@@ -59,7 +59,7 @@ public class Sound {
     }
 
     /**
-     * Increase the music volume
+     * Decrease the music volume
      */
     public void decrease(){
         this.shootingSound.decrease();

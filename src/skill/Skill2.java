@@ -42,7 +42,7 @@ public class Skill2 extends Skill{
     }
 
     /**
-     *for checking skill1, activate skill's cooldown
+     * for checking skill, activate skill's cooldown
      */
     public void startActivate(){
         activation = true;
