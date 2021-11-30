@@ -1,10 +1,10 @@
 package entity;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-//BulletPool.java와 똑같음.
-public class BoomPool {
+public class BoomPool implements Serializable {
 
     private static Set<Boom> pool = new HashSet<Boom>();
 
@@ -16,12 +16,11 @@ public class BoomPool {
                                    final int positionY, final int speedX , final int speedY) {
         Boom boom;
         if (!pool.isEmpty()) {
-            boom = pool.iterator().next(); // 객체로 Set의 모든 아이템을 순회(for loop 같은느낌)
-            pool.remove(boom); //있으면 삭제.
+            boom = pool.iterator().next();
+            pool.remove(boom);
             boom.setPositionX(positionX - boom.getWidth() / 2);
             boom.setPositionY(positionY);
             boom.setSpeed(speedX,speedY);
-            //boom.setSprite();
 
         } else {
             boom = new Boom(positionX, positionY, speedX,speedY);

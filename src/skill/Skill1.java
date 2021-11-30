@@ -20,7 +20,7 @@ public class Skill1 extends Skill{
 
     private boolean activation;
 
-    private boolean open; //열려있는지 체크
+    private boolean open;
 
     public Skill1(int level,int currentSkillCooldown) {
         super(0, 0, 8*2, 8*2, Color.white);

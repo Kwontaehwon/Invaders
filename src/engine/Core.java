@@ -1,6 +1,7 @@
 package engine;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.ConsoleHandler;
@@ -62,7 +63,6 @@ public final class Core {
 			new GameSettings(8, 7, 2, 500);
 	private static final GameSettings SETTINGS_LEVEL_BONUS =
 			new GameSettings(12, 7, 50, 2100000);
-	
 	/** Frame to draw the screen on. */
 	private static Frame frame;
 	/** Screen currently shown. */
@@ -70,7 +70,7 @@ public final class Core {
 	/** Difficulty settings list. */
 	private static List<GameSettings> gameSettings;
 	/** Application logger. */
-	private static final Logger LOGGER = Logger.getLogger(Core.class
+	private static final transient Logger LOGGER = Logger.getLogger(Core.class
 			.getSimpleName());
 	/** Logger handler for printing to disk. */
 	private static Handler fileHandler;
@@ -91,7 +91,7 @@ public final class Core {
 	 * @param args
 	 *            Program args, ignored.
 	 */
-	public static void main(final String[] args) {
+	public static void main(final String[] args) throws IOException, ClassNotFoundException {
 		try {
 			LOGGER.setUseParentHandlers(false);
 
@@ -141,8 +141,10 @@ public final class Core {
 				currentScreen = new TitleScreen(width, height, FPS);
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " title screen at " + FPS + " fps.");
+
 				backgroundMusic.start();
-				returnCode = frame.setScreen(currentScreen);
+				returnCode = frame.setScreen(currentScreen,0);
+
 				LOGGER.info("Closing title screen.");
 				break;
 			case 2:
@@ -159,7 +161,7 @@ public final class Core {
 							bonusLife, designSetting, width, height, FPS, frame);
 					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 							+ " game screen at " + FPS + " fps.");
-					frame.setScreen(currentScreen);
+					frame.setScreen(currentScreen,0);
 					LOGGER.info("Closing game screen.");
 					//추가한 부분 : flag
 					if(flag_main)
@@ -191,7 +193,7 @@ public final class Core {
 						+ gameState.getBulletsShot() + " bullets shot and "
 						+ gameState.getShipsDestroyed() + " ships destroyed.");
 				currentScreen = new ScoreScreen(width, height, FPS, gameState);
-				returnCode = frame.setScreen(currentScreen);
+				returnCode = frame.setScreen(currentScreen,0);
 				LOGGER.info("Closing score screen.");
 				break;
 			case 3:
@@ -199,7 +201,7 @@ public final class Core {
 				currentScreen = new HighScoreScreen(width, height, FPS);
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " high score screen at " + FPS + " fps.");
-				returnCode = frame.setScreen(currentScreen);
+				returnCode = frame.setScreen(currentScreen,0);
 				LOGGER.info("Closing high score screen.");
 				break;
 			// 화면 가짓수 추가. (returnCode : 4 - Restart시 Game, 8 - Load시 Game)
@@ -226,7 +228,7 @@ public final class Core {
 
 					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 							+ " game screen at " + FPS + " fps.");
-					frame.setScreen(currentScreen);
+					frame.setScreen(currentScreen,0);
 					LOGGER.info("Closing game screen.");
 					if(flag_main)
 						break;
@@ -257,24 +259,17 @@ public final class Core {
 						+ gameState.getBulletsShot() + " bullets shot and "
 						+ gameState.getShipsDestroyed() + " ships destroyed.");
 				currentScreen = new ScoreScreen(width, height, FPS, gameState);
-				returnCode = frame.setScreen(currentScreen);
+				returnCode = frame.setScreen(currentScreen,0);
 				LOGGER.info("Closing score screen.");
 				break;
 			case 8:
 				//load game & score
-				GameStatus gameStatus = null;
+
 				boolean isFirst = false;
+				boolean load = false;
 
-				try {
-					gameStatus = FileManager.getInstance().loadSaves();
-				} catch (NumberFormatException | IOException e) {
-					LOGGER.warning("Couldn't load high scores!"+e);
-				}
+				currentScreen = FileManager.getInstance().loadGame();
 
-				currentScreen = new GameScreen(gameStatus.getStates(),
-						gameStatus.getSettings(),
-						gameStatus.getBonus(), designSetting, width, height, FPS, frame);
-				backgroundMusic.stop();
 				do {
 					// One extra live every few levels.
 					if(isFirst){
@@ -285,11 +280,18 @@ public final class Core {
 						currentScreen = new GameScreen(gameState,
 								gameSettings.get(gameState.getLevel() - 1),
 								bonusLife, designSetting, width, height, FPS, frame);}
+
 					isFirst = true;
 
 					LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 							+ " game screen at " + FPS + " fps.");
-					frame.setScreen(currentScreen);
+					if(load == false) {
+						frame.setScreen(currentScreen,1);
+						load = true;
+					}
+					else {
+						frame.setScreen(currentScreen,0);
+					}
 					LOGGER.info("Closing game screen.");
 					if(flag_main)
 						break;
@@ -319,15 +321,17 @@ public final class Core {
 						+ gameState.getBulletsShot() + " bullets shot and "
 						+ gameState.getShipsDestroyed() + " ships destroyed.");
 				currentScreen = new ScoreScreen(width, height, FPS, gameState);
-				returnCode = frame.setScreen(currentScreen);
+				returnCode = frame.setScreen(currentScreen,0);
 				LOGGER.info("Closing score screen.");
+
+
 				break;
 			case 9:
 				//Custom
 				currentScreen = new ShipScreen(width, height, FPS, designSetting);
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " Ship screen at " + FPS + " fps.");
-				returnCode = frame.setScreen(currentScreen);
+				returnCode = frame.setScreen(currentScreen,0);
 				LOGGER.info("Closing high score screen.");
 				break;
 

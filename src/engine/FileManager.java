@@ -4,26 +4,19 @@ import java.awt.*;
 import java.awt.image.RenderedImage;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import engine.DrawManager.SpriteType;
+import entity.Bullet;
+import entity.BulletPool;
+import entity.EnemyShipFormation;
+import screen.GameScreen;
+import screen.Screen;
 
 /**
  * Manages files used in the application.
@@ -475,4 +468,20 @@ public final class FileManager {
 		Collections.sort(highScores);
 		return gameStatus;
 	}
+
+	public void saveGame(GameScreen gameScreen) throws IOException, ClassNotFoundException {
+		FileOutputStream fos = new FileOutputStream("res/gameScreen.bin");
+		ObjectOutputStream oos = new ObjectOutputStream(fos);
+		oos.writeObject(gameScreen);
+		oos.close();
+	}
+
+	public GameScreen loadGame() throws IOException, ClassNotFoundException {
+		FileInputStream fis = new FileInputStream("res/gameScreen.bin");
+		ObjectInputStream ois = new ObjectInputStream(fis);
+		GameScreen gameScreen = (GameScreen)ois.readObject();
+		return gameScreen;
+
+	}
+
 }

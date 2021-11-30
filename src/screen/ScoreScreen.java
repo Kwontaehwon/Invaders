@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 import engine.Cooldown;
 import engine.Core;
@@ -26,6 +27,8 @@ public class ScoreScreen extends Screen {
 	private static final int FIRST_CHAR = 65;
 	/** Code of last mayus character. */
 	private static final int LAST_CHAR = 90;
+	/** Application logger. */
+	private static final Logger logger = Core.getLogger();
 
 	/** Current score. */
 	private int score;
@@ -89,7 +92,7 @@ public class ScoreScreen extends Screen {
 	 * 
 	 * @return Next screen code.
 	 */
-	public final int run() {
+	public final int run() throws IOException, ClassNotFoundException {
 		super.run();
 
 		return this.returnCode;
@@ -98,7 +101,7 @@ public class ScoreScreen extends Screen {
 	/**
 	 * Updates the elements on screen and checks for events.
 	 */
-	protected final void update() {
+	protected final void update() throws IOException, ClassNotFoundException {
 		super.update();
 
 		draw();

@@ -1,6 +1,7 @@
 package entity;
 
 import java.awt.Color;
+import java.io.Serializable;
 
 import engine.DrawManager.SpriteType;
 
@@ -10,7 +11,7 @@ import engine.DrawManager.SpriteType;
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  * 
  */
-public class Entity {
+public class Entity implements Serializable {
 
 	/** Position in the x-axis of the upper left corner of the entity. */
 	protected int positionX;
