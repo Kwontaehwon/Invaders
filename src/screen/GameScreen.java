@@ -87,10 +87,7 @@ public class GameScreen extends Screen implements Serializable {
 	private boolean levelFinished;
 	/** Checks if a bonus life is received. */
 	private boolean bonusLife;
-
-	// 추가한 부분
-	private Item item;
-	private Cooldown itemCooldown;
+	
 	private Random random = new Random();
 	private int boomTimes ; //폭탄발사횟수.
 	private Set<Boom> booms; //화면상 발사된 폭탄
@@ -569,13 +566,13 @@ public class GameScreen extends Screen implements Serializable {
 		//활성화중인 스킬의 로그를 그림
 		if(this.skill1.checkActivate()){
 
-			drawManager.drawSmallString("SKILL 1 : SHIELD IS USED",8,55);
+			drawManager.drawSmallString("SKILL 1 : SHIELD IS USED",8,SEPARATION_LINE_HEIGHT + 15);
 		}
 		if(this.skill2.checkActivate()){
-			drawManager.drawSmallString("SKILL 2 : ENEMYSHIP STOP",8 ,66);
+			drawManager.drawSmallString("SKILL 2 : ENEMYSHIP STOP",8 ,SEPARATION_LINE_HEIGHT + 26);
 		}
 		if(this.skill3.checkActivate()){
-			drawManager.drawSmallString("SKILL 3 : ENEMY BULLET SLOW",8 ,77);
+			drawManager.drawSmallString("SKILL 3 : ENEMY BULLET SLOW",8 ,SEPARATION_LINE_HEIGHT + 37);
 		}
 
 		for (Bullet bullet : this.bullets)
