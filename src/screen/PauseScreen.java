@@ -81,7 +81,6 @@ public class PauseScreen extends Screen{
                 this.isRunning = false;
             }
             if (this.returnCode == 5 && inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
-                this.saveSave();
                 fileManager.saveGame(gameScreen.getGameScreen());
                 this.selectionCooldown.reset();
             }
@@ -180,34 +179,6 @@ public class PauseScreen extends Screen{
             this.returnCode = 13;
         else if (this.returnCode == 14)
             this.returnCode = 15;
-    }
-
-    private void saveSave() {
-        try {
-            List<String> gameStatusList = new ArrayList<>();
-            String state = Integer.toString(gameStatus.getStates().getLevel()) +
-                    ", " + Integer.toString(gameStatus.getStates().getScore()) +
-                    ", " + Integer.toString(gameStatus.getStates().getLivesRemaining()) +
-                    ", " + Integer.toString(gameStatus.getStates().getBulletsShot()) +
-                    ", " + Integer.toString(gameStatus.getStates().getShipsDestroyed()) +
-                    ", " + Integer.toString(gameStatus.getStates().getBoomtimes()) +
-                    ", " + Integer.toString(gameStatus.getStates().getSkillCool()[0]) +
-                    ", " + Integer.toString(gameStatus.getStates().getSkillCool()[1]) +
-                    ", " + Integer.toString(gameStatus.getStates().getSkillCool()[2]) +
-                    ", " + Integer.toString(gameStatus.getStates().getSkillCool()[3]) +
-                    ", " + Integer.toString(gameStatus.getStates().getUltimateTimes());
-            String settings = Integer.toString(gameStatus.getSettings().getFormationWidth()) +
-                    ", " + Integer.toString(gameStatus.getSettings().getFormationHeight()) +
-                    ", " + Integer.toString(gameStatus.getSettings().getBaseSpeed()) +
-                    ", " + Integer.toString(gameStatus.getSettings().getShootingFrecuency());
-
-            gameStatusList.add(state);
-            gameStatusList.add(settings);
-            gameStatusList.add(Boolean.toString(gameStatus.getBonus()));
-            Core.getFileManager().saveSaves(gameStatusList);
-        } catch (IOException e) {
-            logger.warning("Couldn't load saves!");
-        }
     }
 
     private void draw() {

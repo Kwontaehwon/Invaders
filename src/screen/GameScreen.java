@@ -104,11 +104,6 @@ public class GameScreen extends Screen implements Serializable {
 	private long pauseTime ; //pause시작했을때의 시간을잼.
 	private Ultimate ultimate;
 	private int ultimateTimes;
-	// 추가한 부분 (세이브, 로드 관련)
-	private int initScore;
-	private int initLive;
-	private int initBullet;
-	private int initShip;
 	// Bonus Stage
 	private Cooldown bonusTime;
 	Frame frame;
@@ -164,18 +159,13 @@ public class GameScreen extends Screen implements Serializable {
 		// 스킬 선언
 		this.skillCool = gameState.getSkillCool();
 
-		this.skill1 = new Skill1(20,this.skillCool[0]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
-		this.skill2 = new Skill2(20,this.skillCool[1]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
-		this.skill3 = new Skill3(20,this.skillCool[2]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
-		this.skill4 = new Skill4(20,this.skillCool[3]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
+		this.skill1 = new Skill1(20,this.skillCool[0]);
+		this.skill2 = new Skill2(20,this.skillCool[1]);
+		this.skill3 = new Skill3(20,this.skillCool[2]);
+		this.skill4 = new Skill4(20,this.skillCool[3]);
 		// 필살기 횟수 적용
 		this.ultimateTimes = gameState.getUltimateTimes();
 
-		// 추가한 부분
-		this.initScore = this.score;
-		this.initLive = this.lives;
-		this.initBullet = bulletsShot;
-		this.initShip = this.shipsDestroyed;
 		this.frame = frame;
 		this.bonusTime = null;
 	}
@@ -406,7 +396,6 @@ public class GameScreen extends Screen implements Serializable {
 					//pause했을때 스킬쿨타임 돌지않게하기위해서
 					if(this.pauseTime == 0 ) this.pauseTime = System.currentTimeMillis();
 					GameState gameState = getGameState();
-					gameState.setState(initScore, initLive, initBullet, initShip);
 					//남은스킬쿨 저장해서 pauseScreen에 gameStatus에 넘겨줘야됨.
 					this.skillCool[0] = this.skill1.returnSkillCoolTime();
 					this.skillCool[1] = this.skill2.returnSkillCoolTime();
