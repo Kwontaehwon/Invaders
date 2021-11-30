@@ -83,7 +83,6 @@ public class PauseScreen extends Screen{
             if (this.returnCode == 5 && inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
                 this.saveSave();
                 fileManager.saveGame(gameScreen.getGameScreen());
-                //fileManager.saveEnemyShipFormation(gameScreen.getEnemyShipFormation());
                 this.selectionCooldown.reset();
             }
             if (this.returnCode == 11 && (inputManager.isKeyDown(KeyEvent.VK_SPACE) ||

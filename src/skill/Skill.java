@@ -24,7 +24,7 @@ abstract class Skill extends Entity implements Serializable {
 
 
     public Skill(int positionX, int positionY, int width, int height, Color color) {
-        super(0, 0, 8*2, 8*2, Color.white);
+        super(0, 0, 16*2, 16*2, Color.white);
         this.logger = Core.getLogger();
     }
 

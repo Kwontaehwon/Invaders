@@ -17,7 +17,7 @@ public class Boom extends Entity {
 
      */
     public Boom(int positionX, int positionY,int speedX, int speedY){
-        super(positionX, positionY, 8 * 2, 8 * 2, Color.white);
+        super(positionX, positionY, 16 * 2, 16 * 2, Color.white);
 
         this.speedX = speedX;
         this.speedY = speedY;

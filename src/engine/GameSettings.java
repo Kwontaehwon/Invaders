@@ -28,15 +28,15 @@ public class GameSettings implements Serializable {
 	 *            Height of the level's enemy formation.
 	 * @param baseSpeed
 	 *            Speed of the enemies.
-	 * @param shootingFrecuency
+	 * @param shootingFrequency
 	 *            Frecuency of enemy shootings, +/- 30%.
 	 */
 	public GameSettings(final int formationWidth, final int formationHeight,
-			final int baseSpeed, final int shootingFrecuency) {
+			final int baseSpeed, final int shootingFrequency) {
 		this.formationWidth = formationWidth;
 		this.formationHeight = formationHeight;
 		this.baseSpeed = baseSpeed;
-		this.shootingFrecuency = shootingFrecuency;
+		this.shootingFrecuency = shootingFrequency;
 	}
 
 	/**

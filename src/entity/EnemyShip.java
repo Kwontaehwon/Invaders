@@ -46,7 +46,7 @@ public class EnemyShip extends Entity {
 	 */
 	public EnemyShip(final int positionX, final int positionY,
 			final SpriteType spriteType) {
-		super(positionX, positionY, 12 * 2, 8 * 2, Color.WHITE);
+		super(positionX, positionY, 16 * 2, 16 * 2, Color.WHITE);
 
 		this.spriteType = spriteType;
 		this.animationCooldown = Core.getCooldown(500);
@@ -81,9 +81,9 @@ public class EnemyShip extends Entity {
 	 * known starting properties.
 	 */
 	public EnemyShip() {
-		super(-32, 60, 16 * 2, 7 * 2, Color.RED);
-
-		this.spriteType = SpriteType.EnemyShipSpecial;
+		super(-32, 60, 32 * 2, 32 * 2, Color.RED);
+		this.spriteType = SpriteType.EnemyShipSpecial1;
+		this.animationCooldown = Core.getCooldown(100);;
 		this.isDestroyed = false;
 		this.pointValue = BONUS_TYPE_POINTS;
 	}
@@ -118,43 +118,54 @@ public class EnemyShip extends Entity {
 			this.animationCooldown.reset();
 
 			switch (this.spriteType) {
-			case EnemyShipA1:
-				this.spriteType = SpriteType.EnemyShipA2;
-				break;
-			case EnemyShipA2:
-				this.spriteType = SpriteType.EnemyShipA1;
-				break;
-			case EnemyShipB1:
-				this.spriteType = SpriteType.EnemyShipB2;
-				break;
-			case EnemyShipB2:
-				this.spriteType = SpriteType.EnemyShipB1;
-				break;
-			case EnemyShipC1:
-				this.spriteType = SpriteType.EnemyShipC2;
-				break;
-			case EnemyShipC2:
-				this.spriteType = SpriteType.EnemyShipC1;
-				break;
-			// D적 업데이트 스프라이트 추가.
-			case EnemyShipD1:
-				this.spriteType = SpriteType.EnemyShipD2;
-				break;
-			case EnemyShipD2:
-				this.spriteType = SpriteType.EnemyShipD1;
-				break;
-			case EnemyShipD3:
-				this.spriteType = SpriteType.EnemyShipD4;
-				break;
-			case EnemyShipD4:
-				this.spriteType = SpriteType.EnemyShipD3;
-				break;
-			default:
-				break;
+				case EnemyShipA1:
+					this.spriteType = SpriteType.EnemyShipA2;
+					break;
+				case EnemyShipA2:
+					this.spriteType = SpriteType.EnemyShipA1;
+					break;
+				case EnemyShipB1:
+					this.spriteType = SpriteType.EnemyShipB2;
+					break;
+				case EnemyShipB2:
+					this.spriteType = SpriteType.EnemyShipB1;
+					break;
+				case EnemyShipC1:
+					this.spriteType = SpriteType.EnemyShipC2;
+					break;
+				case EnemyShipC2:
+					this.spriteType = SpriteType.EnemyShipC1;
+					break;
+				// D적 업데이트 스프라이트 추가.
+				case EnemyShipD1:
+					this.spriteType = SpriteType.EnemyShipD2;
+					break;
+				case EnemyShipD2:
+					this.spriteType = SpriteType.EnemyShipD1;
+					break;
+				case EnemyShipD3:
+					this.spriteType = SpriteType.EnemyShipD4;
+					break;
+				case EnemyShipD4:
+					this.spriteType = SpriteType.EnemyShipD3;
+					break;
+				case EnemyShipSpecial1:
+					this.spriteType = SpriteType.EnemyShipSpecial2;
+					break;
+				case EnemyShipSpecial2:
+					this.spriteType = SpriteType.EnemyShipSpecial3;
+					break;
+				case EnemyShipSpecial3:
+					this.spriteType = SpriteType.EnemyShipSpecial4;
+					break;
+				case EnemyShipSpecial4:
+					this.spriteType = SpriteType.EnemyShipSpecial1;
+					break;
+				default:
+					break;
 			}
 		}
 	}
-
 	/**
 	 * Destroys the ship, causing an explosion.
 	 */
@@ -167,9 +178,10 @@ public class EnemyShip extends Entity {
 		else if(this.spriteType == SpriteType.EnemyShipD2 && this.live==1){
 			this.spriteType = SpriteType.EnemyShipD3;
 		}
+
 		if(this.live<=0){		// live가 0 이하면 isDestroyed 를 바꿈.
 			this.isDestroyed = true;
-			this.spriteType = SpriteType.Explosion;
+			this.spriteType = SpriteType.Explosion3;
 		}
 	}
 

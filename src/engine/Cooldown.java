@@ -82,5 +82,6 @@ public class Cooldown implements Serializable {
 		return this.duration/1000;
 	}
 
+	public int getMilliseconds() { return milliseconds; }
 }
 

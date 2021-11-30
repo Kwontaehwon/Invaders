@@ -26,22 +26,23 @@ import screen.ShipScreen;
 public final class Core {
 
 	/** Width of current screen. */
-	private static final int WIDTH = 520;
+	private static final int WIDTH = 620;
 	/** Height of current screen. */
-	private static final int HEIGHT = 520;
+	private static final int HEIGHT = 620;
 	/** Max fps of current screen. */
 	private static final int FPS = 60;
 
 	/** Max lives. */
 	private static final int MAX_LIVES = 3;
 	/** Levels between extra life. */
-	private static final int EXTRA_LIFE_FRECUENCY = 3;
+	private static final int EXTRA_LIFE_FREQUENCY = 3;
 	/** Total number of levels. */
 	private static final int NUM_LEVELS = 7;
+
 	
 	/** Difficulty settings for level 1. */
 	private static final GameSettings SETTINGS_LEVEL_1 =
-			new GameSettings(5, 4, 60, 2000);
+			new GameSettings(5, 5, 2, 3000);
 	/** Difficulty settings for level 2. */
 	private static final GameSettings SETTINGS_LEVEL_2 =
 			new GameSettings(5, 5, 50, 2500);
@@ -60,12 +61,8 @@ public final class Core {
 	/** Difficulty settings for level 7. */
 	private static final GameSettings SETTINGS_LEVEL_7 =
 			new GameSettings(8, 7, 2, 500);
-	/** boss statge */
-	private static final GameSettings SETTINGS_LEVEL_8 =
-			new GameSettings(8, 7, 2, 500);
-
-
-
+	private static final GameSettings SETTINGS_LEVEL_BONUS =
+			new GameSettings(12, 7, 50, 2100000);
 	/** Frame to draw the screen on. */
 	private static Frame frame;
 	/** Screen currently shown. */
@@ -112,7 +109,7 @@ public final class Core {
 			// TODO handle exception
 			e.printStackTrace();
 		}
-		backgroundMusic.start();
+		backgroundMusic.decrease();
 
 		frame = new Frame(WIDTH, HEIGHT);
 		DrawManager.getInstance().setFrame(frame);
@@ -121,13 +118,13 @@ public final class Core {
 
 		gameSettings = new ArrayList<GameSettings>();
 		gameSettings.add(SETTINGS_LEVEL_1);
+		gameSettings.add(SETTINGS_LEVEL_BONUS);
 		gameSettings.add(SETTINGS_LEVEL_2);
 		gameSettings.add(SETTINGS_LEVEL_3);
 		gameSettings.add(SETTINGS_LEVEL_4);
 		gameSettings.add(SETTINGS_LEVEL_5);
 		gameSettings.add(SETTINGS_LEVEL_6);
 		gameSettings.add(SETTINGS_LEVEL_7);
-		gameSettings.add(SETTINGS_LEVEL_8);
 
 		DesignSetting designSetting = new DesignSetting(DrawManager.SpriteType.Ship);
 		GameState gameState;
@@ -136,7 +133,7 @@ public final class Core {
 		do {
 			flag_main = false;
 			// 맨처음 폭탄발사횟수,스킬쿨타임, 필살기횟수지정(나중에 0으로수정.)
-			gameState = new GameState(8, 0, MAX_LIVES, 0, 0,3, new int[]{15, 15, 15, 15},0);
+			gameState = new GameState(1, 0, MAX_LIVES, 0, 0,3, new int[]{15, 15, 15, 15},0);
 
 			switch (returnCode) {
 			case 1:
@@ -144,15 +141,19 @@ public final class Core {
 				currentScreen = new TitleScreen(width, height, FPS);
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " title screen at " + FPS + " fps.");
+
+				backgroundMusic.start();
 				returnCode = frame.setScreen(currentScreen,0);
+
 				LOGGER.info("Closing title screen.");
 				break;
 			case 2:
+				backgroundMusic.stop();
 				// Game & score.
 				do {
 					// One extra live every few levels.
 					boolean bonusLife = gameState.getLevel()
-							% EXTRA_LIFE_FRECUENCY == 0
+							% EXTRA_LIFE_FREQUENCY == 0
 							&& gameState.getLivesRemaining() < MAX_LIVES;
 					
 					currentScreen = new GameScreen(gameState,
@@ -184,6 +185,7 @@ public final class Core {
 				} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);
 
+				effectSound.roundEndSound.start();
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " score screen at " + FPS + " fps, with a score of "
 						+ gameState.getScore() + ", "
@@ -217,7 +219,7 @@ public final class Core {
 
 					// One extra live every few levels.
 					boolean bonusLife = gameState.getLevel()
-							% EXTRA_LIFE_FRECUENCY == 0
+							% EXTRA_LIFE_FREQUENCY == 0
 							&& gameState.getLivesRemaining() < MAX_LIVES;
 
 					currentScreen = new GameScreen(gameState,
@@ -249,6 +251,7 @@ public final class Core {
 				} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);
 
+				effectSound.roundEndSound.start();
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " score screen at " + FPS + " fps, with a score of "
 						+ gameState.getScore() + ", "
@@ -266,11 +269,12 @@ public final class Core {
 				boolean load = false;
 
 				currentScreen = FileManager.getInstance().loadGame();
+
 				do {
 					// One extra live every few levels.
 					if(isFirst){
 						boolean bonusLife = gameState.getLevel()
-								% EXTRA_LIFE_FRECUENCY == 0
+								% EXTRA_LIFE_FREQUENCY == 0
 								&& gameState.getLivesRemaining() < MAX_LIVES;
 
 						currentScreen = new GameScreen(gameState,
@@ -309,7 +313,7 @@ public final class Core {
 
 				} while (gameState.getLivesRemaining() > 0
 						&& gameState.getLevel() <= NUM_LEVELS);
-
+				effectSound.roundEndSound.start();
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " score screen at " + FPS + " fps, with a score of "
 						+ gameState.getScore() + ", "
