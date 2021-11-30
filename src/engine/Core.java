@@ -26,9 +26,9 @@ import screen.ShipScreen;
 public final class Core {
 
 	/** Width of current screen. */
-	private static final int WIDTH = 620;
+	private static final int WIDTH = 670;
 	/** Height of current screen. */
-	private static final int HEIGHT = 620;
+	private static final int HEIGHT = 820;
 	/** Max fps of current screen. */
 	private static final int FPS = 60;
 
@@ -42,7 +42,7 @@ public final class Core {
 	
 	/** Difficulty settings for level 1. */
 	private static final GameSettings SETTINGS_LEVEL_1 =
-			new GameSettings(5, 5, 2, 3000);
+			new GameSettings(5, 5, 2, 1000); // level1 임시조정
 	/** Difficulty settings for level 2. */
 	private static final GameSettings SETTINGS_LEVEL_2 =
 			new GameSettings(5, 5, 50, 2500);

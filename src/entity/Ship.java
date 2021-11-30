@@ -23,6 +23,8 @@ public class Ship extends Entity {
 	private static final int SPEED = 2;
 	private SpriteType shipType;
 
+	private Cooldown animationCooldown;
+
 	/** Minimum time between shots. */
 	private Cooldown shootingCooldown;
 	/** Time spent inactive between hits. */
@@ -36,14 +38,25 @@ public class Ship extends Entity {
 	 * @param positionY
 	 *            Initial position of the ship in the Y axis.
 	 */
-	public Ship(final int positionX, final int positionY, SpriteType spriteType) {
-		super(positionX, positionY, 18 * 2, 16 * 2, Color.GREEN);
 
+	public Ship(final int positionX, final int positionY, final SpriteType spriteType) {
+		super(positionX, positionY, 18 * 2, 16 * 2, Color.GREEN);
 		//슈팅 쿨타임을 설정.
 		this.spriteType = spriteType;
 		this.shipType = spriteType;
 		this.shootingCooldown = Core.getCooldown(SHOOTING_INTERVAL);
 		this.destructionCooldown = Core.getCooldown(1000);
+		this.animationCooldown = Core.getCooldown(100);
+	}
+
+	public Ship(final int positionX, final int positionY, final int sizeX, final int sizeY, final SpriteType spriteType) {
+		super(positionX, positionY, sizeX * 2, sizeY * 2, Color.GREEN);
+		//슈팅 쿨타임을 설정.
+		this.spriteType = spriteType;
+		this.shipType = spriteType;
+		this.shootingCooldown = Core.getCooldown(SHOOTING_INTERVAL);
+		this.destructionCooldown = Core.getCooldown(1000);
+		this.animationCooldown = Core.getCooldown(100);
 	}
 
 	/**
@@ -60,6 +73,14 @@ public class Ship extends Entity {
 	 */
 	public final void moveLeft() {
 		this.positionX -= SPEED;
+	}
+
+	public final void moveUp() {
+		this.positionY -= SPEED;
+	}
+
+	public final void moveDown() {
+		this.positionY += SPEED;
 	}
 
 	/**
@@ -100,8 +121,30 @@ public class Ship extends Entity {
 	public final void update() {
 		if (!this.destructionCooldown.checkFinished())
 			this.spriteType = SpriteType.Explosion3;
-		else
-			this.spriteType = shipType;
+		else{
+			if (this.animationCooldown.checkFinished()) {
+				this.animationCooldown.reset();
+				switch (this.spriteType) {
+					case Explosion3:
+						this.spriteType = this.shipType;
+						break;
+					case NewShipDesign1_3:
+						this.spriteType = SpriteType.NewShipDesign1_1;
+						break;
+					case Ship:
+						this.spriteType = SpriteType.Ship;
+						break;
+					case NewShipDesign1_1:
+						this.spriteType = SpriteType.NewShipDesign1_2;
+						break;
+					case NewShipDesign1_2:
+						this.spriteType = SpriteType.NewShipDesign1_3;
+						break;
+					default:
+						break;
+				}
+			}
+		}
 	}
 
 	/**

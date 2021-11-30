@@ -81,7 +81,7 @@ public class EnemyShip extends Entity {
 	 * known starting properties.
 	 */
 	public EnemyShip() {
-		super(-32, 60, 32 * 2, 32 * 2, Color.RED);
+		super(-32, 120, 32 * 2, 32 * 2, Color.RED);
 		this.spriteType = SpriteType.EnemyShipSpecial1;
 		this.animationCooldown = Core.getCooldown(100);;
 		this.isDestroyed = false;

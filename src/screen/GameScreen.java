@@ -24,6 +24,7 @@ import skill.*;
 import static engine.Core.backgroundMusic;
 import static engine.Core.effectSound;
 import static engine.Core.getCooldown;
+import static java.lang.Math.abs;
 
 
 /**
@@ -48,7 +49,7 @@ public class GameScreen extends Screen implements Serializable {
 	/** Time from finishing the level to screen change. */
 	private static final int SCREEN_CHANGE_INTERVAL = 1500;
 	/** Height of the interface separation line. */
-	private static final int SEPARATION_LINE_HEIGHT = 60;
+	private static final int SEPARATION_LINE_HEIGHT = 100;
 
 	private static final int SKILL_CURSOR_DELAY = 200;
 
@@ -187,9 +188,7 @@ public class GameScreen extends Screen implements Serializable {
 		enemyShipFormation = new EnemyShipFormation(this.gameSettings);
 		enemyShipFormation.attach(this);
 
-
-
-		this.ship = new Ship(this.width / 2, this.height - 50, designSetting.getShipType());
+		this.ship = new Ship(this.width / 2, this.height - 70, designSetting.getSizeX(), designSetting.getSizeY(), designSetting.getShipType());
 
 		// Appears each 10-30 seconds.
 		this.enemyShipSpecialCooldown = Core.getVariableCooldown(
@@ -301,6 +300,11 @@ public class GameScreen extends Screen implements Serializable {
 						+ this.ship.getWidth() + this.ship.getSpeed() > this.width - 1;
 				boolean isLeftBorder = this.ship.getPositionX()
 						- this.ship.getSpeed() < 1;
+				boolean isUpBorder = this.ship.getPositionY()
+						- this.ship.getSpeed() < 1;
+				boolean isDownBorder = this.ship.getPositionY()
+						+ this.ship.getHeight() + this.ship.getSpeed() > this.height - 1;
+
 
 				if (moveRight && !isRightBorder) {
 					this.ship.moveRight();
@@ -474,24 +478,23 @@ public class GameScreen extends Screen implements Serializable {
 
 
 		manageCollisions();
-		//ship과 아이템의 충돌
+		//ship과 ShootingCool
 		if(this.shootingCoolItem != null && checkCollision(this.shootingCoolItem, this.ship)){
-			if(this.ship.getShootingCoolDown() > 300){
-				this.ship.setShootingCoolDown(this.ship.getShootingCoolDown()-150);
+			if(this.ship.getShootingCoolDown() > 310){
+				this.ship.setShootingCoolDown(this.ship.getShootingCoolDown()-110);
 			}
 			this.logger.info("Get Item : Bullet Shooting Cooldown Up ! " + this.ship.getShootingCoolDown());
 			this.shootingCoolItem = null;
 			effectSound.getItemSound.start();	// 드랍된 아이템 얻는 소리
 		}
 		if(this.bulletSpeedItem != null && checkCollision(this.bulletSpeedItem, this.ship)){
-			if(this.ship.getBulletSpeed() > -9){
+			if(this.ship.getBulletSpeed() > -10){
 				this.ship.setBulletSpeed(this.ship.getBulletSpeed()-1);
 			}
 			this.logger.info("Get Item : Bullet Shooting Cool down Up ! " + this.ship.getBulletSpeed());
 			this.bulletSpeedItem = null;
 			effectSound.getItemSound.start();	// 드랍된 아이템 얻는 소리
 		}
-
 
 		// ship과 보너스 라이프 아이템의 충돌
 		if(this.bonusLifeItem != null && checkCollision(this.bonusLifeItem,this.ship)){
@@ -549,10 +552,11 @@ public class GameScreen extends Screen implements Serializable {
 			}
 		}
 
-
-
-		if (this.levelFinished && this.screenFinishedCooldown.checkFinished())
+		if (this.levelFinished && this.screenFinishedCooldown.checkFinished()){
+			if(this.level ==  1) designSetting.setDesignAchieved(DrawManager.SpriteType.NewShipDesign1_1, true);
 			this.isRunning = false;
+		}
+
 	}
 
 	/**
@@ -650,7 +654,9 @@ public class GameScreen extends Screen implements Serializable {
 		drawManager.drawUltimate(this.ultimateTimes);
 		// Interface.
 		drawManager.drawScore(this, this.score);
-		drawManager.drawLives(this, this.lives,designSetting.getShipType());
+		drawManager.drawLives(this, this.lives);
+		drawManager.drawBulletSpeed(this, this.ship.getBulletSpeed() * -1 - 6);
+		drawManager.drawShootingCool(this, ((this.ship.getShootingCoolDown() - 310) / 110) * -1 + 4);
 		drawManager.drawHorizontalLine(this, SEPARATION_LINE_HEIGHT - 1);
 		// 폭탄 인터페이스 추가
 		drawManager.drawBooms(this, this.boomTimes);
@@ -730,7 +736,6 @@ public class GameScreen extends Screen implements Serializable {
 								// item 떨어짐.
 								dropItem(enemyShip);
 								this.logger.info("The item is falling !");
-
 							}
 						}
 					}
@@ -838,8 +843,8 @@ public class GameScreen extends Screen implements Serializable {
 		int maxDistanceX = a.getWidth() / 2 + b.getWidth() / 2;
 		int maxDistanceY = a.getHeight() / 2 + b.getHeight() / 2;
 		// Calculates distance.
-		int distanceX = Math.abs(centerAX - centerBX);
-		int distanceY = Math.abs(centerAY - centerBY);
+		int distanceX = abs(centerAX - centerBX);
+		int distanceY = abs(centerAY - centerBY);
 
 		return distanceX < maxDistanceX && distanceY < maxDistanceY;
 	}
@@ -852,8 +857,8 @@ public class GameScreen extends Screen implements Serializable {
 		int centerEntityX = b.getPositionX() + b.getWidth() / 2;
 		int centerEntityY = b.getPositionY() + b.getHeight() / 2;
 
-		int distanceX = Math.abs(centerBoomX - centerEntityX);
-		int distanceY = Math.abs(centerBoomY - centerEntityY);
+		int distanceX = abs(centerBoomX - centerEntityX);
+		int distanceY = abs(centerBoomY - centerEntityY);
 
 		int maxDistanceX = 60;
 		int maxDistanceY = 60;
@@ -866,29 +871,29 @@ public class GameScreen extends Screen implements Serializable {
 	private void dropItem(EnemyShip enemyShip){
 		int r = random.nextInt(5);
 		if(r == 1) { // 5분의 1의확률, 중복으로 아이템 생성x
-			int c = random.nextInt(5);
+			int c = random.nextInt(3);
 			if(c == 0){
 				if(this.shootingCoolItem == null){ // 연사속도
 					effectSound.dropItemSound.start();
-					this.shootingCoolItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(),DrawManager.SpriteType.ShootingCoolItem);
+					this.shootingCoolItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), 16, 16, DrawManager.SpriteType.ShootingCoolItem, 3);
 				}
 			}
 			else if(c == 1) {
 				if(this.bulletSpeedItem== null){ // 총알속도
 					effectSound.dropItemSound.start();
-					this.bulletSpeedItem= new Item(enemyShip.getPositionX(), enemyShip.getPositionY(),DrawManager.SpriteType.BulletSpeedItem);
+					this.bulletSpeedItem= new Item(enemyShip.getPositionX(),  enemyShip.getPositionY(), 16, 16, DrawManager.SpriteType.BulletSpeedItem, 2);
 				}
 			}
 			else if(c == 2) { //폭탄이드랍.
 				if(this.boomItem == null){
 					effectSound.dropItemSound.start();		// 폭탄 아이템 드랍 소리
-					this.boomItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(),DrawManager.SpriteType.Boom);
+					this.boomItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), 16, 16,DrawManager.SpriteType.Boom,4);
 				}
 			}
 			else if(c == 3){
 				if(this.bonusLifeItem == null){
 					effectSound.dropItemSound.start();		// 보너스 라이프 아이템 드랍 소리
-					this.bonusLifeItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), DrawManager.SpriteType.BonusLifeItem);
+					this.bonusLifeItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), 16, 16, DrawManager.SpriteType.BonusLifeItem, 3);
 				}
 			}
 			else {
@@ -897,19 +902,19 @@ public class GameScreen extends Screen implements Serializable {
 				if(r == 0){
 					if(this.bonusScoreItem == null){
 						effectSound.dropItemSound.start();		// 보너스 라이프 아이템 드랍 소리
-						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), DrawManager.SpriteType.BonusScoreItem3);
+						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), 16, 16, DrawManager.SpriteType.BonusScoreItem3, 6);
 					}
 				}
 				else if(r == 1 || r == 2){
 					if(this.bonusScoreItem == null){
 						effectSound.dropItemSound.start();		// 보너스 라이프 아이템 드랍 소리
-						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), DrawManager.SpriteType.BonusScoreItem2);
+						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), 16, 16, DrawManager.SpriteType.BonusScoreItem2,4);
 					}
 				}
 				else{
 					if(this.bonusScoreItem == null){
 						effectSound.dropItemSound.start();		// 보너스 스코어 아이템 드랍 소리
-						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), DrawManager.SpriteType.BonusScoreItem1);
+						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(),16, 16, DrawManager.SpriteType.BonusScoreItem1, 2);
 					}
 				}
 			}
