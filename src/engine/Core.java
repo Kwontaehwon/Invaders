@@ -181,7 +181,7 @@ public final class Core {
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
 							gameState.getShipsDestroyed(),
-							gameState.getBoomtimes(),
+							gameState.getBoomTimes(),
 							gameState.getSkillCool(),
 							gameState.getUltimateTimes());
 
@@ -216,7 +216,7 @@ public final class Core {
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
 							gameState.getShipsDestroyed(),
-							gameState.getBoomtimes(),
+							gameState.getBoomTimes(),
 							gameState.getSkillCool(),
 							gameState.getUltimateTimes());
 
@@ -247,7 +247,7 @@ public final class Core {
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
 							gameState.getShipsDestroyed(),
-							gameState.getBoomtimes(),
+							gameState.getBoomTimes(),
 							gameState.getSkillCool(),
 							gameState.getUltimateTimes());
 
@@ -310,7 +310,7 @@ public final class Core {
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
 							gameState.getShipsDestroyed(),
-							gameState.getBoomtimes(),
+							gameState.getBoomTimes(),
 							gameState.getSkillCool(),
 							gameState.getUltimateTimes());
 

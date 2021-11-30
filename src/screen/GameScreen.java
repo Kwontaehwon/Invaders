@@ -157,7 +157,7 @@ public class GameScreen extends Screen {
 		this.shipsDestroyed = gameState.getShipsDestroyed();
 
 		// 추가한 부분,다음세이브 폭탄추가
-		this.boomTimes = gameState.getBoomtimes();
+		this.boomTimes = gameState.getBoomTimes();
 		// 스킬 선언
 		this.skillCool = gameState.getSkillCool();
 

@@ -86,12 +86,12 @@ public class GameState {
 		return shipsDestroyed;
 	}
 
-	public final int getBoomtimes() { return boomtimes;}
+	public final int getBoomTimes() { return boomtimes;}
 
 	public final int[] getSkillCool() { return skillCool;}
 
 	public final int getUltimateTimes() { return UltimateTimes;}
-	//setter 추가
+	
 	public void setState(int score, int livesRemaining, int bulletsShot, int shipsDestroyed){
 		this.score = score;
 		this.livesRemaining = livesRemaining;
