@@ -148,7 +148,6 @@ public final class Core {
 				LOGGER.info("Closing title screen.");
 				break;
 			case 2:
-				backgroundMusic.stop();
 				// Game & score.
 				do {
 					// One extra live every few levels.
@@ -204,7 +203,6 @@ public final class Core {
 				returnCode = frame.setScreen(currentScreen,0);
 				LOGGER.info("Closing high score screen.");
 				break;
-			// 화면 가짓수 추가. (returnCode : 4 - Restart시 Game, 8 - Load시 Game)
 			case 4:
 				// Game & score. (Restart)
 				do {

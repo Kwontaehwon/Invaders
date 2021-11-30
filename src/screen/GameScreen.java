@@ -87,7 +87,8 @@ public class GameScreen extends Screen implements Serializable {
 	private boolean levelFinished;
 	/** Checks if a bonus life is received. */
 	private boolean bonusLife;
-	
+
+
 	private Random random = new Random();
 	private int boomTimes ; //폭탄발사횟수.
 	private Set<Boom> booms; //화면상 발사된 폭탄
@@ -257,8 +258,6 @@ public class GameScreen extends Screen implements Serializable {
 				else if(countdown == 0) {
 					effectSound.roundStartSound.start();
 				}
-				else if(countdown == -1 && !backgroundMusic.isRunning())
-					backgroundMusic.start();
 			}
 		}
 
