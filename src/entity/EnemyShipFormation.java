@@ -1,5 +1,7 @@
 package entity;
 
+
+import java.io.Serializable;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -16,12 +18,12 @@ import engine.GameSettings;
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  * 
  */
-public class EnemyShipFormation implements Iterable<EnemyShip> {
+public class EnemyShipFormation implements Iterable<EnemyShip> , Serializable {
 
 	/** Initial position in the x-axis. */
 	private static final int INIT_POS_X = 20;
 	/** Initial position in the x-axis. */
-	private static final int INIT_POS_Y = 100;
+	private static final int INIT_POS_Y = 200;
 	/** Distance between ships. */
 	private static final int SEPARATION_DISTANCE = 40;
 	/** Proportion of C-type ships. */
@@ -41,23 +43,31 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	/** Margin on the sides of the screen. */
 	private static final int SIDE_MARGIN = 20;
 	/** Margin on the bottom of the screen. */
-	private static final int BOTTOM_MARGIN = 80;
+	private static final int BOTTOM_MARGIN = 350;
+	/** Margin on the top of the screen. */
+	private static final int TOP_MARGIN = 200;
 	/** Distance to go down each pass. */
 	private static final int DESCENT_DISTANCE = 20;
 	/** Minimum speed allowed. */
 	private static final int MINIMUM_SPEED = 10;
+	/** moving change time*/
+	private static final int MOVE_CHANGE = 3 * 1000;
+
 
 	/** DrawManager instance. */
-	private DrawManager drawManager;
+	private transient DrawManager drawManager;
 	/** Application logger. */
-	private Logger logger;
+	private transient Logger logger;
 	/** Screen to draw ships on. */
-	private Screen screen;
+	private transient Screen screen;
+
 
 	/** List of enemy ships forming the formation. */
 	private List<List<EnemyShip>> enemyShips;
 	/** Minimum time between shots. */
 	private Cooldown shootingCooldown;
+	/** moving change interval */
+	private Cooldown moovingCooldown;
 	/** Number of ships in the formation - horizontally. */
 	private int nShipsWide;
 	/** Number of ships in the formation - vertically. */
@@ -92,6 +102,9 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	private List<EnemyShip> shooters;
 	/** Number of not destroyed ships. */
 	private int shipCount;
+	/** Pattern motion button. */
+	private int currentPattern ;
+	private int previousPattern;
 
 	/** Directions the formation can move. */
 	private enum Direction {
@@ -119,6 +132,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	public EnemyShipFormation(final GameSettings gameSettings) {
 		this.drawManager = Core.getDrawManager();
 		this.logger = Core.getLogger();
+		this.moovingCooldown = Core.getCooldown(MOVE_CHANGE);
+		this.moovingCooldown.reset();
 		this.enemyShips = new ArrayList<List<EnemyShip>>();
 		this.currentDirection = Direction.RIGHT;
 		this.movementInterval = 0;
@@ -132,6 +147,10 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.positionX = INIT_POS_X;
 		this.positionY = INIT_POS_Y;
 		this.shooters = new ArrayList<EnemyShip>();
+		//패턴 동작버튼
+		this.currentPattern = 0;
+		this.previousPattern = 0;
+
 		SpriteType spriteType;
 
 		this.logger.info("Initializing " + nShipsWide + "x" + nShipsHigh
@@ -188,6 +207,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 * Draws every individual component of the formation.
 	 */
 	public final void draw() {
+		if (drawManager == null) drawManager = Core.getDrawManager();
 		for (List<EnemyShip> column : this.enemyShips)
 			for (EnemyShip enemyShip : column)
 				drawManager.drawEntity(enemyShip, enemyShip.getPositionX(),
@@ -203,7 +223,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 					shootingVariance);
 			this.shootingCooldown.reset();
 		}
-		
+
 		cleanUp();
 
 		int movementX = 0;
@@ -214,18 +234,18 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				* this.baseSpeed);
 		this.movementSpeed += MINIMUM_SPEED;
 
+
+
 		movementInterval++;
-		if (movementInterval >= this.movementSpeed) {
-			movementInterval = 0;
-
-			boolean isAtBottom = positionY
-					+ this.height > screen.getHeight() - BOTTOM_MARGIN;
-			boolean isAtRightSide = positionX
-					+ this.width >= screen.getWidth() - SIDE_MARGIN;
-			boolean isAtLeftSide = positionX <= SIDE_MARGIN;
-			boolean isAtHorizontalAltitude = positionY % DESCENT_DISTANCE == 0;
-
-			if(this.shipCount >= level * 2) {
+		if(this.shipCount > level * 2){ //평범한움직임.
+			if (movementInterval >= this.movementSpeed) {
+				movementInterval = 0;
+				boolean isAtBottom = positionY
+						+ this.height > screen.getHeight() - BOTTOM_MARGIN;
+				boolean isAtRightSide = positionX
+						+ this.width >= screen.getWidth() - SIDE_MARGIN;
+				boolean isAtLeftSide = positionX <= SIDE_MARGIN;
+				boolean isAtHorizontalAltitude = positionY % DESCENT_DISTANCE == 0;
 				if (currentDirection == Direction.DOWN) {
 					if (isAtHorizontalAltitude)
 						if (previousDirection == Direction.RIGHT) {
@@ -256,111 +276,372 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 							this.logger.info("Formation now moving left 6");
 						}
 				}
-			}
-			else {
-				switch (new Random().nextInt(8)) {
-					case 0: // LEFT_DOWN
-						currentDirection = Direction.LEFT_DOWN;
-						break;
-					case 1: // RIGHT_DOWN
-						currentDirection = Direction.RIGHT_DOWN;
-						break;
-					case 2: // RIGHT_UP
-						currentDirection = Direction.RIGHT_UP;
-						break;
-					case 3: // LEFT
-						currentDirection = Direction.LEFT;
-						break;
-					case 4: //RIGHT
-						currentDirection = Direction.RIGHT;
-						break;
-					case 5: // LEFT_UP
-						currentDirection = Direction.LEFT_UP;
-						break;
-					case 6: // UP
-						currentDirection = Direction.UP;
-						break;
-					case 7: // DOWN
-						break;
-				}
+				if (currentDirection == Direction.RIGHT)
+					movementX = X_SPEED;
+				else if (currentDirection == Direction.LEFT)
+					movementX = -X_SPEED;
+				else
+					movementY = Y_SPEED;
 
+				positionX += movementX;
+				positionY += movementY;
 
-
-			}
-
-			// 움직임 업데이트.
-			if (currentDirection == Direction.RIGHT) {
-				movementX = X_SPEED;
-			} else if (currentDirection == Direction.RIGHT_DOWN) {
-				movementX = X_SPEED;
-				movementY = Y_SPEED;
-			} else if (currentDirection == Direction.RIGHT_UP) {
-				movementX = X_SPEED;
-				movementY = -Y_SPEED;
-			} else if (currentDirection == Direction.LEFT) {
-				movementX = -X_SPEED;
-			} else if (currentDirection == Direction.LEFT_DOWN) {
-				movementX = -X_SPEED;
-				movementY = Y_SPEED;
-			} else if (currentDirection == Direction.LEFT_UP) {
-				movementX = -X_SPEED;
-				movementY = -Y_SPEED;
-			} else if (currentDirection == Direction.DOWN) {
-				movementY = Y_SPEED;
-			} else if (currentDirection == Direction.UP) {
-				movementY = -Y_SPEED;
-			}
-
-			//bottom 한계체크
-			if(positionY+ height >= this.screen.getHeight()-BOTTOM_MARGIN){
-				movementY = -Y_SPEED;
-			}
-			//top
-			if(positionY <= INIT_POS_Y){
-				movementY = Y_SPEED;
-			}
-			//right
-			if( positionX+ width >= this.screen.getWidth() - SIDE_MARGIN){
-				movementX = -X_SPEED;
-			}
-			//left
-			if(positionX <= SIDE_MARGIN){
-				movementX = X_SPEED;
-			}
-
-			positionX += movementX;
-			positionY += movementY;
-
-			// Cleans explosions.
-			List<EnemyShip> destroyed;
-			for (List<EnemyShip> column : this.enemyShips) {
-				destroyed = new ArrayList<EnemyShip>();
-				for (EnemyShip ship : column) {
-					if (ship != null && ship.isDestroyed()) {
-						destroyed.add(ship);
-						this.logger.info("Removed enemy "
-								+ column.indexOf(ship) + " from column "
-								+ this.enemyShips.indexOf(column));
+				// Cleans explosions.
+				List<EnemyShip> destroyed;
+				for (List<EnemyShip> column : this.enemyShips) {
+					destroyed = new ArrayList<EnemyShip>();
+					for (EnemyShip ship : column) {
+						if (ship != null && ship.isDestroyed()) {
+							destroyed.add(ship);
+							this.logger.info("Removed enemy "
+									+ column.indexOf(ship) + " from column "
+									+ this.enemyShips.indexOf(column));
+						}
 					}
+					column.removeAll(destroyed);
 				}
-				column.removeAll(destroyed);
-			}
-			if (!skill2) { //스킬 2가 활성화중이 아니면 적개체가 움직임.
-				for (List<EnemyShip> column : this.enemyShips){
-					for (EnemyShip enemyShip : column) {
-						if(shootingInterval != 2100000){
-							enemyShip.move(movementX, movementY);
+
+				if (!skill2) { //스킬 2가 활성화중이 아니면 적개체가 움직임.
+					for (List<EnemyShip> column : this.enemyShips){
+						for (EnemyShip enemyShip : column) {
+							if(shootingInterval != 2100000){
+								enemyShip.move(movementX, movementY);
+							}
+							else{
+								enemyShip.move(0,0);
+							}
+							enemyShip.update();
 						}
-						else{
-							enemyShip.move(0,0);
-						}
-						enemyShip.update();
 					}
 				}
 			}
 
 		}
+		else{ //무작위움직임
+			if (movementInterval >= this.movementSpeed) {
+				movementInterval = 0;
+				int bound = 9;
+				if(this.currentPattern == 0){ // 9개의 spot중 어느곳으로?
+					this.currentPattern = new Random().nextInt(bound)+1;
+				}
+				if(this.currentPattern == 1){ //  20,150
+					int goalX = 20;
+					int goalY = 150;
+					int X = positionX;
+					int Y = positionY;
+					System.out.println("spot:1 positionX : "+X);
+					System.out.println("spot:1 positionY : "+Y);
+					if( X <= goalX && Y <= goalY){
+						this.previousPattern = this.currentPattern;
+						while(this.currentPattern == this.previousPattern) //이전과 똑같은 방향으로 가지않게.
+							this.currentPattern = new Random().nextInt(bound) + 1;
 
+					}
+					else if( X > goalX && Y > goalY){
+						currentDirection = Direction.LEFT_UP;
+					}
+					else if( X > goalX){
+						currentDirection = Direction.LEFT;
+					}
+					else if( Y > goalY ){
+						currentDirection = Direction.UP;
+					}
+				}
+				if(this.currentPattern == 2){ //330, 150
+					int goalX = 330;
+					int goalY = 150;
+					int X = positionX + this.width/2;
+					int Y = positionY;
+					System.out.println("spot2: positionX : "+X);
+					System.out.println("spot2: positionY : "+Y);
+					if( between(X,goalX-10,goalX+10) && Y <= goalY){ // X true Y true
+						this.previousPattern = this.currentPattern;
+						while(this.currentPattern == this.previousPattern) //이전과 똑같은 방향으로 가지않게.
+							this.currentPattern = new Random().nextInt(bound) + 1;
+					}
+					else if( !between(X,goalX-10,goalX+10) ){ // X false
+						if( X <= goalX ){ //일단오른쪽으로이동.
+							if(Y <= goalY){ //Y가만족하면
+								this.currentDirection = Direction.RIGHT;
+							}
+							else this.currentDirection = Direction.RIGHT_UP;
+						}
+						else { //일단왼쪽으로 이동
+							if(Y <= goalY){ //Y가만족하면
+								this.currentDirection = Direction.LEFT;
+							}
+							else this.currentDirection = Direction.LEFT_UP;
+						}
+					}
+					else { // Y false ,
+						this.currentDirection = Direction.UP;
+					}
+				}
+				if(this.currentPattern == 3){ // 오른쪽위 구석 645,150
+					int goalX = 640;
+					int goalY = 150;
+					int X = positionX + this.width;
+					int Y = positionY;
+					System.out.println("spot3: positionX : "+X);
+					System.out.println("spot3: positionY : "+Y);
+					if( X >= goalX && Y <= goalY){
+						this.previousPattern = this.currentPattern;
+						while(this.currentPattern == this.previousPattern)  //이전과 똑같은 방향으로 가지않게.
+							this.currentPattern = new Random().nextInt(bound) + 1;
+
+					}
+					else if( X < goalX && Y > goalY){
+						currentDirection = Direction.RIGHT_UP;
+					}
+					else if( X < goalX) {
+						currentDirection = Direction.RIGHT;
+					}
+					else if( Y > goalY ){
+						currentDirection = Direction.UP;
+					}
+				}
+				if(this.currentPattern == 4){ //20, 325
+					int goalX = 20;
+					int goalY = 325;
+					int X = positionX;
+					int Y = positionY + this.height/2;
+					System.out.println("spot4: positionX : "+X);
+					System.out.println("spot4: positionY : "+Y);
+					if( X <= goalX  && between(Y,goalY-10,goalY+10)){ // X true Y true
+						this.previousPattern = this.currentPattern;
+						while(this.currentPattern == this.previousPattern) //이전과 똑같은 방향으로 가지않게.
+							this.currentPattern = new Random().nextInt(bound) + 1;
+					}
+					else if( !between(Y,goalY-10,goalY+10) ){ // Y false
+						if( Y <= goalY ){ //일단아래로이동
+							if(X <= goalX){ //X True
+								this.currentDirection = Direction.DOWN;
+							}
+							else this.currentDirection = Direction.LEFT_DOWN;
+						}
+						else { //일단위로 이동
+							if(X <= goalX){ //X True
+								this.currentDirection = Direction.UP;
+							}
+							else this.currentDirection = Direction.LEFT_UP;
+						}
+					}
+					else { // X false ,
+						this.currentDirection = Direction.LEFT;
+					}
+				}
+				if(this.currentPattern == 5){ //330, 325
+					int goalX = 330;
+					int goalY = 325;
+					int X = positionX + this.width/2;
+					int Y = positionY + this.height/2;
+					System.out.println("spot5: positionX : "+X);
+					System.out.println("spot5: positionY : "+Y);
+					if( between(X,goalX-10,goalX+10)  && between(Y,goalY-10,goalY+10)){ // X true Y true
+						this.previousPattern = this.currentPattern;
+						while(this.currentPattern == this.previousPattern) //이전과 똑같은 방향으로 가지않게.
+							this.currentPattern = new Random().nextInt(bound) + 1;
+					}
+					else if( !between(Y,goalY-10,goalY+10) ){ // Y false
+						if( Y <= goalY ){ //일단위로이동
+							if(X <= goalX){ //X True
+								this.currentDirection = Direction.DOWN;
+							}
+							else this.currentDirection = Direction.LEFT_DOWN;
+						}
+						else { //일단아래으로 이동
+							if(X <= goalX){ //X True
+								this.currentDirection = Direction.UP;
+							}
+							else this.currentDirection = Direction.LEFT_UP;
+						}
+					}
+					else if( !between(X,goalX-10,goalX+10) ){ // X false
+						if( X <= goalX ){ //일단오른쪽으로이동.
+							if(Y <= goalY){ //Y가만족하면
+								this.currentDirection = Direction.RIGHT;
+							}
+							else this.currentDirection = Direction.RIGHT_UP;
+						}
+						else { //일단왼쪽으로 이동
+							if(Y <= goalY){ //Y가만족하면
+								this.currentDirection = Direction.LEFT;
+							}
+							else this.currentDirection = Direction.LEFT_UP;
+						}
+					}
+				}
+				if(this.currentPattern == 6){ //645, 325
+					int goalX = 645;
+					int goalY = 325;
+					int X = positionX+ this.width;
+					int Y = positionY + this.height/2;
+					System.out.println("spot6: positionX : "+X);
+					System.out.println("spot6: positionY : "+Y);
+					if( X >= goalX  && between(Y,goalY-10,goalY+10)){ // X true Y true
+						this.previousPattern = this.currentPattern;
+						while(this.currentPattern == this.previousPattern) //이전과 똑같은 방향으로 가지않게.
+							this.currentPattern = new Random().nextInt(bound) + 1;
+					}
+					else if( !between(Y,goalY-10,goalY+10) ){ // Y false
+						if( Y <= goalY ){ //일단아래로
+							if(X >= goalX){ //X True
+								this.currentDirection = Direction.DOWN;
+							}
+							else this.currentDirection = Direction.RIGHT_DOWN;
+						}
+						else { //일단위로 이동
+							if(X >= goalX){ //X True
+								this.currentDirection = Direction.UP;
+							}
+							else this.currentDirection = Direction.RIGHT_UP;
+						}
+					}
+					else { // X false ,
+						this.currentDirection = Direction.RIGHT;
+					}
+				}
+				if(this.currentPattern == 7){ // 왼쪽 아래 구석 20,500
+					int goalX = 20;
+					int goalY = 500;
+					int X = positionX;
+					int Y = positionY + this.height;
+					System.out.println("spot 7 positionX : "+positionX);
+					System.out.println("spot 7 positionY : "+ (positionY + this.height));
+					if( X <= goalX && Y >= goalY){
+						this.previousPattern = this.currentPattern;
+						while(this.currentPattern == this.previousPattern) //이전과 똑같은 방향으로 가지않게.
+							this.currentPattern = new Random().nextInt(bound)+1;
+					}
+					else if( X > goalX && Y < goalY){
+						currentDirection = Direction.LEFT_DOWN;
+					}
+					else if( X > goalX){
+						currentDirection = Direction.LEFT;
+					}
+					else if( Y < goalY ){
+						currentDirection = Direction.DOWN;
+					}
+				}
+				if(this.currentPattern == 8){ //330, 500
+					int goalX = 330;
+					int goalY = 150;
+					int X = positionX + this.width/2;
+					int Y = positionY + this.height;
+					System.out.println("spot8: positionX : "+X);
+					System.out.println("spot8: positionY : "+Y);
+					if( between(X,goalX-10,goalX+10) && Y >= goalY){ // X true Y true
+						this.previousPattern = this.currentPattern;
+						while(this.currentPattern == this.previousPattern) //이전과 똑같은 방향으로 가지않게.
+							this.currentPattern = new Random().nextInt(bound) + 1;
+					}
+					else if( !between(X,goalX-10,goalX+10) ){ // X false
+						if( X <= goalX ){ //일단오른쪽으로이동.
+							if(Y >= goalY){ //Y가만족하면
+								this.currentDirection = Direction.RIGHT;
+							}
+							else this.currentDirection = Direction.RIGHT_DOWN;
+						}
+						else { //일단왼쪽으로 이동
+							if(Y >= goalY){ //Y가만족하면
+								this.currentDirection = Direction.LEFT;
+							}
+							else this.currentDirection = Direction.LEFT_DOWN;
+						}
+					}
+					else { // Y false ,
+						this.currentDirection = Direction.DOWN;
+					}
+				}
+				if(this.currentPattern == 9){ //오른쪽 아래 구석 645,500
+					int goalX = 640;
+					int goalY = 500;
+					int X = positionX + this.width;
+					int Y = positionY + this.height;
+					System.out.println("spot 9 positionX : "+ (positionX + this.width));
+					System.out.println("spot 9 positionY : "+ (positionY+ this.height));
+					if( X >= goalX && Y >= goalY){
+						this.previousPattern = this.currentPattern;
+						while(this.currentPattern == this.previousPattern) //이전과 똑같은 방향으로 가지않게.
+							this.currentPattern = new Random().nextInt(bound)+1;
+					}
+					else if( X < goalX && Y < goalY){
+						currentDirection = Direction.RIGHT_DOWN;
+					}
+					else if( X < goalX){
+						currentDirection = Direction.RIGHT;
+					}
+					else if( Y < goalY ){
+						currentDirection = Direction.DOWN;
+					}
+				}
+
+				if (currentDirection == Direction.RIGHT) {
+					movementX = X_SPEED+2;
+				} else if (currentDirection == Direction.RIGHT_DOWN) {
+					movementX = X_SPEED+2;
+					movementY = Y_SPEED+5;
+				} else if (currentDirection == Direction.RIGHT_UP) {
+					movementX = X_SPEED+2;
+					movementY = -Y_SPEED-5;
+				} else if (currentDirection == Direction.LEFT) {
+					movementX = -X_SPEED-2;
+				} else if (currentDirection == Direction.LEFT_DOWN) {
+					movementX = -X_SPEED-2;
+					movementY = Y_SPEED+5;
+				} else if (currentDirection == Direction.LEFT_UP) {
+					movementX = -X_SPEED-2;
+					movementY = -Y_SPEED-5;
+				} else if (currentDirection == Direction.DOWN) {
+					movementY = Y_SPEED+5;
+				} else if (currentDirection == Direction.UP) {
+					movementY = -Y_SPEED-5;
+				}
+
+				positionX += movementX;
+				positionY += movementY;
+
+				// Cleans explosions.
+				List<EnemyShip> destroyed;
+				for (List<EnemyShip> column : this.enemyShips) {
+					destroyed = new ArrayList<EnemyShip>();
+					for (EnemyShip ship : column) {
+						if (ship != null && ship.isDestroyed()) {
+							destroyed.add(ship);
+							this.logger.info("Removed enemy "
+									+ column.indexOf(ship) + " from column "
+									+ this.enemyShips.indexOf(column));
+						}
+					}
+					column.removeAll(destroyed);
+				}
+				if (!skill2) { //스킬 2가 활성화중이 아니면 적개체가 움직임.
+					for (List<EnemyShip> column : this.enemyShips){
+						for (EnemyShip enemyShip : column) {
+							if(shootingInterval != 2100000){
+								enemyShip.move(movementX, movementY);
+							}
+							else{
+								enemyShip.move(0,0);
+							}
+							enemyShip.update();
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Whether a specific value is within the range.
+	 * @param x
+	 * 		 specific value
+	 * @param max
+	 * @param min
+	 * @return true or false
+	 * */
+	private boolean between(int x, int min,int max) {
+		return x >= min && x <= max;
 	}
 
 	/**
@@ -420,7 +701,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		if (this.shootingCooldown.checkFinished()) {
 			this.shootingCooldown.reset();
 			bullets.add(BulletPool.getBullet(shooter.getPositionX()
-					+ shooter.width / 2, shooter.getPositionY(), 0, BULLET_SPEED));
+					+ shooter.getWidth() / 2, shooter.getPositionY(), 0, BULLET_SPEED));
 		}
 	}
 
@@ -433,8 +714,10 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 			int difX = target.getPositionX() + target.width / 2 - shooter.getPositionX() - shooter.width / 2;
 			int difY = target.getPositionY() - shooter.getPositionY();
 			int divideNum = 200;
+
 			if (difX > 200) divideNum = (int) (difX * 0.95);
 			else if (difX < -200) divideNum = (int) (difX * -0.95);
+
 			bullets.add(BulletPool.getBullet(shooter.getPositionX() + shooter.width / 2,
 					shooter.getPositionY(), difX * BULLET_SPEED / divideNum, difY * BULLET_SPEED / divideNum));
 		}
@@ -524,4 +807,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	public final boolean isEmpty() {
 		return this.shipCount <= 0;
 	}
+
+	public Logger getLogger() {return this.logger;}
+
+	public void setLogger(Logger logger) {this.logger = logger;}
 }

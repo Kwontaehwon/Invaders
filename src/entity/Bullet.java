@@ -1,5 +1,8 @@
 package entity;
 
+
+import java.awt.Color;
+
 import engine.DrawManager.SpriteType;
 
 import java.awt.*;
@@ -33,7 +36,7 @@ public class Bullet extends Entity {
 
 
 	public Bullet(final int positionX, final int positionY, final int speedX, final int speedY) {
-		super(positionX, positionY, 3*2, 5*2, Color.WHITE);
+		super(positionX, positionY, 5*2, 5*2, Color.WHITE);
 		this.speedX = speedX;
 		this.speedY = speedY;
 		setSprite();
@@ -45,10 +48,22 @@ public class Bullet extends Entity {
 	public final void setSprite() {
 
 		if (speedY > 0)	this.spriteType = SpriteType.EnemyBullet;
-		else if(speedY == -6 || speedY == -7) this.spriteType = SpriteType.Bullet1;
-		else if(speedY == -8) this.spriteType = SpriteType.Bullet2;
-		else this.spriteType = SpriteType.Bullet3;
-
+		else if(speedY == -6 || speedY == -5) this.spriteType = SpriteType.Bullet1;
+		else if(speedY == -7){
+			this.width = 12;
+			this.height = 14;
+			this.spriteType = SpriteType.Bullet2;
+		}
+		else if(speedY == -8 || speedY == -9){
+			this.width = 13;
+			this.height = 25;
+			this.spriteType = SpriteType.Bullet2;
+		}
+		else{
+			this.width = 18;
+			this.height = 21;
+			this.spriteType = SpriteType.Bullet3;
+		}
 	}
 
 	/**

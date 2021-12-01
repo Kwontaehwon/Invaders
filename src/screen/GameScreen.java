@@ -1,10 +1,11 @@
 package screen;
 
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import engine.Cooldown;
 import engine.Core;
@@ -23,6 +24,8 @@ import skill.*;
 import static engine.Core.backgroundMusic;
 import static engine.Core.effectSound;
 import static engine.Core.getCooldown;
+import static java.lang.Math.abs;
+
 
 /**
  * Implements the game screen, where the action happens.
@@ -30,7 +33,8 @@ import static engine.Core.getCooldown;
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  *
  */
-public class GameScreen extends Screen {
+public class GameScreen extends Screen implements Serializable {
+
 
 	/** Milliseconds until the screen accepts user input. */
 	private static final int INPUT_DELAY = 6000;
@@ -45,7 +49,7 @@ public class GameScreen extends Screen {
 	/** Time from finishing the level to screen change. */
 	private static final int SCREEN_CHANGE_INTERVAL = 1500;
 	/** Height of the interface separation line. */
-	private static final int SEPARATION_LINE_HEIGHT = 60;
+	private static final int SEPARATION_LINE_HEIGHT = 100;
 
 	private static final int SKILL_CURSOR_DELAY = 200;
 	private static final int BOSS_STAGE_LEVEL = 8;
@@ -84,10 +88,9 @@ public class GameScreen extends Screen {
 	private boolean levelFinished;
 	/** Checks if a bonus life is received. */
 	private boolean bonusLife;
-	/** */
+
 	private Boss boss;
-	private Item item;
-	private Cooldown itemCooldown;
+
 	private Random random = new Random();
 	private int boomTimes ; //폭탄발사횟수.
 	private Set<Boom> booms; //화면상 발사된 폭탄
@@ -101,11 +104,7 @@ public class GameScreen extends Screen {
 	private long pauseTime ; //pause시작했을때의 시간을잼.
 	private Ultimate ultimate;
 	private int ultimateTimes;
-	// 추가한 부분 (세이브, 로드 관련)
-	private int initScore;
-	private int initLive;
-	private int initBullet;
-	private int initShip;
+
 	// Bonus Stage
 	private Cooldown bonusTime;
 	Frame frame;
@@ -121,7 +120,7 @@ public class GameScreen extends Screen {
 	/** 카운트 다운 중인 숫자 */
 	private int countdown=INPUT_DELAY/1000;
 
-	private DesignSetting designSetting;
+	private transient DesignSetting designSetting;
 
 	/**
 	 * Constructor, establishes the properties of the screen.
@@ -165,14 +164,10 @@ public class GameScreen extends Screen {
 		this.skill2 = new Skill2(this.level,this.skillCool[1]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
 		this.skill3 = new Skill3(this.level,this.skillCool[2]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
 		this.skill4 = new Skill4(this.level,this.skillCool[3]); // this.level로 차후에 바꿔줌. 전스테이지에 남은쿨타임적용.
+
 		// 필살기 횟수 적용
 		this.ultimateTimes = gameState.getUltimateTimes();
 
-		// 추가한 부분
-		this.initScore = this.score;
-		this.initLive = this.lives;
-		this.initBullet = bulletsShot;
-		this.initShip = this.shipsDestroyed;
 		this.frame = frame;
 		this.bonusTime = null;
 	}
@@ -189,12 +184,10 @@ public class GameScreen extends Screen {
 		else {
 			enemyShipFormation = new EnemyShipFormation(this.gameSettings);
 			enemyShipFormation.attach(this);
-
-
-
 		}
 
-		this.ship = new Ship(this.width / 2, this.height - 50, designSetting.getShipType());
+		this.ship = new Ship(this.width / 2, this.height - 70, designSetting.getSizeX(), designSetting.getSizeY(), designSetting.getShipType());
+
 		// Appears each 10-30 seconds.
 		this.enemyShipSpecialCooldown = Core.getVariableCooldown(
 				BONUS_SHIP_INTERVAL, BONUS_SHIP_VARIANCE);
@@ -228,13 +221,24 @@ public class GameScreen extends Screen {
 		}
 
 	}
+	/**
+	 * load a game, connect object
+	 */
+	public final void load(){
+		logger = Core.getLogger();
+		designSetting = new DesignSetting(DrawManager.SpriteType.Ship);
+		enemyShipFormation.setLogger(this.logger);
+		enemyShipFormation.attach(this);
+		//boss.setLogger(this.logger);
+		skill1.setLogger(logger);
+	}
 
 	/**
 	 * Starts the action.
 	 *
 	 * @return Next screen code.
 	 */
-	public final int run() {
+	public final int run() throws IOException, ClassNotFoundException {
 		super.run();
 
 		this.score += LIFE_SCORE * (this.lives - 1);
@@ -246,7 +250,7 @@ public class GameScreen extends Screen {
 	/**
 	 * Updates the elements on screen and checks for events.
 	 */
-	protected final void update() {
+	protected final void update() throws IOException, ClassNotFoundException {
 		super.update();
 
 		// Countdown to game start. 스테이지 시작 전 5초
@@ -262,8 +266,9 @@ public class GameScreen extends Screen {
 					effectSound.countDownSound.start();
 				} else if (countdown == 0) {
 					effectSound.roundStartSound.start();
-				} else if (countdown == -1 && !backgroundMusic.isRunning())
+				} else if (countdown == -1 && !backgroundMusic.isRunning()){
 					backgroundMusic.start();
+				}
 			}
 		}
 
@@ -281,6 +286,7 @@ public class GameScreen extends Screen {
 			}
 
 			if (!this.ship.isDestroyed()) {
+				if(inputManager == null) inputManager = Core.getInputManager();
 				boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT);
 				boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT);
 				boolean SkillCursorRight = inputManager.isKeyDown(KeyEvent.VK_D);
@@ -291,6 +297,11 @@ public class GameScreen extends Screen {
 						+ this.ship.getWidth() + this.ship.getSpeed() > this.width - 1;
 				boolean isLeftBorder = this.ship.getPositionX()
 						- this.ship.getSpeed() < 1;
+				boolean isUpBorder = this.ship.getPositionY()
+						- this.ship.getSpeed() < 1;
+				boolean isDownBorder = this.ship.getPositionY()
+						+ this.ship.getHeight() + this.ship.getSpeed() > this.height - 1;
+
 
 				if (moveRight && !isRightBorder) {
 					this.ship.moveRight();
@@ -374,8 +385,8 @@ public class GameScreen extends Screen {
 					}
 				}
 				//필살기사용
-				if (!isPauseScreen && inputManager.isKeyDown(KeyEvent.VK_C) && ultimateTimes > 0) {
-					this.ultimate = new Ultimate(this.ship.getPositionX() + this.ship.getWidth() / 2 - 100,
+				if(!isPauseScreen&&inputManager.isKeyDown(KeyEvent.VK_C) && ultimateTimes > 0){
+					this.ultimate = new Ultimate(this.ship.getPositionX() + this.ship.getWidth()/ 2-100,
 							this.ship.getPositionY());
 					ultimateTimes--;
 					this.logger.info("The Ultimate has been started.");
@@ -386,18 +397,15 @@ public class GameScreen extends Screen {
 					//pause했을때 스킬쿨타임 돌지않게하기위해서
 					if (this.pauseTime == 0) this.pauseTime = System.currentTimeMillis();
 					GameState gameState = getGameState();
-					gameState.setState(initScore, initLive, initBullet, initShip);
 					//남은스킬쿨 저장해서 pauseScreen에 gameStatus에 넘겨줘야됨.
 					this.skillCool[0] = this.skill1.returnSkillCoolTime();
 					this.skillCool[1] = this.skill2.returnSkillCoolTime();
 					this.skillCool[2] = this.skill3.returnSkillCoolTime();
 					this.skillCool[3] = this.skill4.returnSkillCoolTime();
 					GameStatus gameStatus = new GameStatus(gameState, gameSettings, bonusLife);
-					Screen currentScreen = new PauseScreen(width, height, fps, gameStatus);
-					Logger LOGGER = Logger.getLogger(Core.class
-							.getSimpleName());
-					LOGGER.info("escKey.");
-					returnCode = frame.setScreen(currentScreen);
+					Screen currentScreen = new PauseScreen(width, height, fps, gameStatus,getGameScreen());
+					this.logger.info("escKey.");
+					returnCode = frame.setScreen(currentScreen,0);
 				}
 				if (Core.flag_main || Core.flag_restart)
 					this.isRunning = false;
@@ -467,18 +475,18 @@ public class GameScreen extends Screen {
 
 
 		manageCollisions();
-		//ship과 아이템의 충돌
-		if (this.shootingCoolItem != null && checkCollision(this.shootingCoolItem, this.ship)) {
-			if (this.ship.getShootingCoolDown() > 300) {
-				this.ship.setShootingCoolDown(this.ship.getShootingCoolDown() - 150);
+		//ship과 ShootingCool
+		if(this.shootingCoolItem != null && checkCollision(this.shootingCoolItem, this.ship)){
+			if(this.ship.getShootingCoolDown() > 310){
+				this.ship.setShootingCoolDown(this.ship.getShootingCoolDown()-110);
 			}
 			this.logger.info("Get Item : Bullet Shooting Cooldown Up ! " + this.ship.getShootingCoolDown());
 			this.shootingCoolItem = null;
 			effectSound.getItemSound.start();    // 드랍된 아이템 얻는 소리
 		}
-		if (this.bulletSpeedItem != null && checkCollision(this.bulletSpeedItem, this.ship)) {
-			if (this.ship.getBulletSpeed() > -9) {
-				this.ship.setBulletSpeed(this.ship.getBulletSpeed() - 1);
+		if(this.bulletSpeedItem != null && checkCollision(this.bulletSpeedItem, this.ship)){
+			if(this.ship.getBulletSpeed() > -10){
+				this.ship.setBulletSpeed(this.ship.getBulletSpeed()-1);
 			}
 			this.logger.info("Get Item : Bullet Shooting Cool down Up ! " + this.ship.getBulletSpeed());
 			this.bulletSpeedItem = null;
@@ -524,13 +532,15 @@ public class GameScreen extends Screen {
 				this.levelFinished = true;
 				this.ultimateTimes = 1;
 				this.screenFinishedCooldown.reset();
-
+				if(this.lives == 0) {
+					backgroundMusic.stop();
+					effectSound.shipDeathSound.start();
+				}
 			}
 		} else {
 			if ((this.enemyShipFormation.isEmpty() || this.lives == 0 ||
 					(gameSettings.getShootingFrecuency() ==  BONUS_LEVEL_SHOOTING_FREQ
-							&& bonusTime.checkFinished()))
-					&& !this.levelFinished) {
+							&& bonusTime.checkFinished())) && !this.levelFinished) {
 				//남은스킬쿨 저장
 				this.skillCool[0] = this.skill1.returnSkillCoolTime();
 				this.skillCool[1] = this.skill2.returnSkillCoolTime();
@@ -538,11 +548,19 @@ public class GameScreen extends Screen {
 				this.skillCool[3] = this.skill4.returnSkillCoolTime();
 				this.levelFinished = true;
 				this.screenFinishedCooldown.reset();
+				if(this.lives == 0) {
+					backgroundMusic.stop();
+					effectSound.shipDeathSound.start();
+
+				}
 			}
 		}
 
-		if (this.levelFinished && this.screenFinishedCooldown.checkFinished())
+		if (this.levelFinished && this.screenFinishedCooldown.checkFinished()){
+			if(this.level ==  1) designSetting.setDesignAchieved(DrawManager.SpriteType.NewShipDesign1_1, true);
 			this.isRunning = false;
+		}
+
 	}
 	/**
 	 * Draws the elements associated with the screen.
@@ -555,24 +573,27 @@ public class GameScreen extends Screen {
 			backgroundPos++;
 		drawManager.drawEntity(this.ship, this.ship.getPositionX(), this.ship.getPositionY());
 		if (this.enemyShipSpecial != null)
-			drawManager.drawEntity(this.enemyShipSpecial,
-							this.enemyShipSpecial.getPositionX(),
-							this.enemyShipSpecial.getPositionY());
+			drawManager.drawEntity(this.enemyShipSpecial, this.enemyShipSpecial.getPositionX(), this.enemyShipSpecial.getPositionY());
 
+		//적그림
 		if (this.level == BOSS_STAGE_LEVEL) {
 					this.boss.draw();
 		} else {
 			enemyShipFormation.draw();
 		}
-				//활성화중인 스킬의 로그를 그림
-		if (this.skill1.checkActivate()) {
-			drawManager.drawSmallString("SKILL 1 : SHIELD IS USED", 8, 76);
+
+		//활성화중인 스킬의 로그를 그림
+		if(this.skill1.checkActivate()){
+
+			drawManager.drawSmallString("SKILL 1 : SHIELD IS USED",8,SEPARATION_LINE_HEIGHT + 15);
 		}
-		if (this.skill2.checkActivate()) {
-			drawManager.drawSmallString("SKILL 2 : ENEMYSHIP STOP", 8, 86);
+		if(this.skill2.checkActivate()){
+			drawManager.drawSmallString("SKILL 2 : ENEMYSHIP STOP",8 ,SEPARATION_LINE_HEIGHT + 26);
 		}
-		if (this.skill3.checkActivate()) {
-			drawManager.drawSmallString("SKILL 3 : ENEMY BULLET SLOW", 8, 96);
+		if(this.skill3.checkActivate()){
+			drawManager.drawSmallString("SKILL 3 : ENEMY BULLET SLOW",8 ,SEPARATION_LINE_HEIGHT + 37);
+
+
 		}
 		for (Bullet bullet : this.bullets)
 			drawManager.drawEntity(bullet, bullet.getPositionX(),
@@ -631,7 +652,9 @@ public class GameScreen extends Screen {
 		drawManager.drawUltimate(this.ultimateTimes);
 		// Interface.
 		drawManager.drawScore(this, this.score);
-		drawManager.drawLives(this, this.lives, designSetting.getShipType());
+		drawManager.drawLives(this, this.lives);
+		drawManager.drawBulletSpeed(this, this.ship.getBulletSpeed() * -1 - 6);
+		drawManager.drawShootingCool(this, ((this.ship.getShootingCoolDown() - 310) / 110) * -1 + 4);
 		drawManager.drawHorizontalLine(this, SEPARATION_LINE_HEIGHT - 1);
 		// 폭탄 인터페이스 추가
 		drawManager.drawBooms(this, this.boomTimes);
@@ -733,7 +756,7 @@ public class GameScreen extends Screen {
 				recyclableBoom.add(boom);
 			}
 		}
-		for (Bullet bullet : this.bullets)
+		for (Bullet bullet : this.bullets) {
 			if (bullet.getSpeedY() > 0) { //적이 발사한 경우
 				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
 					recyclable.add(bullet);
@@ -781,25 +804,24 @@ public class GameScreen extends Screen {
 							}
 							recyclable.add(bullet); //충돌에 사용된 총알제거.
 						}
+					if (this.enemyShipSpecial != null
+							&& !this.enemyShipSpecial.isDestroyed()
+							&& checkCollision(bullet, this.enemyShipSpecial)) {
+						effectSound.destroyedEnemySound.start();	// 적이 총알에 파괴되는 소리
+						this.score += this.enemyShipSpecial.getPointValue();
+						this.shipsDestroyed++;
+						this.enemyShipSpecial.destroy();
+						this.enemyShipSpecialExplosionCooldown.reset();
+						recyclable.add(bullet);
+					}
 				}
-				// 적특별개체 판단여부
-				if (this.enemyShipSpecial != null
-						&& !this.enemyShipSpecial.isDestroyed()
-						&& checkCollision(bullet, this.enemyShipSpecial)) {
-					effectSound.destroyedEnemySound.start();    // 적이 총알에 파괴되는 소리
-					this.score += this.enemyShipSpecial.getPointValue();
-					this.shipsDestroyed++;
-					this.enemyShipSpecial.destroy();
-					this.enemyShipSpecialExplosionCooldown.reset();
-					recyclable.add(bullet);
-				}
-
 			}
-		if (this.ultimate != null) {
+		}
+		if(this.ultimate != null){
 			for (EnemyShip enemyShip : this.enemyShipFormation)
 				if (!enemyShip.isDestroyed() //파괴된 적비행기가아니고
-						&& checkCollision(ultimate, enemyShip)) {
-					effectSound.destroyedEnemySound.start();    // 적이 총알에 파괴되는 소리
+						&& checkCollision(ultimate, enemyShip)){
+					effectSound.destroyedEnemySound.start();	// 적이 총알에 파괴되는 소리
 					this.score += enemyShip.getPointValue();
 					this.shipsDestroyed++;
 					this.enemyShipFormation.destroy(enemyShip);
@@ -814,31 +836,31 @@ public class GameScreen extends Screen {
 		this.booms.removeAll(recyclableBoom); // 충돌에 사용된 폭탄제거
 		BoomPool.recycle(recyclableBoom); // Pool업데이트한후 Pool내 에서 제거해주는듯
 	}
+	/**
+	 * Checks if two entities are colliding.
+	 *
+	 * @param a
+	 *            First entity, the bullet.
+	 * @param b
+	 *            Second entity, the ship.
+	 * @return Result of the collision test.
+	 */
 
-			/**
-			 * Checks if two entities are colliding.
-			 *
-			 * @param a
-			 *            First entity, the bullet.
-			 * @param b
-			 *            Second entity, the ship.
-			 * @return Result of the collision test.
-			 */
-			private boolean checkCollision(final Entity a, final Entity b) {
-				// Calculate center point of the entities in both axis.
-				int centerAX = a.getPositionX() + a.getWidth() / 2;
-				int centerAY = a.getPositionY() + a.getHeight() / 2;
-				int centerBX = b.getPositionX() + b.getWidth() / 2;
-				int centerBY = b.getPositionY() + b.getHeight() / 2;
-				// Calculate maximum distance without collision.
-				int maxDistanceX = a.getWidth() / 2 + b.getWidth() / 2;
-				int maxDistanceY = a.getHeight() / 2 + b.getHeight() / 2;
-				// Calculates distance.
-				int distanceX = Math.abs(centerAX - centerBX);
-				int distanceY = Math.abs(centerAY - centerBY);
+	private boolean checkCollision(final Entity a, final Entity b) {
+		// Calculate center point of the entities in both axis.
+		int centerAX = a.getPositionX() + a.getWidth() / 2;
+		int centerAY = a.getPositionY() + a.getHeight() / 2;
+		int centerBX = b.getPositionX() + b.getWidth() / 2;
+		int centerBY = b.getPositionY() + b.getHeight() / 2;
+		// Calculate maximum distance without collision.
+		int maxDistanceX = a.getWidth() / 2 + b.getWidth() / 2;
+		int maxDistanceY = a.getHeight() / 2 + b.getHeight() / 2;
+		// Calculates distance.
+		int distanceX = Math.abs(centerAX - centerBX);
+		int distanceY = Math.abs(centerAY - centerBY);
 
-				return distanceX < maxDistanceX && distanceY < maxDistanceY;
-			}
+		return distanceX < maxDistanceX && distanceY < maxDistanceY;
+	}
 
 	//boom효과를 구현하기 위한 함수
 	private boolean checkBoomCollision(final Boom a, final Entity b) {
@@ -848,8 +870,8 @@ public class GameScreen extends Screen {
 		int centerEntityX = b.getPositionX() + b.getWidth() / 2;
 		int centerEntityY = b.getPositionY() + b.getHeight() / 2;
 
-		int distanceX = Math.abs(centerBoomX - centerEntityX);
-		int distanceY = Math.abs(centerBoomY - centerEntityY);
+		int distanceX = abs(centerBoomX - centerEntityX);
+		int distanceY = abs(centerBoomY - centerEntityY);
 
 		int maxDistanceX = 90;
 		int maxDistanceY = 90;
@@ -861,45 +883,49 @@ public class GameScreen extends Screen {
 	// 적개체 부서였을때 확률적으로 아이템을 드랍.
 	private void dropItem(EnemyShip enemyShip) {
 		int r = random.nextInt(5);
-		if (r == 1) { // 5분의 1의확률, 중복으로 아이템 생성x
-			int c = random.nextInt(5);
-			if (c == 0) {
-				if (this.shootingCoolItem == null) { // 연사속도
+		if(r == 1) { // 5분의 1의확률, 중복으로 아이템 생성x
+			int c = random.nextInt(4);
+			if(c == 0){
+				if(this.shootingCoolItem == null){ // 연사속도
 					effectSound.dropItemSound.start();
-					this.shootingCoolItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), DrawManager.SpriteType.ShootingCoolItem);
+					this.shootingCoolItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), 16, 16, DrawManager.SpriteType.ShootingCoolItem, 3);
 				}
 			} else if (c == 1) {
 				if (this.bulletSpeedItem == null) { // 총알속도
 					effectSound.dropItemSound.start();
-					this.bulletSpeedItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), DrawManager.SpriteType.BulletSpeedItem);
+					this.bulletSpeedItem= new Item(enemyShip.getPositionX(),  enemyShip.getPositionY(), 16, 16, DrawManager.SpriteType.BulletSpeedItem, 2);
 				}
-			} else if (c == 2) { //폭탄이드랍.
-				if (this.boomItem == null) {
-					effectSound.dropItemSound.start();        // 폭탄 아이템 드랍 소리
-					this.boomItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), DrawManager.SpriteType.Boom);
+			}
+			else if(c == 2) { //폭탄이드랍.
+				if(this.boomItem == null){
+					effectSound.dropItemSound.start(); // 폭탄 아이템 드랍 소리
+					this.boomItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), 16, 16,DrawManager.SpriteType.Boom,4);
 				}
-			} else if (c == 3) {
-				if (this.bonusLifeItem == null) {
-					effectSound.dropItemSound.start();        // 보너스 라이프 아이템 드랍 소리
-					this.bonusLifeItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), DrawManager.SpriteType.BonusLifeItem);
+			}
+			else if(c == 3){
+				if(this.bonusLifeItem == null){
+					effectSound.dropItemSound.start();	// 보너스 라이프 아이템 드랍 소리
+					this.bonusLifeItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), 16, 16, DrawManager.SpriteType.BonusLifeItem, 3);
 				}
 			} else {
 				// 점수 오름차순으로 1/2, 1/3, 1/6 확률
 				r = random.nextInt(6);
-				if (r == 0) {
-					if (this.bonusScoreItem == null) {
-						effectSound.dropItemSound.start();        // 보너스 라이프 아이템 드랍 소리
-						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), DrawManager.SpriteType.BonusScoreItem3);
+				if(r == 0){
+					if(this.bonusScoreItem == null){
+						effectSound.dropItemSound.start();		// 보너스 라이프 아이템 드랍 소리
+						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), 16, 16, DrawManager.SpriteType.BonusScoreItem3, 6);
 					}
-				} else if (r == 1 || r == 2) {
-					if (this.bonusScoreItem == null) {
-						effectSound.dropItemSound.start();        // 보너스 라이프 아이템 드랍 소리
-						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), DrawManager.SpriteType.BonusScoreItem2);
+				}
+				else if(r == 1 || r == 2){
+					if(this.bonusScoreItem == null){
+						effectSound.dropItemSound.start();		// 보너스 라이프 아이템 드랍 소리
+						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), 16, 16, DrawManager.SpriteType.BonusScoreItem2,4);
 					}
-				} else {
-					if (this.bonusScoreItem == null) {
-						effectSound.dropItemSound.start();        // 보너스 스코어 아이템 드랍 소리
-						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(), DrawManager.SpriteType.BonusScoreItem1);
+				}
+				else{
+					if(this.bonusScoreItem == null){
+						effectSound.dropItemSound.start();		// 보너스 스코어 아이템 드랍 소리
+						this.bonusScoreItem = new Item(enemyShip.getPositionX(), enemyShip.getPositionY(),16, 16, DrawManager.SpriteType.BonusScoreItem1, 2);
 					}
 				}
 			}
@@ -914,6 +940,12 @@ public class GameScreen extends Screen {
 	//스테이지를 클리어했으면 지금현재 스테이트를 넘겨줌.
 	public final GameState getGameState() {
 		return new GameState(this.level, this.score, this.lives,
-				this.bulletsShot, this.shipsDestroyed, this.boomTimes, this.skillCool, this.ultimateTimes);
+				this.bulletsShot,this.shipsDestroyed,this.boomTimes,this.skillCool,this.ultimateTimes);
 	}
+
+	public final GameScreen getGameScreen(){
+		return this;
+	}
+
+
 }

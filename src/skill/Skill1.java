@@ -8,7 +8,7 @@ import java.awt.*;
 //무적
 public class Skill1 extends Skill{
 
-    private final int SKILL_COOLDOWN = 15 * 1000      ;  //쿨타임
+    private final int SKILL_COOLDOWN = 15 * 1000 ;  //쿨타임
 
     private final int DURATION_COOLDOWN = 5 * 1000; //지속시간
 

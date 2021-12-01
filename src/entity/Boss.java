@@ -19,9 +19,9 @@ public class Boss extends Entity {
     private static final int pointValue = 300;
 
     /** Initial position in the x-axis. */
-    private static final int INIT_POS_X = 215;
+    private static final int INIT_POS_X = 265;
     /** Initial position in the x-axis. */
-    private static final int INIT_POS_Y = 100;
+    private static final int INIT_POS_Y = 200;
     /** Time between shots. */
     private int shootingInterval = 1200;
     /** Speed of the bullets shot by the members. */
@@ -29,9 +29,9 @@ public class Boss extends Entity {
     /** Margin on the sides of the screen. */
     private static final int SIDE_MARGIN = 20;
     /** Margin on the bottom of the screen. */
-    private static final int BOTTOM_MARGIN = 350;
+    private static final int BOTTOM_MARGIN = 450;
     /** Margin on the top of the screen. */
-    private static final int TOP_MARGIN = 100;
+    private static final int TOP_MARGIN = 150;
     /** Lateral speed of the formation. */
     private static final int X_SPEED = 2;
     /** Downwards speed of the formation. */
@@ -155,6 +155,7 @@ public class Boss extends Entity {
                     currentDirection = Direction.UP;
                     break;
                 case 7: // DOWN
+                    currentDirection = Direction.DOWN;
                     break;
 
 

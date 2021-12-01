@@ -1,5 +1,6 @@
 package entity;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,7 +10,7 @@ import java.util.Set;
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  *
  */
-public final class BulletPool {
+public final class BulletPool implements Serializable {
 
 	/** Set of already created bullets. */
 	private static Set<Bullet> pool = new HashSet<Bullet>();
@@ -29,16 +30,16 @@ public final class BulletPool {
 	 *            Requested position of the bullet in the X axis.
 	 * @param positionY
 	 *            Requested position of the bullet in the Y axis.
-	 * @param xSpeed
+	 * @param speedY
 	 *            Requested speed of the bullet, positive or negative depending
 	 *            on direction - positive is down.
-	 * @param ySpeed
+	 * @param speedY
 	 * 			  Requested speed of the bullet, positive or negative depending
 	 * 	 *            on direction - positive is down.
 	 * @return Requested bullet.
 	 */
 	public static Bullet getBullet(final int positionX, final int positionY,
-								   final int xSpeed, final int ySpeed) {
+								   final int speedX, final int speedY) {
 		Bullet bullet;
 
 		if (!pool.isEmpty()) {
@@ -46,11 +47,11 @@ public final class BulletPool {
 			pool.remove(bullet);
 			bullet.setPositionX(positionX - bullet.getWidth() / 2);
 			bullet.setPositionY(positionY);
-			bullet.setSpeed(xSpeed, ySpeed);
+			bullet.setSpeed(speedX, speedY);
 			bullet.setSprite();
 
 		} else {
-			bullet = new Bullet(positionX, positionY, xSpeed, ySpeed);
+			bullet = new Bullet(positionX, positionY, speedX, speedY);
 			bullet.setPositionX(positionX - bullet.getWidth() / 2);
 		}
 		return bullet;
