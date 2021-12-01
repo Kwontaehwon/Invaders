@@ -1,12 +1,14 @@
 package engine;
 
+import java.io.Serializable;
+
 /**
  * Imposes a cooldown period between two actions.
  * 
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  * 
  */
-public class Cooldown {
+public class Cooldown implements Serializable {
 
 	/** Cooldown duration. */
 	private int milliseconds;

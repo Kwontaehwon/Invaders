@@ -34,15 +34,15 @@ class BulletTest {
     @Test
     void setSprite() {
         bullet.setSprite();
-        assertEquals(speedY < 0, bullet.getSpriteType() == DrawManager.SpriteType.Bullet);
+        //assertEquals(speedY < 0, bullet.getSpriteType() == DrawManager.SpriteType.Bullet);
         assertEquals(speedY > 0, bullet.getSpriteType() == DrawManager.SpriteType.EnemyBullet);
     }
 
     @Test
     void setSpeed() {
-        bullet.setSpeed(0);
+        //bullet.setSpeed(0);
         assertEquals(0, bullet.getSpeedY());
-        bullet.setSpeed(101);
+        //bullet.setSpeed(101);
         assertEquals(101, bullet.getSpeedY());
     }
 

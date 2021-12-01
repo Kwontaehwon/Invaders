@@ -2,6 +2,7 @@ package screen;
 
 import engine.Cooldown;
 import engine.Core;
+import engine.FileManager;
 import engine.GameStatus;
 
 import java.awt.event.KeyEvent;
@@ -21,6 +22,10 @@ public class PauseScreen extends Screen{
 
     /** Time between changes in user selection. */
     private Cooldown selectionCooldown;
+    /** FileManager instance. */
+    private static FileManager fileManager;
+    private GameScreen gameScreen;
+
 
 
     /**
@@ -29,23 +34,26 @@ public class PauseScreen extends Screen{
      * @param height Screen height.
      * @param fps
      * @param gameStatus
+     * @pram gameScreen
      */
-    public PauseScreen(int width, int height, int fps, GameStatus gameStatus) {
+    public PauseScreen(int width, int height, int fps, GameStatus gameStatus,GameScreen gamescreen) {
         super(width, height, fps);
 
         this.returnCode = 2;
         this.selectionCooldown = Core.getCooldown(SELECTION_TIME);
         this.selectionCooldown.reset();
         this.gameStatus = gameStatus;
+        this.gameScreen = gamescreen;
+        fileManager = Core.getFileManager();
     }
 
-    public final int run(){
+    public final int run() throws IOException, ClassNotFoundException {
         super.run();
 
         return this.returnCode;
     }
 
-    protected final void update() {
+    protected final void update() throws IOException, ClassNotFoundException {
         super.update();
 
         draw();
@@ -73,7 +81,7 @@ public class PauseScreen extends Screen{
                 this.isRunning = false;
             }
             if (this.returnCode == 5 && inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
-                this.saveSave();
+                fileManager.saveGame(gameScreen.getGameScreen());
                 this.selectionCooldown.reset();
             }
             if (this.returnCode == 11 && (inputManager.isKeyDown(KeyEvent.VK_SPACE) ||
@@ -171,34 +179,6 @@ public class PauseScreen extends Screen{
             this.returnCode = 13;
         else if (this.returnCode == 14)
             this.returnCode = 15;
-    }
-
-    private void saveSave() {
-        try {
-            List<String> gameStatusList = new ArrayList<>();
-            String state = Integer.toString(gameStatus.getStates().getLevel()) +
-                    ", " + Integer.toString(gameStatus.getStates().getScore()) +
-                    ", " + Integer.toString(gameStatus.getStates().getLivesRemaining()) +
-                    ", " + Integer.toString(gameStatus.getStates().getBulletsShot()) +
-                    ", " + Integer.toString(gameStatus.getStates().getShipsDestroyed()) +
-                    ", " + Integer.toString(gameStatus.getStates().getBoomtimes()) +
-                    ", " + Integer.toString(gameStatus.getStates().getSkillCool()[0]) +
-                    ", " + Integer.toString(gameStatus.getStates().getSkillCool()[1]) +
-                    ", " + Integer.toString(gameStatus.getStates().getSkillCool()[2]) +
-                    ", " + Integer.toString(gameStatus.getStates().getSkillCool()[3]) +
-                    ", " + Integer.toString(gameStatus.getStates().getUltimateTimes());
-            String settings = Integer.toString(gameStatus.getSettings().getFormationWidth()) +
-                    ", " + Integer.toString(gameStatus.getSettings().getFormationHeight()) +
-                    ", " + Integer.toString(gameStatus.getSettings().getBaseSpeed()) +
-                    ", " + Integer.toString(gameStatus.getSettings().getShootingFrecuency());
-
-            gameStatusList.add(state);
-            gameStatusList.add(settings);
-            gameStatusList.add(Boolean.toString(gameStatus.getBonus()));
-            Core.getFileManager().saveSaves(gameStatusList);
-        } catch (IOException e) {
-            logger.warning("Couldn't load saves!");
-        }
     }
 
     private void draw() {

@@ -1,5 +1,6 @@
 package entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,7 +21,7 @@ import engine.GameSettings;
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  * 
  */
-public class EnemyShipFormation implements Iterable<EnemyShip> {
+public class EnemyShipFormation implements Iterable<EnemyShip> , Serializable {
 
 	/** Initial position in the x-axis. */
 	private static final int INIT_POS_X = 20;
@@ -52,11 +53,11 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	private static final int MINIMUM_SPEED = 10;
 
 	/** DrawManager instance. */
-	private DrawManager drawManager;
+	private transient DrawManager drawManager;
 	/** Application logger. */
-	private Logger logger;
+	private transient Logger logger;
 	/** Screen to draw ships on. */
-	private Screen screen;
+	private transient Screen screen;
 
 	/** List of enemy ships forming the formation. */
 	private List<List<EnemyShip>> enemyShips;
@@ -185,6 +186,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 * Draws every individual component of the formation.
 	 */
 	public final void draw() {
+		if (drawManager == null) drawManager = Core.getDrawManager();
 		for (List<EnemyShip> column : this.enemyShips)
 			for (EnemyShip enemyShip : column)
 				drawManager.drawEntity(enemyShip, enemyShip.getPositionX(),
@@ -351,7 +353,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		if (this.shootingCooldown.checkFinished()) {
 			this.shootingCooldown.reset();
 			bullets.add(BulletPool.getBullet(shooter.getPositionX()
-					+ shooter.width / 2, shooter.getPositionY(), 0, BULLET_SPEED));
+					+ shooter.getWidth() / 2, shooter.getPositionY(), 0, BULLET_SPEED));
 		}
 	}
 
@@ -368,7 +370,6 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 			int divideNum = 200;
 			if(difX>200) divideNum = (int) (difX*0.95);
 			else if(difX<-200) divideNum = (int) (difX* -0.95);
-			logger.info("difX: " + difX);
 			bullets.add(BulletPool.getBullet(shooter.getPositionX() + shooter.width / 2,
 					shooter.getPositionY(), difX*BULLET_SPEED/divideNum, difY*BULLET_SPEED/divideNum));
 		}
@@ -458,4 +459,8 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	public final boolean isEmpty() {
 		return this.shipCount <= 0;
 	}
+
+	public Logger getLogger() {return this.logger;}
+
+	public void setLogger(Logger logger) {this.logger = logger;}
 }

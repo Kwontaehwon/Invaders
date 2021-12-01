@@ -3,6 +3,7 @@ package entity;
 import engine.DrawManager;
 
 import java.awt.*;
+import java.io.Serializable;
 
 public class Boom extends Entity {
 

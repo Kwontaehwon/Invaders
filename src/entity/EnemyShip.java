@@ -1,6 +1,7 @@
 package entity;
 
 import java.awt.Color;
+import java.io.Serializable;
 
 import engine.Cooldown;
 import engine.Core;

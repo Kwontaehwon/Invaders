@@ -1,12 +1,14 @@
 package engine;
 
+import java.io.Serializable;
+
 /**
  * Implements an object that stores the state of the game between levels.
  * 
  * @author <a href="mailto:RobertoIA1987@gmail.com">Roberto Izquierdo Amo</a>
  * 
  */
-public class GameState {
+public class GameState implements Serializable {
 
 	/** Current game level. */
 	private int level;

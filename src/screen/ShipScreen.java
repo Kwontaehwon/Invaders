@@ -5,6 +5,7 @@ import engine.Core;
 import engine.DesignSetting;
 import engine.DrawManager.SpriteType;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 
 public class ShipScreen extends Screen{
 
@@ -36,13 +37,13 @@ public class ShipScreen extends Screen{
 
 
     @Override
-    public int run() {
+    public int run() throws IOException, ClassNotFoundException {
         super.run();
 
         return this.returnCode;
     }
 
-    protected final void update() {
+    protected final void update() throws IOException, ClassNotFoundException {
         super.update();
 
         draw();

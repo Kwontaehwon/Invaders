@@ -1,5 +1,8 @@
 package entity;
 
+
+import java.awt.Color;
+
 import engine.DrawManager.SpriteType;
 
 import java.awt.*;
@@ -30,6 +33,7 @@ public class Bullet extends Entity {
 	 *            Speed of the bullet, positive or negative depending on
 	 *            direction - positive is down.
 	 */
+
 
 	public Bullet(final int positionX, final int positionY, final int speedX, final int speedY) {
 		super(positionX, positionY, 5*2, 5*2, Color.WHITE);
@@ -77,6 +81,7 @@ public class Bullet extends Entity {
 	}
 
 	/**
+
 	 * Setter of the speedY of the bullet.
 	 *
 	 * @param speed

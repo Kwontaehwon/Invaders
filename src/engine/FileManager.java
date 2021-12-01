@@ -4,26 +4,19 @@ import java.awt.*;
 import java.awt.image.RenderedImage;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import engine.DrawManager.SpriteType;
+import entity.Bullet;
+import entity.BulletPool;
+import entity.EnemyShipFormation;
+import screen.GameScreen;
+import screen.Screen;
 
 /**
  * Manages files used in the application.
@@ -301,178 +294,19 @@ public final class FileManager {
 		}
 	}
 
-	// 추가한 부분 (Save 기능)
-	/**
-	 * Saves game to disk.
-	 *
-	 * @param save
-	 * 			Save list to save.
-	 * @throws IOException
-	 */
-	public void saveSaves(final List<String> save)
-			throws IOException {
-		OutputStream outputStream = null;
-		BufferedWriter bufferedWriter = null;
-
-		try {
-			String jarPath = FileManager.class.getProtectionDomain()
-					.getCodeSource().getLocation().getPath();
-			jarPath = URLDecoder.decode(jarPath, "UTF-8");
-
-			String savesPath = new File(jarPath).getParent();
-			savesPath += File.separator;
-			savesPath += "saves";
-
-			File savesFile = new File(savesPath);
-
-			if (!savesFile.exists())
-				savesFile.createNewFile();
-
-			outputStream = new FileOutputStream(savesFile);
-			bufferedWriter = new BufferedWriter(new OutputStreamWriter(
-					outputStream, Charset.forName("UTF-8")));
-
-			logger.info("Saving user's game.");
-
-			bufferedWriter.write(save.get(0));
-			bufferedWriter.newLine();
-			bufferedWriter.write(save.get(1));
-			bufferedWriter.newLine();
-			bufferedWriter.write(save.get(2));
-
-
-		} finally {
-			if (bufferedWriter != null)
-				bufferedWriter.close();
-		}
+	public void saveGame(GameScreen gameScreen) throws IOException, ClassNotFoundException {
+		FileOutputStream fos = new FileOutputStream("res/gameScreen.bin");
+		ObjectOutputStream oos = new ObjectOutputStream(fos);
+		oos.writeObject(gameScreen);
+		oos.close();
 	}
 
-	// 추가한 부분 (생성된 saves 파일 없을시,, 기본 Saves 파일 불러오기)
-	/**
-	 * Returns the application default saves if there is no user saves file.
-	 *
-	 * @return Default game status
-	 * @throws IOException
-	 */
-	public GameStatus loadDefaultSaves() throws IOException {
+	public GameScreen loadGame() throws IOException, ClassNotFoundException {
+		FileInputStream fis = new FileInputStream("res/gameScreen.bin");
+		ObjectInputStream ois = new ObjectInputStream(fis);
+		GameScreen gameScreen = (GameScreen)ois.readObject();
+		return gameScreen;
 
-		GameState gameStates;
-		GameSettings gameSettings;
-		GameStatus gameStatus = null;
-
-		InputStream inputStream = null;
-		BufferedReader reader = null;
-
-		try {
-			inputStream = FileManager.class.getClassLoader()
-					.getResourceAsStream("saves");
-			reader = new BufferedReader(new InputStreamReader(inputStream));
-
-			String gameStatesl = reader.readLine();
-			String gameSettingsl = reader.readLine();
-			String bonusl = reader.readLine();
-
-			if ((gameStatesl != null) && (gameSettingsl != null) && (bonusl != null)) {
-				String[] gameStatesArr = gameStatesl.split(", ");
-				String[] gameSettingslArr = gameSettingsl.split(", ");
-
-				gameStates = new GameState(Integer.parseInt(gameStatesArr[0]),
-						Integer.parseInt(gameStatesArr[1]),
-						Integer.parseInt(gameStatesArr[2]),
-						Integer.parseInt(gameStatesArr[3]),
-						Integer.parseInt(gameStatesArr[4]),
-						Integer.parseInt(gameStatesArr[5]),
-						new int[] {Integer.parseInt(gameStatesArr[6]),
-								Integer.parseInt(gameStatesArr[7]),
-								Integer.parseInt(gameStatesArr[8]),
-								Integer.parseInt(gameStatesArr[9])},
-						Integer.parseInt(gameStatesArr[10]));
-
-				gameSettings = new GameSettings(Integer.parseInt(gameSettingslArr[0]),
-						Integer.parseInt(gameSettingslArr[1]),
-						Integer.parseInt(gameSettingslArr[2]),
-						Integer.parseInt(gameSettingslArr[3]));
-
-				gameStatus = new GameStatus(gameStates, gameSettings, Boolean.parseBoolean(bonusl));
-
-			}
-		} finally {
-			if (inputStream != null)
-				inputStream.close();
-		}
-
-		return gameStatus;
 	}
 
-	// 추가한 부분 (Saves 파일 불러오기)
-	/**
-	 * Loads saves from file, and returns a game status.
-	 *
-	 * @return game status
-	 * @throws IOException
-	 */
-	public GameStatus loadSaves() throws IOException {
-
-		GameState gameStates;
-		GameSettings gameSettings;
-		GameStatus gameStatus = null;
-
-		List<Score> highScores = new ArrayList<Score>();
-		InputStream inputStream = null;
-		BufferedReader bufferedReader = null;
-
-		try {
-			String jarPath = FileManager.class.getProtectionDomain()
-					.getCodeSource().getLocation().getPath();
-			jarPath = URLDecoder.decode(jarPath, "UTF-8");
-
-			String savesPath = new File(jarPath).getParent();
-			savesPath += File.separator;
-			savesPath += "saves";
-			File savesFile = new File(savesPath);
-			inputStream = new FileInputStream(savesFile);
-
-			bufferedReader = new BufferedReader(new InputStreamReader(
-					inputStream, Charset.forName("UTF-8")));
-			logger.info("Loading user saves.");
-			String gameStatesl = bufferedReader.readLine();
-			String gameSettingsl = bufferedReader.readLine();
-			String bonusl = bufferedReader.readLine();
-
-			if ((gameStatesl != null) && (gameSettingsl != null) && (bonusl != null)) {
-				String[] gameStatesArr = gameStatesl.split(", ");
-				String[] gameSettingslArr = gameSettingsl.split(", ");
-				gameStates = new GameState(Integer.parseInt(gameStatesArr[0]),
-						Integer.parseInt(gameStatesArr[1]),
-						Integer.parseInt(gameStatesArr[2]),
-						Integer.parseInt(gameStatesArr[3]),
-						Integer.parseInt(gameStatesArr[4]),
-						Integer.parseInt(gameStatesArr[5]),
-						new int[] {Integer.parseInt(gameStatesArr[6]),
-								Integer.parseInt(gameStatesArr[7]),
-								Integer.parseInt(gameStatesArr[8]),
-								Integer.parseInt(gameStatesArr[9])},
-						Integer.parseInt(gameStatesArr[10]));
-
-				gameSettings = new GameSettings(Integer.parseInt(gameSettingslArr[0]),
-						Integer.parseInt(gameSettingslArr[1]),
-						Integer.parseInt(gameSettingslArr[2]),
-						Integer.parseInt(gameSettingslArr[3]));
-
-				gameStatus = new GameStatus(gameStates, gameSettings, Boolean.parseBoolean(bonusl));
-
-			}
-
-		} catch (FileNotFoundException e) {
-			// loads default if there's no user scores.
-			logger.info("Loading default saves.");
-			gameStatus = loadDefaultSaves();
-		} finally {
-			if (bufferedReader != null)
-				bufferedReader.close();
-		}
-
-		Collections.sort(highScores);
-		return gameStatus;
-	}
 }
