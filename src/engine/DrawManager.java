@@ -468,22 +468,22 @@ public final class DrawManager {
 		drawString("SKILL",213 +sizePlus ,25);
 		backBufferGraphics.setFont(fontSmall);
 		if (skill1.checkOpen()) { //열려있으면 그려줌.
-			drawEntity(skill1,267 + 22 * 0 +sizePlus, 10);
+			drawEntity(skill1,267 + sizePlus, 10);
 			if(pauseTime == 0) {
 				if (skill1.returnSkillCoolTime() > 0 && skill1.returnSkillCoolTime() < 10) {
-					backBufferGraphics.drawString(Integer.toString(skill1.returnSkillCoolTime()), 267 + 22 * 0 + 4 + sizePlus, y);
+					backBufferGraphics.drawString(Integer.toString(skill1.returnSkillCoolTime()), 267 + 4 + sizePlus, y);
 				} else if (skill1.returnSkillCoolTime() > 9) {
-					backBufferGraphics.drawString(Integer.toString(skill1.returnSkillCoolTime()), 267 + 22 * 0 + 3 + sizePlus, y);
+					backBufferGraphics.drawString(Integer.toString(skill1.returnSkillCoolTime()), 267 + 3 + sizePlus, y);
 				}
 			}
 		}
 		if (skill2.checkOpen()) {
-			drawEntity(skill2, 267 + 22 * 1 + sizePlus, 10);
+			drawEntity(skill2, 267 + 22 + sizePlus, 10);
 			if(pauseTime == 0) {
 				if (skill2.returnSkillCoolTime() > 0 && skill2.returnSkillCoolTime() < 10)
-					backBufferGraphics.drawString(Integer.toString(skill2.returnSkillCoolTime()), 270 + 22 * 1 + 3 + sizePlus, y);
+					backBufferGraphics.drawString(Integer.toString(skill2.returnSkillCoolTime()), 270 + 22 + 3 + sizePlus, y);
 				else if (skill2.returnSkillCoolTime() > 9) {
-					backBufferGraphics.drawString(Integer.toString(skill2.returnSkillCoolTime()), 267 + 22 * 1 + 3 + sizePlus, y);
+					backBufferGraphics.drawString(Integer.toString(skill2.returnSkillCoolTime()), 267 + 22 + 3 + sizePlus, y);
 				}
 			}
 		}
@@ -789,13 +789,13 @@ public final class DrawManager {
 		backBufferGraphics.drawString(string, screen.getWidth() / 2
 				- fontBigMetrics.stringWidth(string) / 2, height);
 	}
-	//정한위치에 string을 적어줌.
+	// 정한 위치에 string을 적어줌.
 	public void drawString(final String string, final int x,final int y){
 		backBufferGraphics.setFont(fontRegular);
 		backBufferGraphics.setColor(Color.yellow);
 		backBufferGraphics.drawString(string,x,y);
 	}
-	//작은글씨 그리기, 스킬발동로그용
+	// 작은 글씨 그리기, 스킬 발동 로그용
 	public void drawSmallString(final String string, final int x, final int y){
 		backBufferGraphics.setColor(Color.yellow);
 		backBufferGraphics.setFont(fontSmall);
@@ -888,32 +888,32 @@ public final class DrawManager {
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, continueString,
-				screen.getHeight() / 3 * 1);
+				screen.getHeight() / 3);
 		if (option == PauseScreen.MAIN_MENU)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, mainString,
-				screen.getHeight() / 3 * 1 + fontRegularMetrics.getHeight() * 2);
+				screen.getHeight() / 3 + fontRegularMetrics.getHeight() * 2);
 
 		if (option == PauseScreen.RESTART)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, restartString,
-				screen.getHeight() / 3 * 1 + fontRegularMetrics.getHeight() * 4);
+				screen.getHeight() / 3 + fontRegularMetrics.getHeight() * 4);
 		if (option == SAVE)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
-		drawCenteredRegularString(screen, saveString, screen.getHeight()
-				/ 3 * 1 + fontRegularMetrics.getHeight() * 6);
+		drawCenteredRegularString(screen, saveString,
+				screen.getHeight() / 3 + fontRegularMetrics.getHeight() * 6);
 		if (option == MUSIC)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
-		drawCenteredRegularString(screen, musicString, screen.getHeight() / 3
-				* 1 + fontRegularMetrics.getHeight() * 8);
+		drawCenteredRegularString(screen, musicString,
+				screen.getHeight() / 3 + fontRegularMetrics.getHeight() * 8);
 
 		if (option == MUSIC_DOWN)
 			backBufferGraphics.setColor(Color.GREEN);
@@ -922,8 +922,7 @@ public final class DrawManager {
 		backBufferGraphics.setFont(fontBig);
 		backBufferGraphics.drawString("<", screen.getWidth() / 2
 						- fontBigMetrics.stringWidth(musicString) / 2 - 5,
-				screen.getHeight() / 3
-						* 1 + fontRegularMetrics.getHeight() * 8);
+				screen.getHeight() / 3 + fontRegularMetrics.getHeight() * 8);
 		if (option == MUSIC_UP)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
@@ -931,15 +930,14 @@ public final class DrawManager {
 		backBufferGraphics.setFont(fontBig);
 		backBufferGraphics.drawString(">", screen.getWidth() / 2
 						+ fontBigMetrics.stringWidth(musicString) / 2 - 5,
-				screen.getHeight() / 3
-						* 1 + fontRegularMetrics.getHeight() * 8);
+				screen.getHeight() / 3 + fontRegularMetrics.getHeight() * 8);
 
 		if (option == SOUND)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
-		drawCenteredRegularString(screen, soundString, screen.getHeight() / 3
-				* 1 + fontRegularMetrics.getHeight() * 10);
+		drawCenteredRegularString(screen, soundString,
+				screen.getHeight() / 3 + fontRegularMetrics.getHeight() * 10);
 
 		if (option == SOUND_DOWN)
 			backBufferGraphics.setColor(Color.GREEN);
@@ -948,8 +946,7 @@ public final class DrawManager {
 		backBufferGraphics.setFont(fontBig);
 		backBufferGraphics.drawString("<", screen.getWidth() / 2
 						- fontBigMetrics.stringWidth(soundString) / 2 - 5,
-				screen.getHeight() / 3
-						* 1 + fontRegularMetrics.getHeight() * 10);
+				screen.getHeight() / 3 + fontRegularMetrics.getHeight() * 10);
 		if (option == SOUND_UP)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
@@ -957,8 +954,7 @@ public final class DrawManager {
 		backBufferGraphics.setFont(fontBig);
 		backBufferGraphics.drawString(">", screen.getWidth() / 2
 						+ fontBigMetrics.stringWidth(soundString) / 2 - 5,
-				screen.getHeight() / 3
-						* 1 + fontRegularMetrics.getHeight() * 10);
+				screen.getHeight() / 3 + fontRegularMetrics.getHeight() * 10);
 	}
 
 	/**
@@ -1038,19 +1034,6 @@ public final class DrawManager {
 
 	}
 
-
-	/**
-	 * Draws triangle which has a horizontal side.
-	 *
-	 * @param tipPositionX
-	 * 					X-position of tip.
-	 * @param tipPositionY
-	 * 					Y-position of tip.
-	 */
-	private void drawTriangle(final int tipPositionX, final int tipPositionY){
-		drawTriangle(tipPositionX, tipPositionY, false);
-	}
-
 	/**
 	 * Draws triangle which has a horizontal side.
 	 *
@@ -1062,7 +1045,6 @@ public final class DrawManager {
 	 * 				Is Tip's direction reversed? (false: up, true: down)
 	 */
 	private void drawTriangle(final int tipPositionX, final int tipPositionY, boolean reverse){
-		// size of triangle.
 		int size = 6;
 
 		int[] x = {tipPositionX, tipPositionX+size, tipPositionX-size};

@@ -1,7 +1,5 @@
 package entity;
 
-import engine.Cooldown;
-import engine.Core;
 import engine.DrawManager;
 
 import java.awt.*;
@@ -9,27 +7,18 @@ import java.awt.*;
 public class Item extends Entity{
 
 
-    // 아이템떨어지는 속도.
+    /** Movement of the item for each unit of time. */
     private int speed;
-    // 보너스 포인트 아이템의 보너스 점수값
+    /** Point of bonus item */
     private int pointValue;
-
-    /** Cooldown between sprite changes. */
-    // 이부분을활용하여 떨어질떄 애니메이션을 줄수있음. EnemyShip.java, update부분보면됨.
-    //private Cooldown animationCooldown;
 
     /**
      * Constructor, establishes the entity's generic properties.
      *
      * @param positionX Initial position of the entity in the X axis.
      * @param positionY Initial position of the entity in the Y axis.
-     *
+     * @param spriteType Sprite of the entity.
      */
-    public Item(int positionX, int positionY) {
-        super(positionX, positionY, 13 * 2, 8 * 2, Color.BLUE);
-        this.spriteType = DrawManager.SpriteType.Ship;
-        this.speed = 2;
-    }
 
     public Item(int positionX, int positionY, DrawManager.SpriteType spriteType) {
         super(positionX, positionY, 13 * 2, 8 * 2, Color.BLUE);
@@ -54,12 +43,25 @@ public class Item extends Entity{
         }
     }
 
+    /**
+     * Update the item's position.
+     */
     public final void update() {
         this.positionY += this.speed;
     }
+
+    /**
+     * Getter of the item's speed.
+     * @return speed of the item.
+     */
     public int getSpeed(){
         return this.speed;
     }
+
+    /**
+     * Getter of the item's point.
+     * @return point
+     */
     public int getPointValue(){
         return this.pointValue;
     }

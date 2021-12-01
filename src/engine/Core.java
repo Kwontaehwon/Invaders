@@ -84,7 +84,7 @@ public final class Core {
 	public static Audio backgroundMusic = new Audio("res/bgm.wav", true);
 	/** Audio effect sound*/
 	public static Sound effectSound = new Sound();
-
+	/** returnCode */
 	public static final int MAIN_MENU = 5;
 	public static final int PLAY = 4;
 	public static final int LOAD = 3;
