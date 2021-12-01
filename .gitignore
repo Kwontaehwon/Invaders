@@ -177,3 +177,5 @@ log*
 .checkstyle
 codemr/
 .hsw
+# Ignore Gradle project-specific cache directory
+.gradle

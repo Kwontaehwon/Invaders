@@ -14,17 +14,17 @@ public class Sound {
     public Audio roundEndSound;
 
     public Sound(){
-        shootingSound = new Audio("res/shootingSound.wav", false);
-        destroyedEnemySound = new Audio("res/destroyedEnemySound.wav", false);
-        hitEnemySound = new Audio("res/hitEnemySound.wav", false);
-        getItemSound = new Audio("res/getItemSound.wav", false);
-        dropItemSound = new Audio("res/dropItemSound.wav", false);
-        boomingSound = new Audio("res/boomingSound.wav", false);
-        deathSound = new Audio("res/deathSound.wav", false);
-        roundStartSound = new Audio("res/roundStart.wav", false);
-        countDownSound = new Audio("res/countdown.wav", false);   // 0.9s
-        shipDeathSound = new Audio("res/shipDeathSound.wav", false); // 1.398s
-        roundEndSound = new Audio("res/roundEndSound.wav", false);  // 2.757s
+        shootingSound = new Audio("src/main/resources/shootingSound.wav", false);
+        destroyedEnemySound = new Audio("src/main/resources/destroyedEnemySound.wav", false);
+        hitEnemySound = new Audio("src/main/resources/hitEnemySound.wav", false);
+        getItemSound = new Audio("src/main/resources/getItemSound.wav", false);
+        dropItemSound = new Audio("src/main/resources/dropItemSound.wav", false);
+        boomingSound = new Audio("src/main/resources/boomingSound.wav", false);
+        deathSound = new Audio("src/main/resources/deathSound.wav", false);
+        roundStartSound = new Audio("src/main/resources/roundStart.wav", false);
+        countDownSound = new Audio("src/main/resources/countdown.wav", false);   // 0.9s
+        shipDeathSound = new Audio("src/main/resources/shipDeathSound.wav", false); // 1.398s
+        roundEndSound = new Audio("src/main/resources/roundEndSound.wav", false);  // 2.757s
     }
 
     public void increase(){

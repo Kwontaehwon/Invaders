@@ -53,7 +53,7 @@ public final class DrawManager implements Serializable {
 	/** Image for game screen. */
 	private static Image backgroundImage;
 	/** Template Image of background*/
-	private static Image templateImage;
+	private static Image  templateImage;
 
 	private static Font fontSmall;
 

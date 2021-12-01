@@ -131,7 +131,7 @@ public final class FileManager {
 	 */
 	public void saveImage(RenderedImage img) {
 		try {
-			ImageIO.write(img, "PNG", new File("res/gameBackground.PNG"));
+			ImageIO.write(img, "PNG", new File("src/main/resources/gameBackground.PNG"));
 			logger.info("save new image.");
 		}
 		catch (IOException e) { e.printStackTrace(); }
@@ -145,7 +145,7 @@ public final class FileManager {
 		ImageIcon imageIcon;
 		Image img;
 		// Image loading.
-		imageIcon = new ImageIcon("res/backgroundTemplate.png");
+		imageIcon = new ImageIcon("src/main/resources/backgroundTemplate.png");
 		img = imageIcon.getImage();
 		if(img != null) {
 			logger.info("Background Image("+ img.getWidth(null) + "x" + img.getHeight(null) +") loaded.");
@@ -295,14 +295,14 @@ public final class FileManager {
 	}
 
 	public void saveGame(GameScreen gameScreen) throws IOException, ClassNotFoundException {
-		FileOutputStream fos = new FileOutputStream("res/gameScreen.bin");
+		FileOutputStream fos = new FileOutputStream("src/main/resources/gameScreen.bin");
 		ObjectOutputStream oos = new ObjectOutputStream(fos);
 		oos.writeObject(gameScreen);
 		oos.close();
 	}
 
 	public GameScreen loadGame() throws IOException, ClassNotFoundException {
-		FileInputStream fis = new FileInputStream("res/gameScreen.bin");
+		FileInputStream fis = new FileInputStream("src/main/resources/gameScreen.bin");
 		ObjectInputStream ois = new ObjectInputStream(fis);
 		GameScreen gameScreen = (GameScreen)ois.readObject();
 		return gameScreen;
