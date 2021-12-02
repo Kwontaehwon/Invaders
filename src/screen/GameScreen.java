@@ -259,9 +259,11 @@ public class GameScreen extends Screen implements Serializable {
 			int countDowned = (int) ((INPUT_DELAY
 					- (System.currentTimeMillis()
 					- this.gameStartTime)) / 1000);
-
 			if (countDowned >= -1 && countDowned < countdown) {
 				countdown = countDowned;
+				if(countdown == 5){
+					if(this.level == 2 || this.level == 3 ||this.level == 4 || this.level ==5) effectSound.skillUnlockSound.start();
+				}
 				if (4 > countdown && countdown > 0) {
 					effectSound.countDownSound.start();
 				} else if (countdown == 0) {
@@ -330,21 +332,25 @@ public class GameScreen extends Screen implements Serializable {
 				if (this.SkillInputDelay.checkFinished() && inputManager.isKeyDown(KeyEvent.VK_X)) {
 					if (this.skillCursor == 0 && this.skill1.checkOpen()) { //무적
 						if (this.skill1.returnSkillCoolTime() == 0) {
+							effectSound.skill1Sound.start();
 							this.skill1.startActivate(); //활성화
 							this.skill1.startCoolTime(); //쿨타임다시시작
 						}
 					} else if (this.skillCursor == 1 && this.skill2.checkOpen()) { // 일정시간 적움직임멈추기.
 						if (this.skill2.checkCoolTime()) {
+							effectSound.skill2Sound.start();
 							this.skill2.startActivate(); //활성화
 							this.skill2.startCoolTime(); //쿨타임다시시작
 						}
 					} else if (this.skillCursor == 2 && this.skill3.checkOpen()) { // 적Bullet속도 낮추기.
 						if (this.skill3.checkCoolTime()) {
+							effectSound.skill3Sound.start();
 							this.skill3.startActivate(); //활성화
 							this.skill3.startCoolTime(); //쿨타임다시시작
 						}
 					} else if (this.skillCursor == 3 && this.skill4.checkOpen()) { //폭탄전방으로 세개
 						if (this.skill4.checkCoolTime()) {
+							effectSound.skill4Sound.start();
 							this.skill4.startActivate(); //활성화
 							this.skill4.startCoolTime(); //쿨타임다시시작
 							//폭탄이 세갈래로 나감.
@@ -386,6 +392,7 @@ public class GameScreen extends Screen implements Serializable {
 				}
 				//필살기사용
 				if(!isPauseScreen&&inputManager.isKeyDown(KeyEvent.VK_C) && ultimateTimes > 0){
+					effectSound.ultimateSound.start();
 					this.ultimate = new Ultimate(this.ship.getPositionX() + this.ship.getWidth()/ 2-100,
 							this.ship.getPositionY());
 					ultimateTimes--;
@@ -482,7 +489,7 @@ public class GameScreen extends Screen implements Serializable {
 			}
 			this.logger.info("Get Item : Bullet Shooting Cooldown Up ! " + this.ship.getShootingCoolDown());
 			this.shootingCoolItem = null;
-			effectSound.getItemSound.start();    // 드랍된 아이템 얻는 소리
+			effectSound.getPowerUpSound.start();    // 드랍된 아이템 얻는 소리
 		}
 		if(this.bulletSpeedItem != null && checkCollision(this.bulletSpeedItem, this.ship)){
 			if(this.ship.getBulletSpeed() > -10){
@@ -490,20 +497,20 @@ public class GameScreen extends Screen implements Serializable {
 			}
 			this.logger.info("Get Item : Bullet Shooting Cool down Up ! " + this.ship.getBulletSpeed());
 			this.bulletSpeedItem = null;
-			effectSound.getItemSound.start();    // 드랍된 아이템 얻는 소리
+			effectSound.getPowerUpSound.start();    // 드랍된 아이템 얻는 소리
 		}
 
 		// ship과 보너스 라이프 아이템의 충돌
 		if (this.bonusLifeItem != null && checkCollision(this.bonusLifeItem, this.ship)) {
 			if (this.lives < 3) this.lives++;
 			this.bonusLifeItem = null;
-			effectSound.getItemSound.start();
+			effectSound.recoverySound.start();
 		}
 		// ship과 보너스 점수 아이템의 충돌
 		if (this.bonusScoreItem != null && checkCollision(this.bonusScoreItem, this.ship)) {
 			this.score = this.score + this.bonusScoreItem.getPointValue();
 			this.bonusScoreItem = null;
-			effectSound.getItemSound.start();
+			effectSound.getCoinSound.start();
 		}
 		//ship과 폭탄아이템의 충돌
 		if (this.boomItem != null && checkCollision(this.boomItem, this.ship)) {
