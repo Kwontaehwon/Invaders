@@ -63,8 +63,7 @@ Requires Java 7 or better.
       *Pause, Restart
       *Save and load
       *setting to adjust BGM volume
-  Title Screen               |  Game Screen            | Score Screen | Setting Screen      | Extra Stage Screen
-:-------------------------:|:-------------------------:|:--------------:|:--------------------:|:------------------
-![image](https://user-images.githubusercontent.com/68143549/144365077-554af43a-8a32-4ceb-a712-b1fca2989f18.png)|   ![image](https://user-images.githubusercontent.com/68143549/144365176-02292947-347d-42ec-9e22-bd3b1d54f5ae.png)|   ![image](https://user-images.githubusercontent.com/68143549/144365312-970ef709-4ad8-48a5-aa2f-0166cb0edaf8.png)|    ![image](https://user-images.githubusercontent.com/68143549/144365351-406effed-5221-41db-9888-7de899776005.png)|    ![image](https://user-images.githubusercontent.com/68143549/144364710-a0a58efb-eccb-47f4-ac70-0ecac8098246.png)
-![image](https://user-images.githubusercontent.com/68143549/144365547-3155302f-8a70-4cdf-83d4-5e56f683e88c.png)
+  Title Screen      |  Game Screen         | Score Screen | Setting Screen      | Boss Stage Screen | Bonus stage Screen
+:--------------:|:-------------------------:|:---------------:|:--------------------:|:--------------------:|:-------------------------
+![image](https://user-images.githubusercontent.com/68143549/144365077-554af43a-8a32-4ceb-a712-b1fca2989f18.png)|   ![image](https://user-images.githubusercontent.com/68143549/144365176-02292947-347d-42ec-9e22-bd3b1d54f5ae.png)|   ![image](https://user-images.githubusercontent.com/68143549/144365312-970ef709-4ad8-48a5-aa2f-0166cb0edaf8.png)|    ![image](https://user-images.githubusercontent.com/68143549/144365351-406effed-5221-41db-9888-7de899776005.png)|    ![image](https://user-images.githubusercontent.com/68143549/144364710-a0a58efb-eccb-47f4-ac70-0ecac8098246.png)|    ![image](https://user-images.githubusercontent.com/68143549/144365547-3155302f-8a70-4cdf-83d4-5e56f683e88c.png)
 
