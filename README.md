@@ -32,7 +32,6 @@ Requires Java 7 or better.
 
 ## Planning Poker
 For efficient allocation of work
-![image](https://user-images.githubusercontent.com/68143549/144363316-1b4ec466-cb5e-4b2c-97e4-772e044e68e0.png)
 
 ### Update
 ## 1. Add game items
@@ -53,7 +52,7 @@ For efficient allocation of work
         - stun enemies
         - slowing bullets
         - fire 3 bombs
-      -Ultimate bomb(C key)
+      -Ultimate(C key)
 
 ## 3. Graphical Improvements
     -Improve Graphics of Spaceship
