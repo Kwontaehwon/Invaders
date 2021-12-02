@@ -42,9 +42,12 @@ public class Bullet extends Entity {
 	 * Sets correct sprite for the bullet, based on speedY.
 	 */
 	public final void setSprite() {
+		int bullet1Speed1 = -6;
+		int bullet1Speed2 = -7;
+		int bullet2Speed = -8;
 		if (speedY > 0)	this.spriteType = SpriteType.EnemyBullet;
-		else if(speedY == -6 || speedY == -7) this.spriteType = SpriteType.Bullet1;
-		else if(speedY == -8) this.spriteType = SpriteType.Bullet2;
+		else if(speedY == bullet1Speed1 || speedY == bullet1Speed2) this.spriteType = SpriteType.Bullet1;
+		else if(speedY == bullet2Speed) this.spriteType = SpriteType.Bullet2;
 		else this.spriteType = SpriteType.Bullet3;
 	}
 
@@ -55,7 +58,6 @@ public class Bullet extends Entity {
 		if(skill3 && this.speedY > 0){
 			this.positionX += speedX/speedY;
 			this.positionY += 1;
-			// speedY/speedY 같은 비율로 나누기
 		}
 		else {
 			this.positionY += this.speedY;

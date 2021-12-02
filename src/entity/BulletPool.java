@@ -40,9 +40,9 @@ public final class BulletPool {
 	public static Bullet getBullet(final int positionX, final int positionY,
 								   final int xSpeed, final int ySpeed) {
 		Bullet bullet;
-		if (!pool.isEmpty()) {					// pool에 총알이 있으면
-			bullet = pool.iterator().next(); 	// 총알 하나를 꺼내고
-			pool.remove(bullet); 				// pool에서 삭제.
+		if (!pool.isEmpty()) {
+			bullet = pool.iterator().next();
+			pool.remove(bullet);
 			bullet.setPositionX(positionX - bullet.getWidth() / 2);
 			bullet.setPositionY(positionY);
 			bullet.setSpeed(xSpeed, ySpeed);

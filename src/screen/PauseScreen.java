@@ -12,8 +12,8 @@ import java.util.List;
 import static engine.Core.backgroundMusic;
 import static engine.Core.effectSound;
 
-// 추가 클래스
 public class PauseScreen extends Screen{
+    /** Container of game states and settings */
     GameStatus gameStatus;
 
     /** Milliseconds between changes in user selection. */
@@ -22,10 +22,25 @@ public class PauseScreen extends Screen{
     /** Time between changes in user selection. */
     private Cooldown selectionCooldown;
 
+    /** Index of focused menu */
+    int cursor;
+
+    /** Index of menus */
+    public static int CONTINUE = 0;
+    public static int MAIN_MENU = 1;
+    public static int RESTART = 2;
+    public static int SAVE = 3;
+    public static int MUSIC = 4;
+    public static int SOUND = 5;
+    public static int MUSIC_DOWN = 6;
+    public static int MUSIC_UP = 7;
+    public static int SOUND_DOWN = 8;
+    public static int SOUND_UP = 9;
+
 
     /**
      * Constructor, establishes the properties of the screen.
-     *  @param width  Screen width.
+     * @param width Screen width.
      * @param height Screen height.
      * @param fps
      * @param gameStatus
@@ -33,18 +48,26 @@ public class PauseScreen extends Screen{
     public PauseScreen(int width, int height, int fps, GameStatus gameStatus) {
         super(width, height, fps);
 
-        this.returnCode = 2;
+        this.returnCode = Core.PLAY;
+        this.cursor = CONTINUE;
         this.selectionCooldown = Core.getCooldown(SELECTION_TIME);
         this.selectionCooldown.reset();
         this.gameStatus = gameStatus;
     }
 
+    /**
+     * Starts the action.
+     *
+     * @return Next screen code.
+     */
     public final int run(){
         super.run();
-
         return this.returnCode;
     }
 
+    /**
+     * Updates the elements on screen and checks for events.
+     */
     protected final void update() {
         super.update();
 
@@ -61,41 +84,6 @@ public class PauseScreen extends Screen{
                 nextMenuItem();
                 this.selectionCooldown.reset();
             }
-
-            if (this.returnCode == 2 && inputManager.isKeyDown(KeyEvent.VK_SPACE))
-                this.isRunning = false;
-            if (this.returnCode == 1 && inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
-                Core.flag_main = true;
-                this.isRunning = false;
-            }
-            if (this.returnCode == 4 && inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
-                Core.flag_restart = true;
-                this.isRunning = false;
-            }
-            if (this.returnCode == 5 && inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
-                this.saveSave();
-                this.selectionCooldown.reset();
-            }
-            if (this.returnCode == 11 && (inputManager.isKeyDown(KeyEvent.VK_SPACE) ||
-                                            inputManager.isKeyDown(KeyEvent.VK_LEFT))) {
-                backgroundMusic.decrease();
-                this.selectionCooldown.reset();
-            }
-            if (this.returnCode == 12 && (inputManager.isKeyDown(KeyEvent.VK_SPACE) ||
-                                            inputManager.isKeyDown(KeyEvent.VK_RIGHT))) {
-                backgroundMusic.increase();
-                this.selectionCooldown.reset();
-            }
-            if (this.returnCode == 13 && (inputManager.isKeyDown(KeyEvent.VK_SPACE) ||
-                                            inputManager.isKeyDown(KeyEvent.VK_RIGHT))) {
-                effectSound.decrease();
-                this.selectionCooldown.reset();
-            }
-            if (this.returnCode == 14 && (inputManager.isKeyDown(KeyEvent.VK_SPACE) ||
-                                            inputManager.isKeyDown(KeyEvent.VK_RIGHT))) {
-                effectSound.increase();
-                this.selectionCooldown.reset();
-            }
             if(inputManager.isKeyDown(KeyEvent.VK_LEFT)
                     || inputManager.isKeyDown(KeyEvent.VK_A)){
                 leftMenuItem();
@@ -106,91 +94,129 @@ public class PauseScreen extends Screen{
                 rightMenuItem();
                 this.selectionCooldown.reset();
             }
+
+            if (this.cursor == CONTINUE && inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
+                this.returnCode = Core.PLAY;
+                this.isRunning = false;
+            }
+            if (this.cursor == MAIN_MENU && inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
+                this.returnCode = Core.MAIN_MENU;
+                Core.flag_main = true;
+                this.isRunning = false;
+            }
+            if (this.cursor == RESTART && inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
+                this.returnCode = Core.RESTART;
+                Core.flag_restart = true;
+                this.isRunning = false;
+            }
+            if (this.cursor == SAVE && inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
+                this.saveSave();
+                this.selectionCooldown.reset();
+            }
+            if (this.cursor == MUSIC_DOWN && (inputManager.isKeyDown(KeyEvent.VK_SPACE) ||
+                                            inputManager.isKeyDown(KeyEvent.VK_LEFT))) {
+                backgroundMusic.decrease();
+                this.selectionCooldown.reset();
+            }
+            if (this.cursor == MUSIC_UP && (inputManager.isKeyDown(KeyEvent.VK_SPACE) ||
+                                            inputManager.isKeyDown(KeyEvent.VK_RIGHT))) {
+                backgroundMusic.increase();
+                this.selectionCooldown.reset();
+            }
+            if (this.cursor == SOUND_DOWN && (inputManager.isKeyDown(KeyEvent.VK_SPACE) ||
+                                            inputManager.isKeyDown(KeyEvent.VK_RIGHT))) {
+                effectSound.decrease();
+                this.selectionCooldown.reset();
+            }
+            if (this.cursor == SOUND_UP && (inputManager.isKeyDown(KeyEvent.VK_SPACE) ||
+                                            inputManager.isKeyDown(KeyEvent.VK_RIGHT))) {
+                effectSound.increase();
+                this.selectionCooldown.reset();
+            }
         }
     }
 
+    /**
+     * Shifts the focus to the next menu item.
+     */
     private void nextMenuItem() {
-        if(this.returnCode == 2)
-            this.returnCode = 1;
-        else if(this.returnCode == 1)
-            this.returnCode = 4;
-        else if(this.returnCode == 6)
-            this.returnCode = 15;
-        else if(this.returnCode == 15)
-            this.returnCode = 2;
-        else if(this.returnCode == 11)
-            this.returnCode = 11;
-        else if(this.returnCode == 12)
-            this.returnCode = 12;
-        else if(this.returnCode == 13)
-            this.returnCode = 13;
+        if (cursor == SOUND)
+            this.cursor = CONTINUE;
+        else if (cursor == MUSIC_DOWN)
+            this.cursor = SOUND_DOWN;
+        else if (cursor == MUSIC_UP)
+            this.cursor = SOUND_UP;
+        else if (cursor == SOUND_UP || cursor == SOUND_DOWN)
+            this.cursor = cursor;
         else
-            this.returnCode++;
+            this.cursor++;
     }
 
+    /**
+     * Shifts the focus to the previous menu item.
+     */
     private void previousMenuItem() {
-        if (this.returnCode == 1)
-            this.returnCode = 2;
-        else if(this.returnCode == 4)
-            this.returnCode = 1;
-        else if(this.returnCode == 6)
-            this.returnCode = 5;
-        else if(this.returnCode == 15)
-            this.returnCode = 6;
-        else if(this.returnCode == 2)
-            this.returnCode = 15;
-        else if(this.returnCode == 11)
-            this.returnCode = 11;
-        else if(this.returnCode == 12)
-            this.returnCode = 12;
-        else if(this.returnCode == 13)
-            this.returnCode = 13;
-        else if(this.returnCode == 14)
-            this.returnCode = 14;
+        if (cursor == CONTINUE)
+            this.cursor = SOUND;
+        else if (cursor == SOUND_DOWN)
+            this.cursor = MUSIC_DOWN;
+        else if (cursor == SOUND_UP)
+            this.cursor = MUSIC_UP;
+        else if (cursor == MUSIC_DOWN || cursor == MUSIC_UP)
+            this.cursor = cursor;
         else
-            this.returnCode--;
+            this.cursor--;
     }
 
+    /**
+     * Shifts the focus to the right menu item.
+     */
     private void rightMenuItem(){
-        if (this.returnCode == 6)
-            this.returnCode = 12;
-        else if (this.returnCode == 11)
-            this.returnCode = 6;
-        else if (this.returnCode == 15)
-            this.returnCode = 14;
-        else if (this.returnCode == 13)
-            this.returnCode = 15;
+        if (this.cursor == SOUND)
+            this.cursor = SOUND_UP;
+        else if (this.cursor == SOUND_DOWN)
+            this.cursor = SOUND;
+        else if (this.cursor == MUSIC)
+            this.cursor = MUSIC_UP;
+        else if (this.cursor == MUSIC_DOWN)
+            this.cursor = MUSIC;
     }
 
+    /**
+     * Shifts the focus to the left menu item.
+     */
     private void leftMenuItem(){
-        if (this.returnCode == 12)
-            this.returnCode = 6;
-        else if (this.returnCode == 6)
-            this.returnCode = 11;
-        else if (this.returnCode == 15)
-            this.returnCode = 13;
-        else if (this.returnCode == 14)
-            this.returnCode = 15;
+        if (this.cursor == MUSIC)
+            this.cursor = MUSIC_DOWN;
+        else if (this.cursor == MUSIC_UP)
+            this.cursor = MUSIC;
+        else if (this.cursor == SOUND)
+            this.cursor = SOUND_DOWN;
+        else if (this.cursor == SOUND_UP)
+            this.cursor = SOUND;
     }
 
+    /**
+     * save all of the status in the game excepts entity's positions.
+     */
     private void saveSave() {
         try {
             List<String> gameStatusList = new ArrayList<>();
-            String state = Integer.toString(gameStatus.getStates().getLevel()) +
-                    ", " + Integer.toString(gameStatus.getStates().getScore()) +
-                    ", " + Integer.toString(gameStatus.getStates().getLivesRemaining()) +
-                    ", " + Integer.toString(gameStatus.getStates().getBulletsShot()) +
-                    ", " + Integer.toString(gameStatus.getStates().getShipsDestroyed()) +
-                    ", " + Integer.toString(gameStatus.getStates().getBoomtimes()) +
-                    ", " + Integer.toString(gameStatus.getStates().getSkillCool()[0]) +
-                    ", " + Integer.toString(gameStatus.getStates().getSkillCool()[1]) +
-                    ", " + Integer.toString(gameStatus.getStates().getSkillCool()[2]) +
-                    ", " + Integer.toString(gameStatus.getStates().getSkillCool()[3]) +
-                    ", " + Integer.toString(gameStatus.getStates().getUltimateTimes());
-            String settings = Integer.toString(gameStatus.getSettings().getFormationWidth()) +
-                    ", " + Integer.toString(gameStatus.getSettings().getFormationHeight()) +
-                    ", " + Integer.toString(gameStatus.getSettings().getBaseSpeed()) +
-                    ", " + Integer.toString(gameStatus.getSettings().getShootingFrecuency());
+            String state = gameStatus.getStates().getLevel() +
+                    ", " + gameStatus.getStates().getScore() +
+                    ", " + gameStatus.getStates().getLivesRemaining() +
+                    ", " + gameStatus.getStates().getBulletsShot() +
+                    ", " + gameStatus.getStates().getShipsDestroyed() +
+                    ", " + gameStatus.getStates().getBoomTimes() +
+                    ", " + gameStatus.getStates().getSkillCool()[0] +
+                    ", " + gameStatus.getStates().getSkillCool()[1] +
+                    ", " + gameStatus.getStates().getSkillCool()[2] +
+                    ", " + gameStatus.getStates().getSkillCool()[3] +
+                    ", " + gameStatus.getStates().getUltimateTimes();
+            String settings = gameStatus.getSettings().getFormationWidth() +
+                    ", " + gameStatus.getSettings().getFormationHeight() +
+                    ", " + gameStatus.getSettings().getBaseSpeed() +
+                    ", " + gameStatus.getSettings().getShootingFrecuency();
 
             gameStatusList.add(state);
             gameStatusList.add(settings);
@@ -201,11 +227,14 @@ public class PauseScreen extends Screen{
         }
     }
 
+    /**
+     * Draws the elements associated with the screen.
+     */
     private void draw() {
         drawManager.initDrawing(this);
 
         drawManager.drawPauseTitle(this);
-        drawManager.drawPauseMenu(this, this.returnCode);
+        drawManager.drawPauseMenu(this, this.cursor);
 
         drawManager.completeDrawing(this);
     }

@@ -22,7 +22,8 @@ public class EnemyShip extends Entity {
 	private static final int C_TYPE_POINTS = 30;
 	/** Point value of a bonus enemy. */
 	private static final int BONUS_TYPE_POINTS = 100;
-	private static final int D_TYPE_POINTS = 40; // 두번 피격해야 죽는 적 D의 포인트.
+	/** Point value of a type D enemy */
+	private static final int D_TYPE_POINTS = 40;
 
 	/** Cooldown between sprite changes. */
 	private Cooldown animationCooldown;
@@ -31,7 +32,7 @@ public class EnemyShip extends Entity {
 	/** Values of the ship, in points, when destroyed. */
 	private int pointValue;
 
-	private int live = 1; // 적의 live 추가 (기본값 1 : 한번 피격하면 죽음)
+	private int lives = 1;
 
 	/**
 	 * Constructor, establishes the ship's properties.
@@ -67,7 +68,7 @@ public class EnemyShip extends Entity {
 		case EnemyShipD1:		// 적D 포인트 설정.
 		case EnemyShipD2:
 			this.pointValue = D_TYPE_POINTS;
-			this.live = 2;
+			this.lives = 2;
 			break;
 		default:
 			this.pointValue = 0;
@@ -135,7 +136,6 @@ public class EnemyShip extends Entity {
 			case EnemyShipC2:
 				this.spriteType = SpriteType.EnemyShipC1;
 				break;
-			// D적 업데이트 스프라이트 추가.
 			case EnemyShipD1:
 				this.spriteType = SpriteType.EnemyShipD2;
 				break;
@@ -158,15 +158,14 @@ public class EnemyShip extends Entity {
 	 * Destroys the ship, causing an explosion.
 	 */
 	public final void destroy() {
-		this.live--;
-		// 피격시 spriteType 을 바꿔줌
-		if(this.spriteType == SpriteType.EnemyShipD1 && this.live==1){
+		this.lives--;
+		if(this.spriteType == SpriteType.EnemyShipD1 && this.lives ==1){
 			this.spriteType = SpriteType.EnemyShipD4;
 		}
-		else if(this.spriteType == SpriteType.EnemyShipD2 && this.live==1){
+		else if(this.spriteType == SpriteType.EnemyShipD2 && this.lives ==1){
 			this.spriteType = SpriteType.EnemyShipD3;
 		}
-		if(this.live<=0){		// live가 0 이하면 isDestroyed 를 바꿈.
+		if(this.lives <=0){
 			this.isDestroyed = true;
 			this.spriteType = SpriteType.Explosion;
 		}
@@ -181,5 +180,5 @@ public class EnemyShip extends Entity {
 		return this.isDestroyed;
 	}
 
-	public int getLive() { return this.live; }
+	public int getLives() { return this.lives; }
 }

@@ -22,9 +22,9 @@ public class ScoreScreen extends Screen {
 	private static final int SELECTION_TIME = 200;
 	/** Maximum number of high scores. */
 	private static final int MAX_HIGH_SCORE_NUM = 7;
-	/** Code of first mayus character. */
+	/** Code of first alphabet character. */
 	private static final int FIRST_CHAR = 65;
-	/** Code of last mayus character. */
+	/** Code of last alphabet character. */
 	private static final int LAST_CHAR = 90;
 
 	/** Current score. */
@@ -105,13 +105,13 @@ public class ScoreScreen extends Screen {
 		if (this.inputDelay.checkFinished()) {
 			if (inputManager.isKeyDown(KeyEvent.VK_ESCAPE)) {
 				// Return to main menu.
-				this.returnCode = 1;
+				this.returnCode = Core.MAIN_MENU;
 				this.isRunning = false;
 				if (this.isNewRecord)
 					saveScore();
 			} else if (inputManager.isKeyDown(KeyEvent.VK_SPACE)) {
 				// Play again.
-				this.returnCode = 2;
+				this.returnCode = Core.PLAY;
 				this.isRunning = false;
 				if (this.isNewRecord)
 					saveScore();
