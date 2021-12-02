@@ -540,26 +540,16 @@ public final class DrawManager implements Serializable {
 	//stageLevel에 따른 스킬해제. cursor의 위치에 따른 효과
 	public void drawSkills(final int cursor, Skill1 skill1, Skill2 skill2, Skill3 skill3 , Skill4 skill4,long pauseTime){
 		int y = 90;
-		int sizePlus = 75; //화면이 늘어남에 따라
+		int sizePlus = 75; 
 		int mNumber = 40;
 		final int SKILL_PIC_X = 347;
 		final int SKILL_PIC_Y = 44;
 		final int DIGIT_TEN = 358;
 		final int DIGIT_ONE = 355;
 		drawString("SKILL",348 +sizePlus ,y-60);
-		drawString("spot1", 20,150);
-		drawString("spot2", 330, 150);
-		drawString("spot3", 645,150);
-		drawString("spot4", 20, 325);
-		drawString("spot5", 330, 325);
-		drawString("spot6", 645, 325);
-		drawString("spot7",20,500);
-		drawString("spot8", 330, 500);
-		drawString("spot9", 645,500);
-
 
 		backBufferGraphics.setFont(fontSmall);
-		if (skill1.checkOpen()) { //열려있으면 그려줌.
+		if (skill1.checkOpen()) {
 			drawEntity(skill1,SKILL_PIC_X + mNumber * 0 +sizePlus, SKILL_PIC_Y);
 			backBufferGraphics.setColor(Color.green);
 			if(pauseTime == 0) {
