@@ -109,11 +109,10 @@ public final class DrawManager implements Serializable {
 		/** Destroyed enemy ship. */
 		Explosion1,
 		Explosion3,
-		//추가한것.
 		ShootingCoolItem,
 		BulletSpeedItem,
 		Boom,
-		// 두번피격적 추가.
+		NewShipDesign,
 		EnemyShipD1,
 		EnemyShipD2,
 		EnemyShipD3,
@@ -126,7 +125,17 @@ public final class DrawManager implements Serializable {
 		BonusScoreItem1,
 		BonusScoreItem2,
 		BonusScoreItem3,
-		Ultimate
+		Ultimate,
+		/** boss */
+		Boss1,
+		Boss2,
+		Boss3,
+		Boss4,
+		/** boss hp low */
+		BossHpLow1,
+		BossHpLow2,
+		/** boss destroyed */
+		BossDestroyed
 
 	};
 
@@ -190,6 +199,13 @@ public final class DrawManager implements Serializable {
 			spriteMap.put(SpriteType.BonusScoreItem1, new Color[16][16]);
 			spriteMap.put(SpriteType.BonusScoreItem2, new Color[16][16]);
 			spriteMap.put(SpriteType.BonusScoreItem3, new Color[16][16]);
+			spriteMap.put(SpriteType.Boss1, new Color[50][50]);
+			spriteMap.put(SpriteType.Boss2, new Color[50][50]);
+			spriteMap.put(SpriteType.Boss3, new Color[50][50]);
+			spriteMap.put(SpriteType.Boss4, new Color[50][50]);
+			spriteMap.put(SpriteType.BossHpLow1, new Color[50][50]);
+			spriteMap.put(SpriteType.BossHpLow2, new Color[50][50]);
+			spriteMap.put(SpriteType.BossDestroyed, new Color[50][50]);
 
 
 			fileManager.loadSprite(spriteMap);
@@ -524,15 +540,16 @@ public final class DrawManager implements Serializable {
 	//stageLevel에 따른 스킬해제. cursor의 위치에 따른 효과
 	public void drawSkills(final int cursor, Skill1 skill1, Skill2 skill2, Skill3 skill3 , Skill4 skill4,long pauseTime){
 		int y = 90;
-		int sizePlus = 75; //화면이 늘어남에 따라
+		int sizePlus = 75; 
 		int mNumber = 40;
 		final int SKILL_PIC_X = 347;
 		final int SKILL_PIC_Y = 44;
 		final int DIGIT_TEN = 358;
 		final int DIGIT_ONE = 355;
 		drawString("SKILL",348 +sizePlus ,y-60);
+
 		backBufferGraphics.setFont(fontSmall);
-		if (skill1.checkOpen()) { //열려있으면 그려줌.
+		if (skill1.checkOpen()) {
 			drawEntity(skill1,SKILL_PIC_X + mNumber * 0 +sizePlus, SKILL_PIC_Y);
 			backBufferGraphics.setColor(Color.green);
 			if(pauseTime == 0) {
@@ -589,6 +606,7 @@ public final class DrawManager implements Serializable {
 
 	//필살기 인터페이스
 	public void drawUltimate(final int UltimateTimes){
+
 		backBufferGraphics.setFont(fontRegular);
 		Entity ultimateHud = new Entity(25,25, SpriteType.UltimateHud);
 		if(UltimateTimes == 0) backBufferGraphics.setColor(Color.gray);
@@ -901,6 +919,16 @@ public final class DrawManager implements Serializable {
 			}
 			else if(level == 2 || level == 3 ||level == 4 || level ==5) {
 				drawCenteredBigString(screen, "Level " + level + " NEW SKILL!",
+						screen.getHeight() / 2
+								+ fontBigMetrics.getHeight() / 3);
+			}
+			else if(level == 8){
+				drawCenteredBigString(screen, "Level " + level +" Boss Stage!",
+						screen.getHeight() / 2
+								+ fontBigMetrics.getHeight() / 3);
+			}
+			else if(level == 9){
+				drawCenteredBigString(screen, "Level " + level +" You get Ultimate!",
 						screen.getHeight() / 2
 								+ fontBigMetrics.getHeight() / 3);
 			}

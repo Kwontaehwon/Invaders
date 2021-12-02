@@ -8,9 +8,9 @@ import java.awt.*;
 //적총알느려짐
 public class Skill3 extends Skill {
 
-    private final int SKILL_COOLDOWN = 15 * 1000      ;  //쿨타임
+    private final int SKILL_COOLDOWN = 5 * 1000      ;  //쿨타임
 
-    private final int DURATION_COOLDOWN = 5 * 1000; //지속시간
+    private final int DURATION_COOLDOWN = 3 * 1000; //지속시간
 
     private int currentSkillCooldown ;
 

@@ -41,6 +41,7 @@ public final class BulletPool implements Serializable {
 	public static Bullet getBullet(final int positionX, final int positionY,
 								   final int speedX, final int speedY) {
 		Bullet bullet;
+
 		if (!pool.isEmpty()) {
 			bullet = pool.iterator().next();
 			pool.remove(bullet);
@@ -55,6 +56,7 @@ public final class BulletPool implements Serializable {
 		}
 		return bullet;
 	}
+
 
 	/**
 	 * Adds one or more bullets to the list of available ones.

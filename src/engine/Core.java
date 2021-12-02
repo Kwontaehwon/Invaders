@@ -37,12 +37,12 @@ public final class Core {
 	/** Levels between extra life. */
 	private static final int EXTRA_LIFE_FREQUENCY = 3;
 	/** Total number of levels. */
-	private static final int NUM_LEVELS = 7;
+	private static final int NUM_LEVELS = 9;
 
 	
 	/** Difficulty settings for level 1. */
 	private static final GameSettings SETTINGS_LEVEL_1 =
-			new GameSettings(5, 5, 2, 1000); // level1 임시조정
+			new GameSettings(5, 5, 2, 2500);
 	/** Difficulty settings for level 2. */
 	private static final GameSettings SETTINGS_LEVEL_2 =
 			new GameSettings(5, 5, 50, 2500);
@@ -58,11 +58,17 @@ public final class Core {
 	/** Difficulty settings for level 6. */
 	private static final GameSettings SETTINGS_LEVEL_6 =
 			new GameSettings(7, 7, 10, 1000);
-	/** Difficulty settings for level 7. */
-	private static final GameSettings SETTINGS_LEVEL_7 =
+	/** boss statge */
+	private static final GameSettings SETTINGS_LEVEL_7_BOSS =
 			new GameSettings(8, 7, 2, 500);
+	/** Difficulty settings for level 8. */
+	private static final GameSettings SETTINGS_LEVEL_8 =
+			new GameSettings(8, 7, 2, 500);
+
 	private static final GameSettings SETTINGS_LEVEL_BONUS =
 			new GameSettings(12, 7, 50, 2100000);
+
+
 	/** Frame to draw the screen on. */
 	private static Frame frame;
 	/** Screen currently shown. */
@@ -124,7 +130,8 @@ public final class Core {
 		gameSettings.add(SETTINGS_LEVEL_4);
 		gameSettings.add(SETTINGS_LEVEL_5);
 		gameSettings.add(SETTINGS_LEVEL_6);
-		gameSettings.add(SETTINGS_LEVEL_7);
+		gameSettings.add(SETTINGS_LEVEL_7_BOSS);
+		gameSettings.add(SETTINGS_LEVEL_8);
 
 		DesignSetting designSetting = new DesignSetting(DrawManager.SpriteType.Ship);
 		GameState gameState;
@@ -132,8 +139,7 @@ public final class Core {
 		int returnCode = 1;
 		do {
 			flag_main = false;
-			// 맨처음 폭탄발사횟수,스킬쿨타임, 필살기횟수지정(나중에 0으로수정.)
-			gameState = new GameState(1, 0, MAX_LIVES, 0, 0,3, new int[]{15, 15, 15, 15},1);
+			gameState = new GameState(1, 0, MAX_LIVES, 0, 0,3, new int[]{15, 15, 15, 15},0);
 
 			switch (returnCode) {
 			case 1:
@@ -177,7 +183,7 @@ public final class Core {
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
 							gameState.getShipsDestroyed(),
-							gameState.getBoomtimes(),
+							gameState.getBoomTimes(),
 							gameState.getSkillCool(),
 							gameState.getUltimateTimes());
 
@@ -211,7 +217,7 @@ public final class Core {
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
 							gameState.getShipsDestroyed(),
-							gameState.getBoomtimes(),
+							gameState.getBoomTimes(),
 							gameState.getSkillCool(),
 							gameState.getUltimateTimes());
 
@@ -242,7 +248,7 @@ public final class Core {
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
 							gameState.getShipsDestroyed(),
-							gameState.getBoomtimes(),
+							gameState.getBoomTimes(),
 							gameState.getSkillCool(),
 							gameState.getUltimateTimes());
 
@@ -305,7 +311,7 @@ public final class Core {
 							gameState.getLivesRemaining(),
 							gameState.getBulletsShot(),
 							gameState.getShipsDestroyed(),
-							gameState.getBoomtimes(),
+							gameState.getBoomTimes(),
 							gameState.getSkillCool(),
 							gameState.getUltimateTimes());
 
