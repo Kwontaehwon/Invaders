@@ -13,10 +13,9 @@ public class ShipScreen extends Screen{
     private static final int SELECTION_TIME = 200;
     /** Time between changes in user selection. */
     private Cooldown selectionCooldown;
-    private SpriteType newSpriteType;
-
+    /** ship DesignSetting */
     private final DesignSetting designSetting;
-    private int cursor=0;
+    private int cursor;
 
     /**
      * Constructor, establishes the properties of the screen.
@@ -31,7 +30,7 @@ public class ShipScreen extends Screen{
         this.designSetting = designSetting;
         this.selectionCooldown = Core.getCooldown(SELECTION_TIME);
         this.selectionCooldown.reset();
-        this.returnCode = 1;
+        this.returnCode = Core.MAIN_MENU;
         this.cursor = designSetting.designIndexOf(designSetting.getShipType());
     }
 
@@ -42,7 +41,9 @@ public class ShipScreen extends Screen{
 
         return this.returnCode;
     }
-
+    /**
+     * Updates the elements on screen and checks for events.
+     */
     protected final void update() throws IOException, ClassNotFoundException {
         super.update();
 
@@ -67,9 +68,11 @@ public class ShipScreen extends Screen{
             if (inputManager.isKeyDown(KeyEvent.VK_ESCAPE))
                 this.isRunning = false;
         }
-
     }
 
+    /**
+     * Draws the elements associated with the screen.
+     */
     public void draw(){
         drawManager.initDrawing(this);
         drawManager.drawShipCustomMenu(this);
@@ -77,6 +80,9 @@ public class ShipScreen extends Screen{
         drawManager.completeDrawing(this);
     }
 
+    /**
+     * Shifts the focus to the next design item.
+     */
     private void nextItem(){
         int next = cursor;
         if(next == designSetting.getDesignList().size()-1)
@@ -88,6 +94,9 @@ public class ShipScreen extends Screen{
             cursor = next;
     }
 
+    /**
+     * Shifts the focus to the previous design item.
+     */
     private void prevItem(){
         int prev = cursor;
         if(prev == 0)

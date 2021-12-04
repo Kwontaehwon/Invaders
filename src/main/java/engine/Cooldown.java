@@ -59,14 +59,22 @@ public class Cooldown implements Serializable {
 		return false;
 	}
 
+	/**
+	 *
+	 * @return passed time
+	 */
 	public int passedCooldown(){
 		return (int)(System.currentTimeMillis() - this.time)/1000;
 	}
 
-	//pause한 시간만큼 시간을 시작시간에 더해줌.
+	/**
+	 * Add time to the start time as much as the time goes by.
+	 * @param pauseTime value of time that paused
+	 */
 	public void pause(long pauseTime){
 		this.time += pauseTime;
 	}
+
 	/**
 	 * Restarts the cooldown.
 	 */
@@ -78,10 +86,11 @@ public class Cooldown implements Serializable {
 					* (this.milliseconds + this.variance));
 	}
 
+	/** return duraiton */
 	public int getDuration(){
 		return this.duration/1000;
 	}
-
+	/** return milliseconds */
 	public int getMilliseconds() { return milliseconds; }
 }
 

@@ -18,11 +18,24 @@ abstract class Skill extends Entity implements Serializable {
 
     private boolean activation;
 
-    private boolean open; //열려있는지 체크
+    private boolean open;
 
     protected transient Logger logger;
 
 
+    /**
+     * Constructor, establishes the skill's generic properties.
+     *
+     * @param positionX Initial position of the entity in the X axis.
+     *
+     * @param positionY Initial position of the entity in the Y axis.
+     *
+     * @param width Width of the entity.
+     *
+     * @param height Height of the entity.
+     *
+     * @param color Color of the entity.
+     */
     public Skill(int positionX, int positionY, int width, int height, Color color) {
         super(0, 0, 16*2, 16*2, Color.white);
         this.logger = Core.getLogger();

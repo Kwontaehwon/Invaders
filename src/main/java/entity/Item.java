@@ -10,14 +10,10 @@ import java.io.Serializable;
 public class Item extends Entity {
 
 
-    // 아이템떨어지는 속도.
+    /** Movement of the item for each unit of time. */
     private int speed;
-    // 보너스 포인트 아이템의 보너스 점수값
+    /** Point of bonus item */
     private int pointValue;
-
-    /** Cooldown between sprite changes. */
-    // 이부분을활용하여 떨어질떄 애니메이션을 줄수있음. EnemyShip.java, update부분보면됨.
-    //private Cooldown animationCooldown;
 
     /**
      * Constructor, establishes the entity's generic properties.
@@ -27,6 +23,8 @@ public class Item extends Entity {
      * @param sizeX Item X size
      * @param sizeY Item Y size
      * @param speed Speed of item
+     * @param spriteType Sprite of the entity.
+     *
      */
     public Item(int positionX, int positionY, int sizeX, int sizeY, DrawManager.SpriteType spriteType, int speed) {
         super(positionX, positionY, sizeX * 2, sizeY * 2, Color.BLUE);
@@ -48,13 +46,23 @@ public class Item extends Entity {
         }
     }
 
-
+    /**
+     * Update the item's position.
+     */
     public final void update() {
         this.positionY += this.speed;
     }
+    /**
+     * Getter of the item's speed.
+     * @return speed of the item.
+     */
     public int getSpeed(){
         return this.speed;
     }
+    /**
+     * Getter of the item's point.
+     * @return point
+     */
     public int getPointValue(){
         return this.pointValue;
     }

@@ -5,15 +5,19 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 
 public class DesignSetting {
-
+    /** Sprite ship type*/
     private SpriteType shipType;
-
+    /** size of ship*/
     private int sizeX;
     private int sizeY;
-
+    /** List of simple entry */
     private static ArrayList<SimpleEntry<SpriteType, Boolean>> designList = new ArrayList<>();
     private static ArrayList<SimpleEntry<Integer, Integer>> sizeList = new ArrayList<>();
 
+    /**
+     *Constructor, designs the ship.
+     * @param shipType ship sprite type
+     */
     public DesignSetting(SpriteType shipType){
         this.shipType = shipType;
         sizeX = 18;
@@ -30,11 +34,19 @@ public class DesignSetting {
         sizeList.add(new SimpleEntry<>(23,32));
     }
 
+    /**
+     * Getter of ship type
+     * @return current ship sprite type
+     */
     public SpriteType getShipType(){ return shipType; }
-
+    /** get size of ship*/
     public int getSizeX(){return sizeX;}
     public int getSizeY(){return sizeY;}
 
+    /**
+     * Setter of ship type
+     * @param type selected ship sprite type
+     */
     public void setShipType(SpriteType type){
         this.shipType = type;
     }
@@ -43,7 +55,7 @@ public class DesignSetting {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
     }
-
+    /** get size and Desigi list */
     public ArrayList<SimpleEntry<Integer, Integer>> getSizeList() {
         return sizeList;
     }
@@ -51,6 +63,10 @@ public class DesignSetting {
         return designList;
     }
 
+    /**
+     * Getter for the list of design
+     * @return get design lists
+     */
     public void setDesignAchieved(SpriteType sprite, Boolean value){
         for(SimpleEntry<SpriteType, Boolean> entry :designList){
             if(entry.getKey()==sprite) {
@@ -60,6 +76,11 @@ public class DesignSetting {
         }
     }
 
+    /**
+     * reutrn design index
+     * @param sprite
+     * @return design index
+     */
     public int designIndexOf(SpriteType sprite){
         int index=0;
         for(SimpleEntry<SpriteType, Boolean> entry : designList){

@@ -17,8 +17,12 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.logging.Logger;
 
 import entity.*;
+import screen.PauseScreen;
 import screen.Screen;
 import skill.*;
+
+import static engine.Core.*;
+import static screen.PauseScreen.*;
 
 /**
  * Manages screen drawing.
@@ -48,14 +52,15 @@ public final class DrawManager implements Serializable {
 	private static FontMetrics fontRegularMetrics;
 	/** Big sized font. */
 	private static Font fontBig;
+	/** Small sized font properties */
+	private static Font fontSmall;
 	/** Big sized font properties. */
 	private static FontMetrics fontBigMetrics;
 	/** Image for game screen. */
 	private static Image backgroundImage;
 	/** Template Image of background*/
-	private static Image  templateImage;
+	private static Image templateImage;
 
-	private static Font fontSmall;
 
 	/** Sprite types mapped to their images. */
 	private static Map<SpriteType, Color[][]> spriteMap;
@@ -80,8 +85,6 @@ public final class DrawManager implements Serializable {
 		NewShipDesign2,
 		NewShipDesign3,
 		NewShipDesign4,
-		/** Destroyed player ship. */
-		ShipDestroyed,
 		/** Player bullet. */
 		Bullet1,
 		Bullet2,
@@ -109,24 +112,48 @@ public final class DrawManager implements Serializable {
 		/** Destroyed enemy ship. */
 		Explosion1,
 		Explosion3,
-		//추가한것.
+		/** cooltime reduction */
 		ShootingCoolItem,
+		/** increase bullet speed*/
 		BulletSpeedItem,
+		/** extra skill - bomb */
 		Boom,
-		// 두번피격적 추가.
+		/** Fourth enemy ship (not attacked) - first form */
 		EnemyShipD1,
+		/** Fourth enemy ship (not attacked) - second form */
 		EnemyShipD2,
+		/** Fourth enemy ship (attacked) - first form */
 		EnemyShipD3,
+		/** Fourth enemy ship (attacked) - second form*/
 		EnemyShipD4,
+		/** shield skill */
 		Skill1,
+		/** stun skill */
 		Skill2,
+		/** slowing bullet skill */
 		Skill3,
+		/** 3 bomb firing skill */
 		Skill4,
+		/** Bonus life item */
 		BonusLifeItem,
+		/** Bonus score item - first */
 		BonusScoreItem1,
+		/** Bonus score item - second */
 		BonusScoreItem2,
+		/** Bonus score item - third */
 		BonusScoreItem3,
-		Ultimate
+		/** Ultimate */
+		Ultimate,
+		/** boss */
+		Boss1,
+		Boss2,
+		Boss3,
+		Boss4,
+		/** boss hp low */
+		BossHpLow1,
+		BossHpLow2,
+		/** boss destroyed */
+		BossDestroyed
 
 	};
 
@@ -140,7 +167,6 @@ public final class DrawManager implements Serializable {
 
 		try {
 			spriteMap = new LinkedHashMap<SpriteType, Color[][]>();
-			// 각각의 이름그대로, 배, 배파괴되어을때, 총알등등이있음.
 			spriteMap.put(SpriteType.LifeBar, new Color[65][16]);
 			spriteMap.put(SpriteType.EnergyBar, new Color[66][16]);
 			spriteMap.put(SpriteType.SpeedBar, new Color[66][16]);
@@ -190,6 +216,13 @@ public final class DrawManager implements Serializable {
 			spriteMap.put(SpriteType.BonusScoreItem1, new Color[16][16]);
 			spriteMap.put(SpriteType.BonusScoreItem2, new Color[16][16]);
 			spriteMap.put(SpriteType.BonusScoreItem3, new Color[16][16]);
+			spriteMap.put(SpriteType.Boss1, new Color[50][50]);
+			spriteMap.put(SpriteType.Boss2, new Color[50][50]);
+			spriteMap.put(SpriteType.Boss3, new Color[50][50]);
+			spriteMap.put(SpriteType.Boss4, new Color[50][50]);
+			spriteMap.put(SpriteType.BossHpLow1, new Color[50][50]);
+			spriteMap.put(SpriteType.BossHpLow2, new Color[50][50]);
+			spriteMap.put(SpriteType.BossDestroyed, new Color[50][50]);
 
 
 			fileManager.loadSprite(spriteMap);
@@ -271,7 +304,7 @@ public final class DrawManager implements Serializable {
 	}
 
 	/**
-	 * Draws an entity, using the apropiate image.
+	 * Draws an entity, using the appropriate image.
 	 *
 	 * @param entity
 	 *            Entity to be drawn.
@@ -318,6 +351,12 @@ public final class DrawManager implements Serializable {
 		}
 	}
 
+	/**
+	 * Draws a shadowed entity, using the appropriate image.
+	 * @param entity Entity to be drawn.
+	 * @param positionX Coordinates for the left side of the image.
+	 * @param positionY Coordinates for the upper side of the image.
+	 */
 	public void drawShadowedEntity(final Entity entity, final int positionX,
 								   final int positionY) {
 		Color[][] image = spriteMap.get(entity.getSpriteType());
@@ -332,7 +371,7 @@ public final class DrawManager implements Serializable {
 	}
 
 	/**
-	 * For debugging purpouses, draws the canvas borders.
+	 * For debugging purposes, draws the canvas borders.
 	 *
 	 * @param screen
 	 *            Screen to draw in.
@@ -349,7 +388,7 @@ public final class DrawManager implements Serializable {
 	}
 
 	/**
-	 * For debugging purpouses, draws a grid over the canvas.
+	 * For debugging purposes, draws a grid over the canvas.
 	 *
 	 * @param screen
 	 *            Screen to draw in.
@@ -369,7 +408,6 @@ public final class DrawManager implements Serializable {
 	 * @return adjusted Image
 	 */
 	private Image makeBackgroundImage(){
-		// 원래 이미지에서 높이를 늘린 이미지 생성
 		BufferedImage bufferedImage = new BufferedImage(templateImage.getWidth(null),
 				templateImage.getHeight(null) + frame.getHeight(), BufferedImage.TYPE_INT_RGB);
 		Graphics graphics = bufferedImage.getGraphics();
@@ -402,7 +440,6 @@ public final class DrawManager implements Serializable {
 		int imageHeight = backgroundImage.getHeight(null);
 		boolean isExceeded = false;
 
-		// 범위 초과 여부
 		if(imageHeight - screen.getHeight()  - imgPos<=0) {
 			imgPos = 0;
 			isExceeded = true;
@@ -481,7 +518,6 @@ public final class DrawManager implements Serializable {
 		}
 	}
 
-
 	/**
 	 * Draws a thick line from side to side of the screen.
 	 *
@@ -497,6 +533,11 @@ public final class DrawManager implements Serializable {
 				positionY + 1);
 	}
 
+	/**
+	 * Draw about the player's bomb
+	 * @param screen Screen to draw on.
+	 * @param boomTimes value of current boom
+	 */
 	public void drawBooms(final Screen screen , final int boomTimes){
 		Entity boomBar = new Entity(65, 16, SpriteType.BoomBar);
 		Entity boomBox = new Entity(13, 7, SpriteType.BoomBox);
@@ -505,8 +546,12 @@ public final class DrawManager implements Serializable {
 			drawEntity(boomBox,  48 + 30 * i, 62);
 	}
 
-
-	//보너스 스테이지 남은 시간 표시
+	/**
+	 * Draws a remaining time of bonus stage
+	 * @param screen Screen to draw on.
+	 * @param cooldown current cooldown
+	 * @param pauseTime value of pause time
+	 */
 	public void drawBonusTime(final Screen screen , final Cooldown cooldown, long pauseTime){
 		backBufferGraphics.setFont(fontBig);
 		backBufferGraphics.setColor(Color.green);
@@ -520,19 +565,27 @@ public final class DrawManager implements Serializable {
 		}
 	}
 
-
-	//stageLevel에 따른 스킬해제. cursor의 위치에 따른 효과
+	/**
+	 * Draw a skill bar
+	 * @param cursor current cursor
+	 * @param skill1 shield skill
+	 * @param skill2 stun skill
+	 * @param skill3 slow enemy bullet skill
+	 * @param skill4 3 bomb fire skill
+	 * @param pauseTime value of pause time
+	 */
 	public void drawSkills(final int cursor, Skill1 skill1, Skill2 skill2, Skill3 skill3 , Skill4 skill4,long pauseTime){
 		int y = 90;
-		int sizePlus = 75; //화면이 늘어남에 따라
+		int sizePlus = 75; 
 		int mNumber = 40;
 		final int SKILL_PIC_X = 347;
 		final int SKILL_PIC_Y = 44;
 		final int DIGIT_TEN = 358;
 		final int DIGIT_ONE = 355;
 		drawString("SKILL",348 +sizePlus ,y-60);
+
 		backBufferGraphics.setFont(fontSmall);
-		if (skill1.checkOpen()) { //열려있으면 그려줌.
+		if (skill1.checkOpen()) {
 			drawEntity(skill1,SKILL_PIC_X + mNumber * 0 +sizePlus, SKILL_PIC_Y);
 			backBufferGraphics.setColor(Color.green);
 			if(pauseTime == 0) {
@@ -587,8 +640,12 @@ public final class DrawManager implements Serializable {
 		}
 	}
 
-	//필살기 인터페이스
+	/**
+	 * Ultimate skill interface
+	 * @param UltimateTimes value of ultimate time
+	 */
 	public void drawUltimate(final int UltimateTimes){
+
 		backBufferGraphics.setFont(fontRegular);
 		Entity ultimateHud = new Entity(25,25, SpriteType.UltimateHud);
 		if(UltimateTimes == 0) backBufferGraphics.setColor(Color.gray);
@@ -633,32 +690,32 @@ public final class DrawManager implements Serializable {
 		String loadString = "Load";
 		String customizeString = "Custom";
 
-		if (option == 2)
+		if (option == PLAY)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, playString, screen.getHeight()
 				/ 3 * 2 - fontRegularMetrics.getHeight() * 2);
 		// load 메뉴 추가.
-		if (option == 8)
+		if (option == LOAD)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, loadString, screen.getHeight()
 				/ 3 * 2 );
-		if (option == 3)
+		if (option == HIGH_SCORES)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, highScoresString, screen.getHeight()
 				/ 3 * 2 + fontRegularMetrics.getHeight() * 2);
-		if (option == 9)
+		if (option == CUSTOM)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, customizeString, screen.getHeight()
 				/ 3 * 2 + fontRegularMetrics.getHeight() * 4);
-		if (option == 0)
+		if (option == EXIT)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
@@ -859,13 +916,31 @@ public final class DrawManager implements Serializable {
 		backBufferGraphics.drawString(string, screen.getWidth() / 2
 				- fontBigMetrics.stringWidth(string) / 2, height);
 	}
-	//정한위치에 string을 적어줌.
+	/**
+	 * Draws a string on regular font.
+	 *
+	 * @param string
+	 *            string
+	 * @param x
+	 *            x position
+	 * @param y
+	 *            y position
+	 */
 	public void drawString(final String string, final int x,final int y){
 		backBufferGraphics.setFont(fontRegular);
 		backBufferGraphics.setColor(Color.yellow);
 		backBufferGraphics.drawString(string,x,y);
 	}
-	//작은글씨 그리기, 스킬발동로그용
+	/**
+	 * Draws a string on small font.
+	 *
+	 * @param string
+	 *            string
+	 * @param x
+	 *            x position
+	 * @param y
+	 *            y position
+	 */
 	public void drawSmallString(final String string, final int x, final int y){
 		backBufferGraphics.setColor(Color.yellow);
 		backBufferGraphics.setFont(fontSmall);
@@ -893,14 +968,23 @@ public final class DrawManager implements Serializable {
 				rectWidth, rectHeight);
 		backBufferGraphics.setColor(Color.GREEN);
 		if (number >= 4)
-			// 일단 임시로 2단계를 보너스 스테이지로 정함.
-			if(level == 2) {
+			if(level == 6) {
 				drawCenteredBigString(screen, "Level " + level + " BONUS STAGE!",
 						screen.getHeight() / 2
 								+ fontBigMetrics.getHeight() / 3);
 			}
 			else if(level == 2 || level == 3 ||level == 4 || level ==5) {
 				drawCenteredBigString(screen, "Level " + level + " NEW SKILL!",
+						screen.getHeight() / 2
+								+ fontBigMetrics.getHeight() / 3);
+			}
+			else if(level == 8){
+				drawCenteredBigString(screen, "Level " + level +" Boss Stage!",
+						screen.getHeight() / 2
+								+ fontBigMetrics.getHeight() / 3);
+			}
+			else if(level == 9){
+				drawCenteredBigString(screen, "Level " + level +" You get Ultimate!",
 						screen.getHeight() / 2
 								+ fontBigMetrics.getHeight() / 3);
 			}
@@ -923,8 +1007,10 @@ public final class DrawManager implements Serializable {
 					+ fontBigMetrics.getHeight() / 3);
 	}
 
-
-	// 추가한 부분 : 일시정지 화면 타이틀 구성.
+	/**
+	 * Draws Pause Screen title
+	 * @param screen screen to draw on
+	 */
 	public void drawPauseTitle(final Screen screen) {
 		String pauseString = "Pause";
 		String instructionsString = "Press Space to return";
@@ -936,7 +1022,12 @@ public final class DrawManager implements Serializable {
 		drawCenteredRegularString(screen, instructionsString,
 				screen.getHeight() / 5);
 	}
-	// 추가한 부분 : 일시정지 화면 메뉴 구성.
+
+	/**
+	 * Draws Pause menu
+	 * @param screen Screen to draw on.
+	 * @param option value of current option
+	 */
 	public void drawPauseMenu(final Screen screen, final int option) {
 		String restartString = "Restart";
 		String saveString = "Save";
@@ -945,39 +1036,39 @@ public final class DrawManager implements Serializable {
 		String continueString = "Continue";
 		String soundString = "Sound";
 
-		if (option == 2)
+		if (option == CONTINUE)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, continueString,
 				screen.getHeight() / 3 * 1);
-		if (option == 1)
+		if (option == PauseScreen.MAIN_MENU)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, mainString,
 				screen.getHeight() / 3 * 1 + fontRegularMetrics.getHeight() * 2);
 
-		if (option == 4)
+		if (option == PauseScreen.RESTART)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, restartString,
 				screen.getHeight() / 3 * 1 + fontRegularMetrics.getHeight() * 4);
-		if (option == 5)
+		if (option == SAVE)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, saveString, screen.getHeight()
 				/ 3 * 1 + fontRegularMetrics.getHeight() * 6);
-		if (option == 6)
+		if (option == MUSIC)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, musicString, screen.getHeight() / 3
 				* 1 + fontRegularMetrics.getHeight() * 8);
 
-		if (option == 11)
+		if (option == MUSIC_DOWN)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
@@ -986,7 +1077,7 @@ public final class DrawManager implements Serializable {
 						- fontBigMetrics.stringWidth(musicString) / 2 - 5,
 				screen.getHeight() / 3
 						* 1 + fontRegularMetrics.getHeight() * 8);
-		if (option == 12)
+		if (option == MUSIC_UP)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
@@ -996,14 +1087,14 @@ public final class DrawManager implements Serializable {
 				screen.getHeight() / 3
 						* 1 + fontRegularMetrics.getHeight() * 8);
 
-		if (option == 15)
+		if (option == SOUND)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, soundString, screen.getHeight() / 3
 				* 1 + fontRegularMetrics.getHeight() * 10);
 
-		if (option == 13)
+		if (option == SOUND_DOWN)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
@@ -1012,7 +1103,7 @@ public final class DrawManager implements Serializable {
 						- fontBigMetrics.stringWidth(soundString) / 2 - 5,
 				screen.getHeight() / 3
 						* 1 + fontRegularMetrics.getHeight() * 10);
-		if (option == 14)
+		if (option == SOUND_UP)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
@@ -1068,7 +1159,6 @@ public final class DrawManager implements Serializable {
 		int margin = 10;
 		ArrayList<SimpleEntry<SpriteType, Boolean>> designList = designSetting.getDesignList();
 
-		// 두 줄에 다 안들어오는 경우는 고려하지 못함.
 		for(SimpleEntry<SpriteType, Boolean> entry: designList){
 			SpriteType sprite = entry.getKey();
 			boolean isAchieved = entry.getValue();
@@ -1100,19 +1190,6 @@ public final class DrawManager implements Serializable {
 
 	}
 
-
-	/**
-	 * Draws triangle which has a horizontal side.
-	 *
-	 * @param tipPositionX
-	 * 					X-position of tip.
-	 * @param tipPositionY
-	 * 					Y-position of tip.
-	 */
-	private void drawTriangle(final int tipPositionX, final int tipPositionY){
-		drawTriangle(tipPositionX, tipPositionY, false);
-	}
-
 	/**
 	 * Draws triangle which has a horizontal side.
 	 *
@@ -1134,6 +1211,6 @@ public final class DrawManager implements Serializable {
 			y[1] -= size*4;
 			y[2] -= size*4;
 		}
-		backBufferGraphics.drawPolygon(x, y, 3);		// 3점의 x좌표와 y좌표를 전달해서 삼각형을 그리는 함수
+		backBufferGraphics.drawPolygon(x, y, 3);
 	}
 }

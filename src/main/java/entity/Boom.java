@@ -23,12 +23,21 @@ public class Boom extends Entity {
         this.speedY = speedY;
         this.spriteType = DrawManager.SpriteType.Boom;
     }
-
+    /**
+     * Updates the boom's position.
+     */
     public final void update() {
         this.positionX += this.speedX;
         this.positionY += this.speedY;
     }
-
+    /**
+     * Setter of the speeds of the boom.
+     *
+     * @param speedX
+     * 				New speedX of the boom.
+     * @param speedY
+     * 				New speedY of the boom.
+     */
     public final void setSpeed(final int speedX, final int speedY) {
         this.speedX = speedX;
         this.speedY = speedY;

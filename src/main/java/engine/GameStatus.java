@@ -1,7 +1,5 @@
 package engine;
 
-//추가 클래스
-
 import java.io.Serializable;
 
 /**

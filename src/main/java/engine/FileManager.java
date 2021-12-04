@@ -294,17 +294,31 @@ public final class FileManager {
 		}
 	}
 
+	/**
+	 * Saves Game
+	 * @param gameScreen
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
 	public void saveGame(GameScreen gameScreen) throws IOException, ClassNotFoundException {
 		FileOutputStream fos = new FileOutputStream("src/main/resources/gameScreen.bin");
 		ObjectOutputStream oos = new ObjectOutputStream(fos);
 		oos.writeObject(gameScreen);
+		logger.info("Save game");
 		oos.close();
 	}
 
+	/**
+	 * load Game
+	 * @return saved game
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
 	public GameScreen loadGame() throws IOException, ClassNotFoundException {
 		FileInputStream fis = new FileInputStream("src/main/resources/gameScreen.bin");
 		ObjectInputStream ois = new ObjectInputStream(fis);
 		GameScreen gameScreen = (GameScreen)ois.readObject();
+		logger.info("Load game");
 		return gameScreen;
 
 	}

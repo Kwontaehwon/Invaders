@@ -21,8 +21,9 @@ public class Ship extends Entity {
 	private static int BULLET_SPEED = -6;
 	/** Movement of the ship for each unit of time. */
 	private static final int SPEED = 2;
+	/** Default SpriteType */
 	private SpriteType shipType;
-
+	/** animation Cooldown */
 	private Cooldown animationCooldown;
 
 	/** Minimum time between shots. */
@@ -41,7 +42,6 @@ public class Ship extends Entity {
 
 	public Ship(final int positionX, final int positionY, final SpriteType spriteType) {
 		super(positionX, positionY, 18 * 2, 16 * 2, Color.GREEN);
-		//슈팅 쿨타임을 설정.
 		this.spriteType = spriteType;
 		this.shipType = spriteType;
 		this.shootingCooldown = Core.getCooldown(SHOOTING_INTERVAL);
@@ -51,7 +51,6 @@ public class Ship extends Entity {
 
 	public Ship(final int positionX, final int positionY, final int sizeX, final int sizeY, final SpriteType spriteType) {
 		super(positionX, positionY, sizeX * 2, sizeY * 2, Color.GREEN);
-		//슈팅 쿨타임을 설정.
 		this.spriteType = spriteType;
 		this.shipType = spriteType;
 		this.shootingCooldown = Core.getCooldown(SHOOTING_INTERVAL);
@@ -75,14 +74,6 @@ public class Ship extends Entity {
 		this.positionX -= SPEED;
 	}
 
-	public final void moveUp() {
-		this.positionY -= SPEED;
-	}
-
-	public final void moveDown() {
-		this.positionY += SPEED;
-	}
-
 	/**
 	 * Shoots a bullet upwards.
 	 * 
@@ -90,7 +81,6 @@ public class Ship extends Entity {
 	 *            List of bullets on screen, to add the new bullet.
 	 * @return Checks if the bullet was shot correctly.
 	 */
-	//Colldown이 슈팅쿨타운을 조절하는것을 알수있음.
 	public final boolean shoot(final Set<Bullet> bullets) {
 		if (this.shootingCooldown.checkFinished()) {
 			this.shootingCooldown.reset();
@@ -99,7 +89,13 @@ public class Ship extends Entity {
 		}
 		return false;
 	}
-	//폭탄발사부분
+	/**
+	 * Shoots a bomb upwards.
+	 *
+	 * @param booms
+	 *            List of bullets on screen, to add the new bomb.
+	 * @return Checks if the bullet was shot correctly.
+	 */
 	public final boolean boomShoot(final Set<Boom> booms ) {
 		if (this.shootingCooldown.checkFinished()) {
 			this.shootingCooldown.reset();
@@ -109,8 +105,13 @@ public class Ship extends Entity {
 		}
 		return false;
 	}
-	
-	//폭탄스킬발사
+
+	/**
+	 * Shoots a bombSkill upwards.
+	 *
+	 * @param booms
+	 *            List of bullets on screen, to add the new bombSkill.
+	 */
 	public final void boomSkillShoot(final Set<Boom> booms, int speedX ){
 		booms.add(BoomPool.getBoom(positionX + this.width / 2  ,
 				positionY, speedX,BULLET_SPEED));
@@ -171,11 +172,16 @@ public class Ship extends Entity {
 	public final int getSpeed() {
 		return SPEED;
 	}
-	//추가한부분: 총알 쿨타움조절함수
-	//추가한부분: 총알 속도조절
+	/**
+	 * Setter for the bullet's speed.
+	 * @param speed new speed of the bullet.
+	 */
 	public void setBulletSpeed(int speed) {this.BULLET_SPEED = speed;}
 
-
+	/**
+	 * Getter for the shooting cooldown.
+	 * @return milliseconds of the cool time.
+	 */
 	public int getShootingCoolDown(){
 		return this.shootingCooldown.getMilliseconds();
 	}
@@ -189,6 +195,10 @@ public class Ship extends Entity {
 	 */
 	public void setShipType(SpriteType type){ this.shipType = type; }
 
+	/**
+	 * Setter for the shooting cooldown.
+	 * @param interval milliseconds of the cool time.
+	 */
 	public void setShootingCoolDown(int interval) {
 		this.shootingCooldown = Core.getCooldown(interval);
 		SHOOTING_INTERVAL = interval;

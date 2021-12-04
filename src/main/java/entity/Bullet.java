@@ -120,4 +120,6 @@ public class Bullet extends Entity {
 	 * @return SpeedX of the Bullet
 	 */
 	public final int getSpeedX() { return this.speedX; }
+
+	public final SpriteType getSprite() { return this.spriteType;}
 }

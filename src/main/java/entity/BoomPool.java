@@ -6,12 +6,30 @@ import java.util.Set;
 
 public class BoomPool implements Serializable {
 
-    private static Set<Boom> pool = new HashSet<Boom>();
+    /** Set of already created booms. */
+    private static Set<Boom> pool = new HashSet<>();
 
+    /** Constructor, not called */
     private BoomPool() {
 
     }
 
+    /**
+     * Returns a boom from the pool if one is available, a new one if there
+     * isn't.
+     *
+     * @param positionX
+     *            Requested position of the boom in the X axis.
+     * @param positionY
+     *            Requested position of the boom in the Y axis.
+     * @param speedX
+     *            Requested speed of the boom, positive or negative depending
+     *            on direction - positive is down.
+     * @param speedY
+     * 			  Requested speed of the boom, positive or negative depending
+     * 	 *            on direction - positive is down.
+     * @return Requested boom.
+     */
     public static Boom getBoom(final int positionX,
                                    final int positionY, final int speedX , final int speedY) {
         Boom boom;
@@ -30,7 +48,12 @@ public class BoomPool implements Serializable {
     }
 
 
-
+    /**
+     * Adds one or more booms to the list of available ones.
+     *
+     * @param boom
+     *            Booms to recycle.
+     */
     public static void recycle(final Set<Boom> boom) {
         pool.addAll(boom);
     }
