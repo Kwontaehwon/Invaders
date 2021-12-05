@@ -84,6 +84,7 @@ public class GameScreen extends Screen implements Serializable {
     /** boss object */
 	private Boss boss;
 	/** Generator for random number. */
+
 	private Random random = new Random();
 	/** Number of remained boom. */
 	private int boomTimes ;
@@ -165,6 +166,7 @@ public class GameScreen extends Screen implements Serializable {
 		this.skill2 = new Skill2(this.level,this.skillCool[1]);
 		this.skill3 = new Skill3(this.level,this.skillCool[2]);
 		this.skill4 = new Skill4(this.level,this.skillCool[3]);
+
 		this.ultimateTimes = gameState.getUltimateTimes();
 		this.frame = frame;
 		this.bonusTime = null;
@@ -479,7 +481,6 @@ public class GameScreen extends Screen implements Serializable {
 			if (pauseTime == 0) pauseTime = System.currentTimeMillis();
 		}
 
-
 		manageCollisions();
 
 		if(this.shootingCoolItem != null && checkCollision(this.shootingCoolItem, this.ship)){
@@ -581,7 +582,6 @@ public class GameScreen extends Screen implements Serializable {
 		} else {
 			enemyShipFormation.draw();
 		}
-
 		if(this.skill1.checkActivate()){
 
 			drawManager.drawSmallString("SKILL 1 : SHIELD IS USED",8,SEPARATION_LINE_HEIGHT + 15);
@@ -679,6 +679,7 @@ public class GameScreen extends Screen implements Serializable {
 		this.bullets.removeAll(recyclable);
 		BulletPool.recycle(recyclable);
 	}
+
 	private void cleanBooms () {
 		Set<Boom> recyclable = new HashSet<>();
 		for (Boom boom : this.booms) {

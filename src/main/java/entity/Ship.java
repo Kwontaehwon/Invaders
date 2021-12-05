@@ -84,7 +84,9 @@ public class Ship extends Entity {
 	public final boolean shoot(final Set<Bullet> bullets) {
 		if (this.shootingCooldown.checkFinished()) {
 			this.shootingCooldown.reset();
-			bullets.add(BulletPool.getBullet(positionX + this.width / 2, positionY, 0, BULLET_SPEED));
+			bullets.add(BulletPool.getBullet(positionX + this.width / 2,
+					positionY, 0,BULLET_SPEED));
+
 			return true;
 		}
 		return false;
