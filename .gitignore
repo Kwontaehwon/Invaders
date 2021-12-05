@@ -15,7 +15,6 @@ local.properties
 .classpath
 .settings/
 .loadpath
-/test
 
 # inteillJ
 .idea/
@@ -177,3 +176,5 @@ log*
 .checkstyle
 codemr/
 .hsw
+# Ignore Gradle project-specific cache directory
+.gradle
