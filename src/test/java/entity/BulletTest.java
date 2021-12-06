@@ -4,6 +4,8 @@ import engine.DrawManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import entity.Bullet;
+import engine.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 

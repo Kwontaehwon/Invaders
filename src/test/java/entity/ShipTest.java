@@ -1,7 +1,6 @@
 package entity;
 
-import engine.DesignSetting;
-import engine.DrawManager;
+import engine.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
