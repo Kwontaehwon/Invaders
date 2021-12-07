@@ -706,6 +706,7 @@ public class GameScreen extends Screen implements Serializable {
 						this.boss.destroy();
 						if (this.boss.isDestroyed()) {
 							this.score += boss.getPointValue();
+							this.logger.info("The Boss is destroyed." );
 						}
 						recyclableBoom.add(boom);
 					}
