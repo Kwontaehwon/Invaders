@@ -202,7 +202,7 @@ public class Ship extends Entity {
 	 * @param interval milliseconds of the cool time.
 	 */
 	public void setShootingCoolDown(int interval) {
-		this.shootingCooldown = Core.getCooldown(interval);
+		this.shootingCooldown = Cooldown.getCooldown(interval);
 		SHOOTING_INTERVAL = interval;
 	}
 }
