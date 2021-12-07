@@ -73,9 +73,6 @@ public class Bullet extends Entity {
 		if(skill3 && this.speedY > 0){
 			this.positionY += 1 ;
 			this.positionX += this.speedX;
-			//this.positionX += speedX/speedY;
-			//this.positionY += 1;
-			// speedY/speedY 같은 비율로 나누기
 		}
 		else {
 			this.positionY += this.speedY;

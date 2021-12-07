@@ -92,5 +92,15 @@ public class Cooldown implements Serializable {
 	}
 	/** return milliseconds */
 	public int getMilliseconds() { return milliseconds; }
+	/**
+	 * Controls creation of new cooldowns.
+	 *
+	 * @param milliseconds
+	 *            Duration of the cooldown.
+	 * @return A new cooldown.
+	 */
+	public static Cooldown getCooldown(final int milliseconds) {
+		return new Cooldown(milliseconds);
+	}
 }
 
