@@ -578,7 +578,7 @@ public class GameScreen extends Screen implements Serializable {
 			drawManager.drawEntity(this.enemyShipSpecial, this.enemyShipSpecial.getPositionX(), this.enemyShipSpecial.getPositionY());
 
 		if (this.level == BOSS_STAGE_LEVEL) {
-					this.boss.draw();
+			drawManager.drawEntity(boss,boss.getPositionX(),boss.getPositionY());
 		} else {
 			enemyShipFormation.draw();
 		}
