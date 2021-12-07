@@ -78,7 +78,7 @@ public class Boss extends Entity {
         super(INIT_POS_X,INIT_POS_Y, 50 *2 , 50 * 2, Color.white);
         this.movementInterval = 0;
         this.spriteType = DrawManager.SpriteType.Boss1;
-        this.animationCooldown = Core.getCooldown(500);
+        this.animationCooldown = Cooldown.getCooldown(500);
         this.isDestroyed = false;
         this.currentDirection = Direction.UP;
         this.logger = Core.getLogger();
