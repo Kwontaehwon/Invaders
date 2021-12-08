@@ -578,7 +578,7 @@ public class GameScreen extends Screen implements Serializable {
 			drawManager.drawEntity(this.enemyShipSpecial, this.enemyShipSpecial.getPositionX(), this.enemyShipSpecial.getPositionY());
 
 		if (this.level == BOSS_STAGE_LEVEL) {
-					this.boss.draw();
+			drawManager.drawEntity(boss,boss.getPositionX(),boss.getPositionY());
 		} else {
 			enemyShipFormation.draw();
 		}
@@ -706,6 +706,7 @@ public class GameScreen extends Screen implements Serializable {
 						this.boss.destroy();
 						if (this.boss.isDestroyed()) {
 							this.score += boss.getPointValue();
+							this.logger.info("The Boss is destroyed." );
 						}
 						recyclableBoom.add(boom);
 					}

@@ -1213,4 +1213,8 @@ public final class DrawManager implements Serializable {
 		}
 		backBufferGraphics.drawPolygon(x, y, 3);
 	}
+
+	public DrawManager getDrawManager(){
+		return this;
+	}
 }

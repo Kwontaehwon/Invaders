@@ -1,9 +1,9 @@
-package entity;
-
 import engine.DrawManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import entity.Bullet;
+import engine.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,7 +38,7 @@ class BulletTest {
         assertEquals(4,bullet.getPositionX());
         assertEquals(6,bullet.getPositionY());
         bullet.update(true);
-        assertEquals(4,bullet.getPositionX());
+        assertEquals(7,bullet.getPositionX());
         assertEquals(7,bullet.getPositionY());
     }
 }

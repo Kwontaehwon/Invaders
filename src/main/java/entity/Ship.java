@@ -44,18 +44,18 @@ public class Ship extends Entity {
 		super(positionX, positionY, 18 * 2, 16 * 2, Color.GREEN);
 		this.spriteType = spriteType;
 		this.shipType = spriteType;
-		this.shootingCooldown = Core.getCooldown(SHOOTING_INTERVAL);
-		this.destructionCooldown = Core.getCooldown(1000);
-		this.animationCooldown = Core.getCooldown(100);
+		this.shootingCooldown = Cooldown.getCooldown(SHOOTING_INTERVAL);
+		this.destructionCooldown = Cooldown.getCooldown(1000);
+		this.animationCooldown = Cooldown.getCooldown(100);
 	}
 
 	public Ship(final int positionX, final int positionY, final int sizeX, final int sizeY, final SpriteType spriteType) {
 		super(positionX, positionY, sizeX * 2, sizeY * 2, Color.GREEN);
 		this.spriteType = spriteType;
 		this.shipType = spriteType;
-		this.shootingCooldown = Core.getCooldown(SHOOTING_INTERVAL);
-		this.destructionCooldown = Core.getCooldown(1000);
-		this.animationCooldown = Core.getCooldown(100);
+		this.shootingCooldown = Cooldown.getCooldown(SHOOTING_INTERVAL);
+		this.destructionCooldown = Cooldown.getCooldown(1000);
+		this.animationCooldown = Cooldown.getCooldown(100);
 	}
 
 	/**
@@ -202,7 +202,7 @@ public class Ship extends Entity {
 	 * @param interval milliseconds of the cool time.
 	 */
 	public void setShootingCoolDown(int interval) {
-		this.shootingCooldown = Core.getCooldown(interval);
+		this.shootingCooldown = Cooldown.getCooldown(interval);
 		SHOOTING_INTERVAL = interval;
 	}
 }

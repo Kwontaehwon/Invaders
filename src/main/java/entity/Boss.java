@@ -1,22 +1,18 @@
 package entity;
 
 import engine.Cooldown;
-import engine.Core;
 import engine.DrawManager;
 import screen.Screen;
 
 import java.awt.*;
 import java.util.*;
-import java.util.List;
-import java.util.logging.Logger;
 
 public class Boss extends Entity {
 
-    protected Logger logger;
 
     private int live = 10;
 
-    private static final int pointValue = 300;
+    private static final int POINTVALUE = 300;
 
     /** Initial position in the x-axis. */
     private static final int INIT_POS_X = 265;
@@ -49,9 +45,6 @@ public class Boss extends Entity {
     /** Current direction the formation is moving on. */
     private Direction currentDirection;
 
-
-    /** DrawManager instance. */
-    private DrawManager drawManager;
     /** Screen to draw ships on. */
     private Screen screen;
 
@@ -79,13 +72,11 @@ public class Boss extends Entity {
      */
     public Boss() {
         super(INIT_POS_X,INIT_POS_Y, 50 *2 , 50 * 2, Color.white);
-        this.drawManager = Core.getDrawManager();
         this.movementInterval = 0;
         this.spriteType = DrawManager.SpriteType.Boss1;
-        this.animationCooldown = Core.getCooldown(500);
+        this.animationCooldown = Cooldown.getCooldown(500);
         this.isDestroyed = false;
         this.currentDirection = Direction.UP;
-        this.logger = Core.getLogger();
 
     }
 
@@ -124,7 +115,7 @@ public class Boss extends Entity {
             }
         }
         if(this.shootingCooldown == null) {
-            this.shootingCooldown = Core.getCooldown(shootingInterval);
+            this.shootingCooldown = Cooldown.getCooldown(shootingInterval);
             this.shootingCooldown.reset();
         }
 
@@ -197,13 +188,6 @@ public class Boss extends Entity {
         if(this.getPositionX() <= SIDE_MARGIN){
             positionX += X_SPEED ;
         }
-    }
-
-    /**
-     * Draws Boss.
-     */
-    public final void draw() {
-        drawManager.drawEntity(this,this.getPositionX(),this.getPositionY());
     }
 
     /**
@@ -283,7 +267,6 @@ public class Boss extends Entity {
         else if (this.live == 0){
             this.isDestroyed = true;
             this.spriteType = DrawManager.SpriteType.BossDestroyed;
-            this.logger.info("The Boss is destroyed." );
         }
     }
 
@@ -293,7 +276,7 @@ public class Boss extends Entity {
      * @return Value of the boss.
      */
     public final int getPointValue() {
-        return this.pointValue;
+        return this.POINTVALUE;
     }
     /**
      * Getter for the score bonus if this boss is destroyed.
