@@ -174,3 +174,5 @@ pip-log.txt
 log*
 *.ttf
 .checkstyle
+codemr/
+.hsw
